@@ -5,6 +5,10 @@
 
 - GitHub：`https://github.com/kuotunyu/doc-inspector`
 - Hugging Face Space：`https://huggingface.co/spaces/steven0226/doc-inspector`
+- Public live demo：`https://steven0226-doc-inspector.hf.space`
+
+截至 2026-07-24，GitHub 主倉與 Hugging Face Docker Space 均已發布；Space
+已完成 Private 合成範例／Gemini／JSON／Excel 全流程驗收並切換 Public。
 
 發布順序固定為 **GitHub 主倉 → Hugging Face 部署鏡像**。GitHub 保存主要
 程式碼與開發歷史；Hugging Face Space 使用同一份已驗收內容建置公開服務。
@@ -29,7 +33,7 @@ uv build
 
 預期結果：
 
-- dependency lock 無漂移，116 項測試通過且總 coverage 為 89%。
+- dependency lock 無漂移，118 項測試通過且總 coverage 為 89%。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。
@@ -194,6 +198,9 @@ uv run python scripts/check_live_space.py `
 ```
 
 回報 `healthy: true` 後，再更新 README 狀態與正式網址。
+
+2026-07-24 實跑結果：匿名 HTTPS 一次回傳 HTTP 200、HTML 內含「文件預檢所」，
+`healthy=true`；檢查未上傳文件、未呼叫模型，也未讀取 `.env`。
 
 ## 7. 回復方式
 

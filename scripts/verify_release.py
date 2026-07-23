@@ -55,7 +55,8 @@ README_MARKERS = (
     "## 目前限制",
     "維護者整體驗收",
     "Hugging Face Docker Space",
-    "116 passed，總 coverage 89%",
+    "118 passed，總 coverage 89%",
+    "https://steven0226-doc-inspector.hf.space",
 )
 
 SECRET_PLACEHOLDERS = (

@@ -13,7 +13,9 @@ license: mit
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
-> 目前狀態：Phase 0–6 已於 2026-07-23 完成本機工程、驗證及維護者整體驗收；[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 已建立並推送。Hugging Face Docker Space、Secrets 與公開 live demo 尚未建立。這是送件前預檢工具，不取代主管機關的正式資格審查。
+> 目前狀態：Phase 0–6 已完成工程、驗證及維護者整體驗收；[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 均已發布。這是送件前預檢工具，不取代主管機關的正式資格審查。
+
+**線上試用：[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)**
 
 ## 能做什麼
 
@@ -125,7 +127,7 @@ uv lock --check
 uv build
 ```
 
-2026-07-23 完整驗收與發布前 gate：**116 passed，總 coverage 89%**；wheel 與 sdist 均成功建立。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI。付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-24 完整驗收與發布 gate：**118 passed，總 coverage 89%**；wheel 與 sdist 均成功建立。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI。付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
 
 ## XFUND 評估
 
@@ -232,4 +234,4 @@ docker run --rm -p 7861:7861 `
 - 雲端模型可能誤讀手寫、低解析、旋轉或極密集表格，仍需人工核對 evidence。
 - XFUND 指標是嚴格 exact match，不能直接等同真實案件可用率。
 - 視覺檢索模型主要以英文訓練；目前中文結果是單一固定資料集的零樣本證據。
-- Hugging Face 服務與公開 live demo URL 尚未建立，必須由維護者完成 Secrets、私有測試與發布決策。
+- 公開 live demo 使用維護者設定的雲端 API 配額；程序內共用每小時 60 次上限只能降低一般濫用，不能取代供應商端硬性支出上限。

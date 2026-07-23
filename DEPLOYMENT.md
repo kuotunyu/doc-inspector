@@ -45,6 +45,9 @@ docker run --rm -p 7861:7861 `
 
 本專案的公開目標是 Hugging Face Docker Space。README front matter 已設定：
 
+目前公開服務已於 2026-07-24 完成 Private 全流程驗收與匿名 HTTPS 健康檢查：
+[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)。
+
 ```yaml
 sdk: docker
 app_port: 7861
