@@ -1,0 +1,58 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "doc-inspector"
+version = "0.1.0"
+description = "政府補助申請表單與收據的智慧抽取及送件前預檢工具"
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { file = "LICENSE" }
+authors = [{ name = "doc-inspector contributors" }]
+dependencies = [
+  "gradio>=6.0,<7.0",
+  "langchain>=1.0,<2.0",
+  "langchain-google-genai>=3.0,<5.0",
+  "langchain-openai>=1.0,<2.0",
+  "pillow>=11.0,<13.0",
+  "pydantic>=2.10,<3.0",
+  "pydantic-settings>=2.7,<3.0",
+  "pymupdf>=1.25,<2.0",
+  "xlsxwriter>=3.2,<4.0",
+]
+
+[project.optional-dependencies]
+local-retrieval = [
+  "accelerate>=1.12,<2.0",
+  "torch>=2.11,<2.12",
+  "transformers>=5.1,<6.0",
+]
+
+[dependency-groups]
+dev = [
+  "playwright>=1.55,<2.0",
+  "pytest>=8.3,<10.0",
+  "pytest-cov>=6.0,<8.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/doc_inspector"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+testpaths = ["tests"]
+markers = [
+  "live_api: 會呼叫付費雲端 API，預設測試不得執行",
+  "benchmark: 需要外部資料或 OCR 工具的量化評估",
+  "gpu: 需要本機 GPU 與模型權重",
+  "ui: 啟動本機介面的整合測試",
+]

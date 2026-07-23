@@ -1,0 +1,51 @@
+# Secrets and local settings
+.env
+.env.*
+!.env.example
+
+# Python and uv
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Local agent workflow and project memory
+.agents/
+CLAUDE.md
+PLAN.md
+PROGRESS.md
+
+# Local documents, model output, and caches
+data/raw/
+data/processed/
+data/benchmark/
+data/demo/generated/
+downloads/
+outputs/
+reports/private/
+tmp/
+temp/
+logs/
+*.log
+*.safetensors
+*.bin
+*.ckpt
+*.pt
+*.pth
+
+# Gradio local state
+flagged/
+gradio_cached_examples/

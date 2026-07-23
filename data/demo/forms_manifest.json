@@ -1,0 +1,61 @@
+{
+  "forms": [
+    {
+      "id": "rental_subsidy_115",
+      "title": "115年中央擴大租金補貼申請書",
+      "agency": "內政部國土管理署",
+      "url": "https://pip.moi.gov.tw/Upload/HouSubsidy/File2/115Y_01_租金補貼申請書.pdf",
+      "source_page": "https://pip.moi.gov.tw/Publicize/Info/B1020?n=E794B3E8AB8BE6A29DE4BBB6&y=115",
+      "terms_status": "官方頁面提供下載；未找到明確再散布授權，僅供本機驗證，不納入版本控制。",
+      "terms_url": null,
+      "file_name": "rental_subsidy_115.pdf",
+      "retrieved_at_utc": "2026-07-22T19:47:42.198253+00:00",
+      "content_type": "application/pdf",
+      "size_bytes": 565432,
+      "sha256": "341c6b871af69e249cd83b4dd174ebd1e13ec41e62d8b8566fddc1b62fe47d27",
+      "validation": {
+        "status": "verified",
+        "page_count": 8,
+        "encrypted": false
+      }
+    },
+    {
+      "id": "childcare_allowance_under_2",
+      "title": "育有未滿2歲兒童育兒津貼申請書",
+      "agency": "連江縣北竿鄉公所",
+      "url": "https://www.beigan.gov.tw/upload/pdf-20260107114330.pdf",
+      "source_page": "https://www.beigan.gov.tw/Chhtml/download/2194",
+      "terms_status": "網站頁尾標示 All rights reserved；僅供本機驗證，不再散布或納入版本控制。",
+      "terms_url": "https://www.beigan.gov.tw/Chhtml/download/2194",
+      "file_name": "childcare_allowance_under_2.pdf",
+      "retrieved_at_utc": "2026-07-22T19:47:43.699131+00:00",
+      "content_type": "application/pdf",
+      "size_bytes": 169841,
+      "sha256": "628c62da64d06df10cce54b81f10c1fff05ff65f133e007f18419c3d2f350995",
+      "validation": {
+        "status": "verified",
+        "page_count": 2,
+        "encrypted": false
+      }
+    },
+    {
+      "id": "assistive_device_subsidy_hualien",
+      "title": "身心障礙者輔具費用補助申請表",
+      "agency": "花蓮縣政府",
+      "url": "https://ws.hl.gov.tw/Download.ashx?n=6Lqr5b%2BD6Zqc56SZ6ICF55Sf5rS76LyU5YW36LK755So6KOc5Yqp55Sz6KuL6KGoKOeZvSkucGRm&u=LzAwMS9VcGxvYWQvNDIwL3JlbGZpbGUvOTgxNy83NzExL2U0MGU5NjQ1LWM2YTAtNGMxZi1iOWE0LTkwNGRkMjNjMTE0OC5wZGY%3D",
+      "source_page": "https://sa.hl.gov.tw/",
+      "terms_status": "縣府有資料開放宣告，但社會處頁尾另要求授權；保守採僅本機驗證，不再散布。",
+      "terms_url": "https://www.hl.gov.tw/en/cp.aspx?n=32892",
+      "file_name": "assistive_device_subsidy_hualien.pdf",
+      "retrieved_at_utc": "2026-07-22T19:47:43.870991+00:00",
+      "content_type": "application/pdf",
+      "size_bytes": 254335,
+      "sha256": "a5d1b7f6d523777e027cfd22e6c75c2e591eb47966a1660b529a1401130648dd",
+      "validation": {
+        "status": "verified",
+        "page_count": 2,
+        "encrypted": false
+      }
+    }
+  ]
+}

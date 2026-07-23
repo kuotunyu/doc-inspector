@@ -1,0 +1,914 @@
+{
+  "url": "http://127.0.0.1:7862",
+  "screenshots": [
+    "wide.png",
+    "desktop.png",
+    "mobile.png",
+    "result-red.png"
+  ],
+  "wide_metrics": {
+    "viewportWidth": 1920,
+    "documentWidth": 1920,
+    "header": {
+      "x": 204,
+      "y": 53,
+      "width": 502,
+      "height": 125,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "h1": {
+      "x": 204,
+      "y": 53,
+      "width": 502,
+      "height": 52,
+      "fontSize": "46px",
+      "lineHeight": "51.52px"
+    },
+    "bodyText": {
+      "x": 204,
+      "y": 113,
+      "width": 502,
+      "height": 65,
+      "fontSize": "20px",
+      "lineHeight": "32.5px"
+    },
+    "masthead": {
+      "x": 204,
+      "y": 50,
+      "width": 1512,
+      "height": 131,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowGuide": {
+      "x": 742,
+      "y": 52,
+      "width": 974,
+      "height": 127,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowTitle": {
+      "x": 761,
+      "y": 67,
+      "width": 936,
+      "height": 28,
+      "fontSize": "21px",
+      "lineHeight": "28.35px"
+    },
+    "workflowStepTitle": {
+      "x": 801,
+      "y": 103,
+      "width": 182,
+      "height": 27,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowStepCopy": {
+      "x": 801,
+      "y": 131,
+      "width": 182,
+      "height": 23,
+      "fontSize": "17px",
+      "lineHeight": "22.95px"
+    },
+    "sourceHeading": {
+      "x": 243,
+      "y": 359,
+      "width": 140,
+      "height": 28,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
+    },
+    "sourceText": {
+      "x": 395,
+      "y": 362,
+      "width": 448,
+      "height": 74,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoHeading": {
+      "x": 240,
+      "y": 707,
+      "width": 130,
+      "height": 28,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "demoText": {
+      "x": 240,
+      "y": 736,
+      "width": 130,
+      "height": 49,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoSelectorAccessible": true,
+    "documentPickerLabelVisible": true,
+    "workbench": {
+      "x": 192,
+      "y": 207,
+      "width": 1536,
+      "height": 623,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "uploadPanel": {
+      "x": 192,
+      "y": 210,
+      "width": 703,
+      "height": 620,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "settingsPanel": {
+      "x": 895,
+      "y": 210,
+      "width": 833,
+      "height": 620,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "sectionHeading": {
+      "x": 230,
+      "y": 246,
+      "width": 626,
+      "height": 35,
+      "fontSize": "28px",
+      "lineHeight": "35px"
+    },
+    "sectionCopy": {
+      "x": 230,
+      "y": 287,
+      "width": 626,
+      "height": 29,
+      "fontSize": "19px",
+      "lineHeight": "28.5px"
+    },
+    "fieldLabel": {
+      "x": 921,
+      "y": 339,
+      "width": 68,
+      "height": 25,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "uploadGuidance": {
+      "x": 230,
+      "y": 641,
+      "width": 626,
+      "height": 25,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "noticeGrid": {
+      "x": 921,
+      "y": 460,
+      "width": 781,
+      "height": 162,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "privacyText": {
+      "x": 950,
+      "y": 515,
+      "width": 368,
+      "height": 81,
+      "fontSize": "18px",
+      "lineHeight": "27px"
+    },
+    "actionGrid": {
+      "x": 921,
+      "y": 633,
+      "width": 781,
+      "height": 94,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "primaryButton": {
+      "x": 921,
+      "y": 652,
+      "width": 301,
+      "height": 56,
+      "fontSize": "19px",
+      "lineHeight": "29.45px"
+    },
+    "statusText": {
+      "x": 1247,
+      "y": 643,
+      "width": 443,
+      "height": 74,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "actionPlan": {
+      "x": 204,
+      "y": 992,
+      "width": 1512,
+      "height": 91,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "resultTabs": {
+      "x": 192,
+      "y": 1109,
+      "width": 1536,
+      "height": 187,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "emptyResultHint": "尚未執行預檢；完成後，資料會顯示在這裡。",
+    "layoutAncestors": [
+      {
+        "tag": "SECTION",
+        "id": "",
+        "className": "masthead",
+        "width": 1512,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "html-mzapidgzb",
+        "className": "prose gradio-style  svelte-26mp0t",
+        "width": 1512,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "html-container svelte-1jts93g",
+        "width": 1536,
+        "paddingLeft": "12px",
+        "paddingRight": "12px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "block  svelte-1plpy97 padded hide-container auto-margin",
+        "width": 1536,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "column  svelte-siq5d6",
+        "width": 1536,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "MAIN",
+        "id": "",
+        "className": "contain svelte-zxu34v",
+        "width": 1536,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "wrap svelte-zxu34v",
+        "width": 1536,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "main fillable svelte-99kmwu app fill_width",
+        "width": 1568,
+        "paddingLeft": "16px",
+        "paddingRight": "16px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
+        "width": 1680,
+        "paddingLeft": "56px",
+        "paddingRight": "56px"
+      },
+      {
+        "tag": "GRADIO-APP",
+        "id": "",
+        "className": "",
+        "width": 1920,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      }
+    ]
+  },
+  "desktop_metrics": {
+    "viewportWidth": 1440,
+    "documentWidth": 1440,
+    "header": {
+      "x": 77,
+      "y": 65,
+      "width": 425,
+      "height": 125,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "h1": {
+      "x": 77,
+      "y": 65,
+      "width": 425,
+      "height": 52,
+      "fontSize": "46px",
+      "lineHeight": "51.52px"
+    },
+    "bodyText": {
+      "x": 77,
+      "y": 124,
+      "width": 425,
+      "height": 65,
+      "fontSize": "20px",
+      "lineHeight": "32.5px"
+    },
+    "masthead": {
+      "x": 77,
+      "y": 50,
+      "width": 1286,
+      "height": 154,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowGuide": {
+      "x": 538,
+      "y": 52,
+      "width": 825,
+      "height": 150,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowTitle": {
+      "x": 557,
+      "y": 67,
+      "width": 787,
+      "height": 28,
+      "fontSize": "21px",
+      "lineHeight": "28.35px"
+    },
+    "workflowStepTitle": {
+      "x": 597,
+      "y": 103,
+      "width": 145,
+      "height": 27,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowStepCopy": {
+      "x": 597,
+      "y": 131,
+      "width": 145,
+      "height": 23,
+      "fontSize": "17px",
+      "lineHeight": "22.95px"
+    },
+    "sourceHeading": {
+      "x": 116,
+      "y": 382,
+      "width": 140,
+      "height": 28,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
+    },
+    "sourceText": {
+      "x": 268,
+      "y": 385,
+      "width": 346,
+      "height": 99,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoHeading": {
+      "x": 113,
+      "y": 755,
+      "width": 130,
+      "height": 28,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "demoText": {
+      "x": 113,
+      "y": 784,
+      "width": 130,
+      "height": 49,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoSelectorAccessible": true,
+    "documentPickerLabelVisible": true,
+    "workbench": {
+      "x": 65,
+      "y": 230,
+      "width": 1310,
+      "height": 648,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "uploadPanel": {
+      "x": 65,
+      "y": 233,
+      "width": 601,
+      "height": 645,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "settingsPanel": {
+      "x": 666,
+      "y": 233,
+      "width": 710,
+      "height": 645,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "sectionHeading": {
+      "x": 103,
+      "y": 269,
+      "width": 524,
+      "height": 35,
+      "fontSize": "28px",
+      "lineHeight": "35px"
+    },
+    "sectionCopy": {
+      "x": 103,
+      "y": 310,
+      "width": 524,
+      "height": 29,
+      "fontSize": "19px",
+      "lineHeight": "28.5px"
+    },
+    "fieldLabel": {
+      "x": 692,
+      "y": 362,
+      "width": 68,
+      "height": 25,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "uploadGuidance": {
+      "x": 103,
+      "y": 688,
+      "width": 524,
+      "height": 25,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "noticeGrid": {
+      "x": 692,
+      "y": 482,
+      "width": 658,
+      "height": 162,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "privacyText": {
+      "x": 721,
+      "y": 538,
+      "width": 300,
+      "height": 81,
+      "fontSize": "18px",
+      "lineHeight": "27px"
+    },
+    "actionGrid": {
+      "x": 692,
+      "y": 656,
+      "width": 658,
+      "height": 94,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "primaryButton": {
+      "x": 692,
+      "y": 675,
+      "width": 256,
+      "height": 56,
+      "fontSize": "19px",
+      "lineHeight": "29.45px"
+    },
+    "statusText": {
+      "x": 972,
+      "y": 666,
+      "width": 365,
+      "height": 74,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "actionPlan": {
+      "x": 77,
+      "y": 1039,
+      "width": 1286,
+      "height": 91,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "resultTabs": {
+      "x": 65,
+      "y": 1156,
+      "width": 1310,
+      "height": 187,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "emptyResultHint": "尚未執行預檢；完成後，資料會顯示在這裡。",
+    "layoutAncestors": [
+      {
+        "tag": "SECTION",
+        "id": "",
+        "className": "masthead",
+        "width": 1286,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "html-0w2xssg1i",
+        "className": "prose gradio-style  svelte-26mp0t",
+        "width": 1286,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "html-container svelte-1jts93g",
+        "width": 1310,
+        "paddingLeft": "12px",
+        "paddingRight": "12px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "block  svelte-1plpy97 padded hide-container auto-margin",
+        "width": 1310,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "column  svelte-siq5d6",
+        "width": 1310,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "MAIN",
+        "id": "",
+        "className": "contain svelte-zxu34v",
+        "width": 1310,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "wrap svelte-zxu34v",
+        "width": 1310,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "main fillable svelte-99kmwu app fill_width",
+        "width": 1339,
+        "paddingLeft": "14.4px",
+        "paddingRight": "14.4px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
+        "width": 1440,
+        "paddingLeft": "50.4px",
+        "paddingRight": "50.4px"
+      },
+      {
+        "tag": "GRADIO-APP",
+        "id": "",
+        "className": "",
+        "width": 1440,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      }
+    ]
+  },
+  "mobile_metrics": {
+    "viewportWidth": 390,
+    "documentWidth": 390,
+    "header": {
+      "x": 30,
+      "y": 52,
+      "width": 331,
+      "height": 100,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "h1": {
+      "x": 30,
+      "y": 52,
+      "width": 331,
+      "height": 38,
+      "fontSize": "34px",
+      "lineHeight": "38.08px"
+    },
+    "bodyText": {
+      "x": 30,
+      "y": 98,
+      "width": 331,
+      "height": 54,
+      "fontSize": "18px",
+      "lineHeight": "27px"
+    },
+    "masthead": {
+      "x": 30,
+      "y": 50,
+      "width": 331,
+      "height": 366,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowGuide": {
+      "x": 30,
+      "y": 170,
+      "width": 331,
+      "height": 244,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowTitle": {
+      "x": 44,
+      "y": 184,
+      "width": 303,
+      "height": 28,
+      "fontSize": "21px",
+      "lineHeight": "28.35px"
+    },
+    "workflowStepTitle": {
+      "x": 85,
+      "y": 220,
+      "width": 101,
+      "height": 27,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "workflowStepCopy": {
+      "x": 85,
+      "y": 248,
+      "width": 101,
+      "height": 46,
+      "fontSize": "17px",
+      "lineHeight": "22.95px"
+    },
+    "sourceHeading": {
+      "x": 59,
+      "y": 608,
+      "width": 273,
+      "height": 28,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
+    },
+    "sourceText": {
+      "x": 59,
+      "y": 638,
+      "width": 273,
+      "height": 123,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoHeading": {
+      "x": 56,
+      "y": 1088,
+      "width": 279,
+      "height": 28,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "demoText": {
+      "x": 56,
+      "y": 1117,
+      "width": 279,
+      "height": 25,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "demoSelectorAccessible": true,
+    "documentPickerLabelVisible": true,
+    "workbench": {
+      "x": 18,
+      "y": 442,
+      "width": 355,
+      "height": 1779,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "uploadPanel": {
+      "x": 18,
+      "y": 445,
+      "width": 355,
+      "height": 888,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "settingsPanel": {
+      "x": 18,
+      "y": 1333,
+      "width": 355,
+      "height": 888,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "sectionHeading": {
+      "x": 46,
+      "y": 473,
+      "width": 299,
+      "height": 31,
+      "fontSize": "25px",
+      "lineHeight": "31.25px"
+    },
+    "sectionCopy": {
+      "x": 46,
+      "y": 511,
+      "width": 299,
+      "height": 54,
+      "fontSize": "18px",
+      "lineHeight": "27px"
+    },
+    "fieldLabel": {
+      "x": 34,
+      "y": 1476,
+      "width": 68,
+      "height": 25,
+      "fontSize": "17px",
+      "lineHeight": "24.65px"
+    },
+    "uploadGuidance": {
+      "x": 46,
+      "y": 986,
+      "width": 299,
+      "height": 60,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "noticeGrid": {
+      "x": 34,
+      "y": 1706,
+      "width": 323,
+      "height": 325,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "privacyText": {
+      "x": 63,
+      "y": 1762,
+      "width": 265,
+      "height": 108,
+      "fontSize": "18px",
+      "lineHeight": "27px"
+    },
+    "actionGrid": {
+      "x": 34,
+      "y": 2043,
+      "width": 323,
+      "height": 160,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "primaryButton": {
+      "x": 34,
+      "y": 2043,
+      "width": 323,
+      "height": 54,
+      "fontSize": "19px",
+      "lineHeight": "29.45px"
+    },
+    "statusText": {
+      "x": 46,
+      "y": 2119,
+      "width": 299,
+      "height": 74,
+      "fontSize": "18px",
+      "lineHeight": "25.2px"
+    },
+    "actionPlan": {
+      "x": 30,
+      "y": 2403,
+      "width": 331,
+      "height": 112,
+      "fontSize": "19px",
+      "lineHeight": "26.6px"
+    },
+    "resultTabs": {
+      "x": 18,
+      "y": 2540,
+      "width": 355,
+      "height": 187,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "emptyResultHint": "尚未執行預檢；完成後，資料會顯示在這裡。",
+    "layoutAncestors": [
+      {
+        "tag": "SECTION",
+        "id": "",
+        "className": "masthead",
+        "width": 331,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "html-c8c77uh0v",
+        "className": "prose gradio-style  svelte-26mp0t",
+        "width": 331,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "html-container svelte-1jts93g",
+        "width": 355,
+        "paddingLeft": "12px",
+        "paddingRight": "12px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "block  svelte-1plpy97 padded hide-container auto-margin",
+        "width": 355,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "column  svelte-siq5d6",
+        "width": 355,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "MAIN",
+        "id": "",
+        "className": "contain svelte-zxu34v",
+        "width": 355,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "wrap svelte-zxu34v",
+        "width": 355,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "main fillable svelte-99kmwu app fill_width",
+        "width": 363,
+        "paddingLeft": "4px",
+        "paddingRight": "4px"
+      },
+      {
+        "tag": "DIV",
+        "id": "",
+        "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
+        "width": 390,
+        "paddingLeft": "13.65px",
+        "paddingRight": "13.65px"
+      },
+      {
+        "tag": "GRADIO-APP",
+        "id": "",
+        "className": "",
+        "width": 390,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
+      }
+    ]
+  },
+  "consent_control_default_unchecked": true,
+  "consent_error_visible_before_api_call": true,
+  "persistent_status_near_action": true,
+  "button_reenabled_after_error": true,
+  "demo_file_loaded_without_api": true,
+  "demo_status_visible": true,
+  "demo_schema_updated": true,
+  "action_plan_checked": true,
+  "action_plan_visible": true,
+  "action_plan_next_step_visible": true,
+  "action_plan_plain_language_visible": true,
+  "action_plan_machine_paths_hidden": true,
+  "console_errors": [],
+  "page_errors": []
+}
