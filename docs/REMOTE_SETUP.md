@@ -60,8 +60,8 @@ uv run python scripts/audit_ui_quality.py
 5. **不要**勾選 Add README、Add .gitignore 或 Choose a license；本機已經有這些檔案，預先建立會造成歷史衝突。
 6. 按 **Create repository**。
 
-截至 2026-07-23，`kuotunyu/doc-inspector` 空白 Public repository 已由維護者
-建立；若它仍存在，不要重複建立。
+截至 2026-07-23，`kuotunyu/doc-inspector` Public repository 已由維護者建立，
+且 `main` 已完成首次推送；後續維護不要重複建立 repository。
 
 GitHub 官方也建議匯入既有本機專案時不要預先產生上述檔案：
 [Creating a new repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-new-repository)。

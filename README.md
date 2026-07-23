@@ -13,7 +13,7 @@ license: mit
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
-> 目前狀態：Phase 0–6 已於 2026-07-23 完成本機工程、驗證及維護者整體驗收。Public GitHub repository 已建立但尚未推送；Hugging Face Docker Space、Secrets 與公開 live demo 尚未建立。這是送件前預檢工具，不取代主管機關的正式資格審查。
+> 目前狀態：Phase 0–6 已於 2026-07-23 完成本機工程、驗證及維護者整體驗收；[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 已建立並推送。Hugging Face Docker Space、Secrets 與公開 live demo 尚未建立。這是送件前預檢工具，不取代主管機關的正式資格審查。
 
 ## 能做什麼
 
@@ -232,4 +232,4 @@ docker run --rm -p 7861:7861 `
 - 雲端模型可能誤讀手寫、低解析、旋轉或極密集表格，仍需人工核對 evidence。
 - XFUND 指標是嚴格 exact match，不能直接等同真實案件可用率。
 - 視覺檢索模型主要以英文訓練；目前中文結果是單一固定資料集的零樣本證據。
-- 遠端服務與公開 URL 尚未建立，必須由維護者完成 Secrets、私有測試與發布決策。
+- Hugging Face 服務與公開 live demo URL 尚未建立，必須由維護者完成 Secrets、私有測試與發布決策。
