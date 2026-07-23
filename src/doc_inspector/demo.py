@@ -137,17 +137,41 @@ class DemoArtifact:
     sha256: str
 
 
-def _font_path(*, bold: bool = False) -> Path:
-    fonts_root = Path(os.environ.get("WINDIR", r"C:\Windows")) / "Fonts"
+def _font_search_roots() -> tuple[Path, ...]:
+    """Return supported Windows and Linux system font directories."""
+
+    roots: list[Path] = []
+    windir = os.environ.get("WINDIR")
+    if windir:
+        roots.append(Path(windir) / "Fonts")
+    elif os.name == "nt":
+        roots.append(Path(r"C:\Windows") / "Fonts")
+    roots.extend(
+        (
+            Path("/usr/share/fonts/opentype/noto"),
+            Path("/usr/share/fonts/truetype/noto"),
+            Path("/usr/local/share/fonts"),
+        )
+    )
+    return tuple(roots)
+
+
+def _font_path(
+    *,
+    bold: bool = False,
+    search_roots: tuple[Path, ...] | None = None,
+) -> Path:
     names = (
         ("msjhbd.ttc", "NotoSansCJK-Bold.ttc", "arialbd.ttf")
         if bold
         else ("msjh.ttc", "NotoSansCJK-Regular.ttc", "arial.ttf")
     )
-    for name in names:
-        candidate = fonts_root / name
-        if candidate.is_file():
-            return candidate
+    roots = _font_search_roots() if search_roots is None else search_roots
+    for root in roots:
+        for name in names:
+            candidate = root / name
+            if candidate.is_file():
+                return candidate
     raise RuntimeError("找不到可顯示正體中文的系統字型。")
 
 

@@ -1735,6 +1735,10 @@ def _gradio_demo_callback(
         return load_demo_document_callback(demo_name)
     except ValueError as exc:
         raise gr.Error(str(exc)) from None
+    except RuntimeError:
+        raise gr.Error(
+            "無法建立合成範例，請稍後再試或改用自己的文件。"
+        ) from None
 
 
 def build_app(

@@ -5,7 +5,13 @@ from pathlib import Path
 
 from PIL import Image
 
-from doc_inspector.demo import DEMO_SEED, WATERMARK, demo_extractions, generate_demo_artifacts
+from doc_inspector.demo import (
+    DEMO_SEED,
+    WATERMARK,
+    _font_path,
+    demo_extractions,
+    generate_demo_artifacts,
+)
 from doc_inspector.rules import inspect_extraction
 
 
@@ -38,3 +44,13 @@ def test_generate_demo_artifacts_writes_safe_manifest_and_exports(tmp_path: Path
         assert artifact.workbook_path.is_file()
         with Image.open(artifact.image_path) as image:
             assert image.size == (1600, 2200)
+
+
+def test_font_path_supports_debian_noto_cjk(tmp_path: Path) -> None:
+    regular = tmp_path / "NotoSansCJK-Regular.ttc"
+    bold = tmp_path / "NotoSansCJK-Bold.ttc"
+    regular.write_bytes(b"test-font")
+    bold.write_bytes(b"test-font")
+
+    assert _font_path(search_roots=(tmp_path,)) == regular
+    assert _font_path(bold=True, search_roots=(tmp_path,)) == bold

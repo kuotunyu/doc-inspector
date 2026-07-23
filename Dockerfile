@@ -13,6 +13,10 @@ ENV UV_NO_DEV=1 \
 
 WORKDIR /app
 
+RUN apt-get update && \
+    apt-get install --yes --no-install-recommends fonts-noto-cjk && \
+    rm -rf /var/lib/apt/lists/*
+
 COPY pyproject.toml uv.lock README.md LICENSE ./
 COPY src ./src
 COPY app.py ./
