@@ -55,19 +55,18 @@ def _metrics(locator: Locator) -> dict[str, float | str]:
 
 
 def _page_metrics(page: Page) -> dict:
-    return {
+    metrics = {
         "viewportWidth": page.evaluate("window.innerWidth"),
         "documentWidth": page.evaluate("document.documentElement.scrollWidth"),
+        "documentHeight": page.evaluate("document.documentElement.scrollHeight"),
         "header": _metrics(page.locator(".app-header").first),
         "h1": _metrics(page.locator(".app-header h1").first),
         "bodyText": _metrics(page.locator(".app-header p").first),
         "masthead": _metrics(page.locator(".masthead").first),
-        "workflowGuide": _metrics(page.locator(".workflow-guide").first),
-        "workflowTitle": _metrics(page.locator(".workflow-guide h2").first),
-        "workflowStepTitle": _metrics(
-            page.locator(".workflow-copy strong").first
-        ),
-        "workflowStepCopy": _metrics(page.locator(".workflow-copy p").first),
+        "resultLegend": _metrics(page.locator(".result-legend").first),
+        "legendTitle": _metrics(page.locator(".result-legend h2").first),
+        "legendItem": _metrics(page.locator(".legend-items li").first),
+        "legendLabel": _metrics(page.locator(".legend-items strong").first),
         "sourceHeading": _metrics(page.locator(".source-brief h3").first),
         "sourceText": _metrics(page.locator(".source-brief p").first),
         "demoHeading": _metrics(page.locator(".demo-heading h3").first),
@@ -80,9 +79,16 @@ def _page_metrics(page: Page) -> dict:
         ).is_visible(),
         "workbench": _metrics(page.locator(".workbench").first),
         "uploadPanel": _metrics(page.locator(".upload-section").first),
+        "sourceBrief": _metrics(page.locator(".source-brief").first),
+        "uploadControl": _metrics(page.locator(".upload-control").first),
+        "uploadPrompt": _metrics(
+            page.locator(".upload-control > button > .wrap").first
+        ),
         "settingsPanel": _metrics(page.locator(".settings-section").first),
-        "sectionHeading": _metrics(page.locator(".section-heading h2").first),
-        "sectionCopy": _metrics(page.locator(".section-heading p").first),
+        "actionPanel": _metrics(page.locator(".action-section").first),
+        "taskHeading": _metrics(page.locator(".task-heading").first),
+        "taskTitle": _metrics(page.locator(".task-heading h2").first),
+        "taskCopy": _metrics(page.locator(".task-heading p").first),
         "fieldLabel": _metrics(
             page.locator('#schema-selector [data-testid="block-info"]').first
         ),
@@ -118,6 +124,13 @@ def _page_metrics(page: Page) -> dict:
             }"""
         ),
     }
+    upload = metrics["uploadControl"]
+    prompt = metrics["uploadPrompt"]
+    metrics["uploadPromptInsetTop"] = prompt["y"] - upload["y"]
+    metrics["uploadPromptInsetBottom"] = (
+        upload["y"] + upload["height"] - prompt["y"] - prompt["height"]
+    )
+    return metrics
 
 
 def _capture(
@@ -139,11 +152,25 @@ def _capture(
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
     page.goto(URL, wait_until="networkidle")
-    page.get_by_text("照這 4 步完成預檢", exact=True).wait_for(state="visible")
-    for step in ["準備文件", "確認設定", "同意並開始", "查看結果"]:
+    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
+    page.get_by_text(
+        "完成後照顏色處理", exact=True
+    ).wait_for(state="visible")
+    for label in [
+        "送件前先修正",
+        "對照原文件確認",
+        "目前未發現問題",
+    ]:
+        page.get_by_text(label, exact=False).wait_for(state="visible")
+    for step in [
+        "準備要檢查的文件",
+        "確認預檢設定",
+        "確認傳送並開始",
+        "查看預檢結果",
+    ]:
         page.get_by_text(step, exact=True).wait_for(state="visible")
-    page.get_by_text("去哪裡取得？", exact=True).wait_for(state="visible")
-    page.get_by_text("請選填好的申請表或店家收據／發票", exact=False).wait_for(
+    page.get_by_text("文件從哪裡來？", exact=True).wait_for(state="visible")
+    page.get_by_text("請上傳已填好的申請表", exact=False).wait_for(
         state="visible"
     )
     page.get_by_text("沒有文件？", exact=True).wait_for(state="visible")
@@ -175,7 +202,7 @@ def _verify_consent_gate(
     error.wait_for(state="visible")
     visible = error.is_visible()
     status_near_action = page.locator(
-        ".settings-section .status-output .status-card.status-red"
+        ".action-section .status-output .status-card.status-red"
     ).is_visible()
     button_reenabled = page.locator(".primary-btn").is_enabled()
     context.close()
@@ -364,42 +391,60 @@ def main() -> None:
 
     assert desktop["viewportWidth"] == desktop["documentWidth"]
     assert mobile["viewportWidth"] == mobile["documentWidth"]
-    assert float(desktop["bodyText"]["fontSize"].removesuffix("px")) >= 18
-    assert float(desktop["workflowTitle"]["fontSize"].removesuffix("px")) >= 21
+    assert float(desktop["bodyText"]["fontSize"].removesuffix("px")) >= 20
+    assert float(desktop["legendTitle"]["fontSize"].removesuffix("px")) >= 22
+    assert float(desktop["legendItem"]["fontSize"].removesuffix("px")) >= 18
+    assert float(desktop["legendLabel"]["fontSize"].removesuffix("px")) >= 20
+    assert float(desktop["sourceText"]["fontSize"].removesuffix("px")) >= 19
+    assert float(desktop["demoText"]["fontSize"].removesuffix("px")) >= 18
+    assert float(desktop["taskTitle"]["fontSize"].removesuffix("px")) >= 28
+    assert float(desktop["taskCopy"]["fontSize"].removesuffix("px")) >= 20
+    assert float(desktop["fieldLabel"]["fontSize"].removesuffix("px")) >= 18
     assert (
-        float(desktop["workflowStepTitle"]["fontSize"].removesuffix("px"))
-        >= 19
+        float(desktop["uploadGuidance"]["fontSize"].removesuffix("px")) >= 18
     )
-    assert (
-        float(desktop["workflowStepCopy"]["fontSize"].removesuffix("px"))
-        >= 17
-    )
-    assert float(desktop["sourceText"]["fontSize"].removesuffix("px")) >= 17
-    assert float(desktop["demoText"]["fontSize"].removesuffix("px")) >= 17
-    assert float(desktop["sectionHeading"]["fontSize"].removesuffix("px")) >= 24
-    assert float(desktop["sectionCopy"]["fontSize"].removesuffix("px")) >= 18
-    assert float(desktop["fieldLabel"]["fontSize"].removesuffix("px")) >= 17
-    assert (
-        float(desktop["uploadGuidance"]["fontSize"].removesuffix("px")) >= 17
-    )
-    assert float(desktop["primaryButton"]["fontSize"].removesuffix("px")) >= 18
-    assert float(desktop["statusText"]["fontSize"].removesuffix("px")) >= 18
-    assert float(mobile["bodyText"]["fontSize"].removesuffix("px")) >= 17
-    assert (
-        float(mobile["workflowStepCopy"]["fontSize"].removesuffix("px")) >= 17
-    )
-    assert float(mobile["sourceText"]["fontSize"].removesuffix("px")) >= 17
-    assert float(mobile["fieldLabel"]["fontSize"].removesuffix("px")) >= 17
-    assert desktop["workflowStepCopy"]["height"] <= 30
-    assert desktop["masthead"]["height"] <= 170
+    assert float(desktop["primaryButton"]["fontSize"].removesuffix("px")) >= 20
+    assert float(desktop["statusText"]["fontSize"].removesuffix("px")) >= 19
+    assert float(mobile["bodyText"]["fontSize"].removesuffix("px")) >= 19
+    assert float(mobile["legendItem"]["fontSize"].removesuffix("px")) >= 18
+    assert float(mobile["sourceText"]["fontSize"].removesuffix("px")) >= 19
+    assert float(mobile["fieldLabel"]["fontSize"].removesuffix("px")) >= 18
+    assert desktop["masthead"]["height"] <= 150
+    assert desktop["resultLegend"]["height"] <= 140
+    assert desktop["uploadPanel"]["height"] <= 480
     assert desktop["noticeGrid"]["height"] <= 180
-    assert desktop["actionGrid"]["height"] <= 100
-    assert desktop["workbench"]["y"] <= 340
-    assert desktop["workbench"]["height"] <= 650
-    assert mobile["workflowGuide"]["height"] <= 270
-    assert mobile["masthead"]["height"] <= 390
-    assert mobile["workbench"]["y"] <= 520
+    assert desktop["actionGrid"]["height"] <= 110
+    assert desktop["workbench"]["y"] <= 225
+    assert desktop["uploadPromptInsetTop"] >= 6
+    assert desktop["uploadPromptInsetBottom"] >= 6
+    assert desktop["documentHeight"] <= 1900
+    assert (
+        abs(
+            desktop["settingsPanel"]["y"]
+            - (
+                desktop["uploadPanel"]["y"]
+                + desktop["uploadPanel"]["height"]
+            )
+        )
+        <= 2
+    )
+    assert (
+        abs(
+            desktop["actionPanel"]["y"]
+            - (
+                desktop["settingsPanel"]["y"]
+                + desktop["settingsPanel"]["height"]
+            )
+        )
+        <= 2
+    )
+    assert mobile["resultLegend"]["height"] <= 180
+    assert mobile["masthead"]["height"] <= 340
+    assert mobile["workbench"]["y"] <= 410
     assert mobile["workbench"]["width"] / mobile["viewportWidth"] >= 0.9
+    assert mobile["uploadPromptInsetTop"] >= 6
+    assert mobile["uploadPromptInsetBottom"] >= 6
+    assert mobile["documentHeight"] <= 2900
     assert "尚未執行預檢" in desktop["emptyResultHint"]
     assert desktop["resultTabs"]["height"] >= 130
     assert desktop["demoSelectorAccessible"]

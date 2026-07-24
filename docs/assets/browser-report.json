@@ -1,221 +1,261 @@
 {
-  "url": "http://127.0.0.1:7862",
+  "url": "http://127.0.0.1:7863",
   "screenshots": [
     "wide.png",
     "desktop.png",
-    "mobile.png",
-    "result-red.png"
+    "mobile.png"
   ],
   "wide_metrics": {
     "viewportWidth": 1920,
     "documentWidth": 1920,
+    "documentHeight": 1766,
     "header": {
-      "x": 204,
-      "y": 53,
-      "width": 502,
-      "height": 125,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+      "x": 167,
+      "y": 33,
+      "width": 619,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
     "h1": {
-      "x": 204,
-      "y": 53,
-      "width": 502,
-      "height": 52,
-      "fontSize": "46px",
-      "lineHeight": "51.52px"
+      "x": 195,
+      "y": 55,
+      "width": 563,
+      "height": 51,
+      "fontSize": "44px",
+      "lineHeight": "50.6px"
     },
     "bodyText": {
-      "x": 204,
+      "x": 195,
       "y": 113,
-      "width": 502,
-      "height": 65,
+      "width": 563,
+      "height": 30,
       "fontSize": "20px",
-      "lineHeight": "32.5px"
+      "lineHeight": "30px"
     },
     "masthead": {
-      "x": 204,
-      "y": 50,
-      "width": 1512,
-      "height": 131,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+      "x": 166,
+      "y": 32,
+      "width": 1588,
+      "height": 134,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
-    "workflowGuide": {
-      "x": 742,
-      "y": 52,
-      "width": 974,
-      "height": 127,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+    "resultLegend": {
+      "x": 786,
+      "y": 33,
+      "width": 967,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
-    "workflowTitle": {
-      "x": 761,
-      "y": 67,
-      "width": 936,
+    "legendTitle": {
+      "x": 804,
+      "y": 71,
+      "width": 148,
       "height": 28,
-      "fontSize": "21px",
-      "lineHeight": "28.35px"
+      "fontSize": "22px",
+      "lineHeight": "27.5px"
     },
-    "workflowStepTitle": {
-      "x": 801,
-      "y": 103,
-      "width": 182,
-      "height": 27,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+    "legendItem": {
+      "x": 966,
+      "y": 60,
+      "width": 250,
+      "height": 69,
+      "fontSize": "18px",
+      "lineHeight": "24.3px"
     },
-    "workflowStepCopy": {
-      "x": 801,
-      "y": 131,
-      "width": 182,
-      "height": 23,
-      "fontSize": "17px",
-      "lineHeight": "22.95px"
+    "legendLabel": {
+      "x": 1001,
+      "y": 70,
+      "width": 108,
+      "height": 24,
+      "fontSize": "20px",
+      "lineHeight": "24px"
     },
     "sourceHeading": {
-      "x": 243,
-      "y": 359,
-      "width": 140,
+      "x": 207,
+      "y": 283,
+      "width": 164,
+      "height": 30,
+      "fontSize": "21px",
+      "lineHeight": "30.45px"
+    },
+    "sourceText": {
+      "x": 385,
+      "y": 283,
+      "width": 1328,
       "height": 28,
       "fontSize": "19px",
       "lineHeight": "27.55px"
     },
-    "sourceText": {
-      "x": 395,
-      "y": 362,
-      "width": 448,
-      "height": 74,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
-    },
     "demoHeading": {
-      "x": 240,
-      "y": 707,
-      "width": 130,
-      "height": 28,
-      "fontSize": "20px",
-      "lineHeight": "28px"
+      "x": 194,
+      "y": 520,
+      "width": 220,
+      "height": 31,
+      "fontSize": "22px",
+      "lineHeight": "30.8px"
     },
     "demoText": {
-      "x": 240,
-      "y": 736,
-      "width": 130,
-      "height": 49,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 194,
+      "y": 552,
+      "width": 220,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "demoSelectorAccessible": true,
     "documentPickerLabelVisible": true,
     "workbench": {
-      "x": 192,
-      "y": 207,
-      "width": 1536,
-      "height": 623,
+      "x": 166,
+      "y": 182,
+      "width": 1588,
+      "height": 962,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "uploadPanel": {
-      "x": 192,
-      "y": 210,
-      "width": 703,
-      "height": 620,
+      "x": 166,
+      "y": 182,
+      "width": 1588,
+      "height": 423,
       "fontSize": "14px",
       "lineHeight": "21.7px"
+    },
+    "sourceBrief": {
+      "x": 194,
+      "y": 273,
+      "width": 1532,
+      "height": 50,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadControl": {
+      "x": 194,
+      "y": 331,
+      "width": 1532,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadPrompt": {
+      "x": 890,
+      "y": 341,
+      "width": 140,
+      "height": 113,
+      "fontSize": "20px",
+      "lineHeight": "26px"
     },
     "settingsPanel": {
-      "x": 895,
-      "y": 210,
-      "width": 833,
-      "height": 620,
+      "x": 166,
+      "y": 604,
+      "width": 1588,
+      "height": 221,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
-    "sectionHeading": {
-      "x": 230,
-      "y": 246,
-      "width": 626,
+    "actionPanel": {
+      "x": 166,
+      "y": 825,
+      "width": 1588,
+      "height": 318,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "taskHeading": {
+      "x": 194,
+      "y": 198,
+      "width": 1532,
+      "height": 67,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "taskTitle": {
+      "x": 245,
+      "y": 198,
+      "width": 540,
       "height": 35,
       "fontSize": "28px",
       "lineHeight": "35px"
     },
-    "sectionCopy": {
-      "x": 230,
-      "y": 287,
-      "width": 626,
+    "taskCopy": {
+      "x": 245,
+      "y": 236,
+      "width": 540,
       "height": 29,
-      "fontSize": "19px",
-      "lineHeight": "28.5px"
+      "fontSize": "20px",
+      "lineHeight": "29px"
     },
     "fieldLabel": {
-      "x": 921,
-      "y": 339,
-      "width": 68,
-      "height": 25,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 194,
+      "y": 697,
+      "width": 72,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "uploadGuidance": {
-      "x": 230,
-      "y": 641,
-      "width": 626,
-      "height": 25,
+      "x": 194,
+      "y": 471,
+      "width": 1532,
+      "height": 31,
       "fontSize": "18px",
       "lineHeight": "25.2px"
     },
     "noticeGrid": {
-      "x": 921,
-      "y": 460,
-      "width": 781,
-      "height": 162,
+      "x": 194,
+      "y": 917,
+      "width": 1532,
+      "height": 114,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "privacyText": {
-      "x": 950,
-      "y": 515,
-      "width": 368,
-      "height": 81,
-      "fontSize": "18px",
-      "lineHeight": "27px"
+      "x": 210,
+      "y": 964,
+      "width": 806,
+      "height": 55,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
     },
     "actionGrid": {
-      "x": 921,
-      "y": 633,
-      "width": 781,
-      "height": 94,
+      "x": 194,
+      "y": 1040,
+      "width": 1532,
+      "height": 88,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "primaryButton": {
-      "x": 921,
-      "y": 652,
-      "width": 301,
+      "x": 194,
+      "y": 1056,
+      "width": 573,
       "height": 56,
-      "fontSize": "19px",
-      "lineHeight": "29.45px"
+      "fontSize": "20px",
+      "lineHeight": "31px"
     },
     "statusText": {
-      "x": 1247,
-      "y": 643,
-      "width": 443,
-      "height": 74,
-      "fontSize": "18px",
-      "lineHeight": "25.2px"
-    },
-    "actionPlan": {
-      "x": 204,
-      "y": 992,
-      "width": 1512,
-      "height": 91,
+      "x": 779,
+      "y": 1040,
+      "width": 947,
+      "height": 88,
       "fontSize": "19px",
       "lineHeight": "26.6px"
     },
+    "actionPlan": {
+      "x": 166,
+      "y": 1265,
+      "width": 1588,
+      "height": 93,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
     "resultTabs": {
-      "x": 192,
-      "y": 1109,
-      "width": 1536,
-      "height": 187,
+      "x": 166,
+      "y": 1374,
+      "width": 1588,
+      "height": 168,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
@@ -225,15 +265,15 @@
         "tag": "SECTION",
         "id": "",
         "className": "masthead",
-        "width": 1512,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
       {
         "tag": "DIV",
-        "id": "html-mzapidgzb",
+        "id": "html-5ec4za67r",
         "className": "prose gradio-style  svelte-26mp0t",
-        "width": 1512,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -241,15 +281,15 @@
         "tag": "DIV",
         "id": "",
         "className": "html-container svelte-1jts93g",
-        "width": 1536,
-        "paddingLeft": "12px",
-        "paddingRight": "12px"
+        "width": 1588,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
       },
       {
         "tag": "DIV",
         "id": "",
         "className": "block  svelte-1plpy97 padded hide-container auto-margin",
-        "width": 1536,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -257,7 +297,7 @@
         "tag": "DIV",
         "id": "",
         "className": "column  svelte-siq5d6",
-        "width": 1536,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -265,7 +305,7 @@
         "tag": "MAIN",
         "id": "",
         "className": "contain svelte-zxu34v",
-        "width": 1536,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -273,7 +313,7 @@
         "tag": "DIV",
         "id": "",
         "className": "wrap svelte-zxu34v",
-        "width": 1536,
+        "width": 1588,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -281,7 +321,7 @@
         "tag": "DIV",
         "id": "",
         "className": "main fillable svelte-99kmwu app fill_width",
-        "width": 1568,
+        "width": 1620,
         "paddingLeft": "16px",
         "paddingRight": "16px"
       },
@@ -289,9 +329,9 @@
         "tag": "DIV",
         "id": "",
         "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
-        "width": 1680,
-        "paddingLeft": "56px",
-        "paddingRight": "56px"
+        "width": 1700,
+        "paddingLeft": "40px",
+        "paddingRight": "40px"
       },
       {
         "tag": "GRADIO-APP",
@@ -301,218 +341,261 @@
         "paddingLeft": "0px",
         "paddingRight": "0px"
       }
-    ]
+    ],
+    "uploadPromptInsetTop": 10,
+    "uploadPromptInsetBottom": 9
   },
   "desktop_metrics": {
     "viewportWidth": 1440,
     "documentWidth": 1440,
+    "documentHeight": 1766,
     "header": {
-      "x": 77,
-      "y": 65,
-      "width": 425,
-      "height": 125,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+      "x": 51,
+      "y": 33,
+      "width": 522,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
     "h1": {
-      "x": 77,
-      "y": 65,
-      "width": 425,
-      "height": 52,
-      "fontSize": "46px",
-      "lineHeight": "51.52px"
+      "x": 79,
+      "y": 55,
+      "width": 466,
+      "height": 51,
+      "fontSize": "44px",
+      "lineHeight": "50.6px"
     },
     "bodyText": {
-      "x": 77,
-      "y": 124,
-      "width": 425,
-      "height": 65,
+      "x": 79,
+      "y": 113,
+      "width": 466,
+      "height": 30,
       "fontSize": "20px",
-      "lineHeight": "32.5px"
+      "lineHeight": "30px"
     },
     "masthead": {
-      "x": 77,
-      "y": 50,
-      "width": 1286,
-      "height": 154,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+      "x": 50,
+      "y": 32,
+      "width": 1339,
+      "height": 134,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
-    "workflowGuide": {
-      "x": 538,
-      "y": 52,
-      "width": 825,
-      "height": 150,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+    "resultLegend": {
+      "x": 573,
+      "y": 33,
+      "width": 816,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
     },
-    "workflowTitle": {
-      "x": 557,
-      "y": 67,
-      "width": 787,
+    "legendTitle": {
+      "x": 591,
+      "y": 71,
+      "width": 148,
       "height": 28,
-      "fontSize": "21px",
-      "lineHeight": "28.35px"
+      "fontSize": "22px",
+      "lineHeight": "27.5px"
     },
-    "workflowStepTitle": {
-      "x": 597,
-      "y": 103,
-      "width": 145,
-      "height": 27,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
+    "legendItem": {
+      "x": 753,
+      "y": 60,
+      "width": 199,
+      "height": 69,
+      "fontSize": "18px",
+      "lineHeight": "24.3px"
     },
-    "workflowStepCopy": {
-      "x": 597,
-      "y": 131,
-      "width": 145,
-      "height": 23,
-      "fontSize": "17px",
-      "lineHeight": "22.95px"
+    "legendLabel": {
+      "x": 788,
+      "y": 70,
+      "width": 108,
+      "height": 24,
+      "fontSize": "20px",
+      "lineHeight": "24px"
     },
     "sourceHeading": {
-      "x": 116,
-      "y": 382,
-      "width": 140,
+      "x": 91,
+      "y": 283,
+      "width": 164,
+      "height": 30,
+      "fontSize": "21px",
+      "lineHeight": "30.45px"
+    },
+    "sourceText": {
+      "x": 269,
+      "y": 283,
+      "width": 1079,
       "height": 28,
       "fontSize": "19px",
       "lineHeight": "27.55px"
     },
-    "sourceText": {
-      "x": 268,
-      "y": 385,
-      "width": 346,
-      "height": 99,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
-    },
     "demoHeading": {
-      "x": 113,
-      "y": 755,
-      "width": 130,
-      "height": 28,
-      "fontSize": "20px",
-      "lineHeight": "28px"
+      "x": 78,
+      "y": 520,
+      "width": 220,
+      "height": 31,
+      "fontSize": "22px",
+      "lineHeight": "30.8px"
     },
     "demoText": {
-      "x": 113,
-      "y": 784,
-      "width": 130,
-      "height": 49,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 78,
+      "y": 552,
+      "width": 220,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "demoSelectorAccessible": true,
     "documentPickerLabelVisible": true,
     "workbench": {
-      "x": 65,
-      "y": 230,
-      "width": 1310,
-      "height": 648,
+      "x": 50,
+      "y": 182,
+      "width": 1339,
+      "height": 962,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "uploadPanel": {
-      "x": 65,
-      "y": 233,
-      "width": 601,
-      "height": 645,
+      "x": 50,
+      "y": 182,
+      "width": 1339,
+      "height": 423,
       "fontSize": "14px",
       "lineHeight": "21.7px"
+    },
+    "sourceBrief": {
+      "x": 78,
+      "y": 273,
+      "width": 1283,
+      "height": 50,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadControl": {
+      "x": 78,
+      "y": 331,
+      "width": 1283,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadPrompt": {
+      "x": 650,
+      "y": 341,
+      "width": 140,
+      "height": 113,
+      "fontSize": "20px",
+      "lineHeight": "26px"
     },
     "settingsPanel": {
-      "x": 666,
-      "y": 233,
-      "width": 710,
-      "height": 645,
+      "x": 50,
+      "y": 604,
+      "width": 1339,
+      "height": 221,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
-    "sectionHeading": {
-      "x": 103,
-      "y": 269,
-      "width": 524,
+    "actionPanel": {
+      "x": 50,
+      "y": 825,
+      "width": 1339,
+      "height": 318,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
+    },
+    "taskHeading": {
+      "x": 78,
+      "y": 198,
+      "width": 1283,
+      "height": 67,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "taskTitle": {
+      "x": 129,
+      "y": 198,
+      "width": 540,
       "height": 35,
       "fontSize": "28px",
       "lineHeight": "35px"
     },
-    "sectionCopy": {
-      "x": 103,
-      "y": 310,
-      "width": 524,
+    "taskCopy": {
+      "x": 129,
+      "y": 236,
+      "width": 540,
       "height": 29,
-      "fontSize": "19px",
-      "lineHeight": "28.5px"
+      "fontSize": "20px",
+      "lineHeight": "29px"
     },
     "fieldLabel": {
-      "x": 692,
-      "y": 362,
-      "width": 68,
-      "height": 25,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 78,
+      "y": 697,
+      "width": 72,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "uploadGuidance": {
-      "x": 103,
-      "y": 688,
-      "width": 524,
-      "height": 25,
+      "x": 78,
+      "y": 471,
+      "width": 1283,
+      "height": 31,
       "fontSize": "18px",
       "lineHeight": "25.2px"
     },
     "noticeGrid": {
-      "x": 692,
-      "y": 482,
-      "width": 658,
-      "height": 162,
+      "x": 78,
+      "y": 917,
+      "width": 1283,
+      "height": 114,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "privacyText": {
-      "x": 721,
-      "y": 538,
-      "width": 300,
-      "height": 81,
-      "fontSize": "18px",
-      "lineHeight": "27px"
+      "x": 94,
+      "y": 964,
+      "width": 670,
+      "height": 55,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
     },
     "actionGrid": {
-      "x": 692,
-      "y": 656,
-      "width": 658,
-      "height": 94,
+      "x": 78,
+      "y": 1040,
+      "width": 1283,
+      "height": 88,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "primaryButton": {
-      "x": 692,
-      "y": 675,
-      "width": 256,
+      "x": 78,
+      "y": 1056,
+      "width": 483,
       "height": 56,
-      "fontSize": "19px",
-      "lineHeight": "29.45px"
+      "fontSize": "20px",
+      "lineHeight": "31px"
     },
     "statusText": {
-      "x": 972,
-      "y": 666,
-      "width": 365,
-      "height": 74,
-      "fontSize": "18px",
-      "lineHeight": "25.2px"
-    },
-    "actionPlan": {
-      "x": 77,
-      "y": 1039,
-      "width": 1286,
-      "height": 91,
+      "x": 573,
+      "y": 1040,
+      "width": 789,
+      "height": 88,
       "fontSize": "19px",
       "lineHeight": "26.6px"
     },
+    "actionPlan": {
+      "x": 50,
+      "y": 1265,
+      "width": 1339,
+      "height": 93,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
     "resultTabs": {
-      "x": 65,
-      "y": 1156,
-      "width": 1310,
-      "height": 187,
+      "x": 50,
+      "y": 1374,
+      "width": 1339,
+      "height": 168,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
@@ -522,15 +605,15 @@
         "tag": "SECTION",
         "id": "",
         "className": "masthead",
-        "width": 1286,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
       {
         "tag": "DIV",
-        "id": "html-0w2xssg1i",
+        "id": "html-vwcew6cr5",
         "className": "prose gradio-style  svelte-26mp0t",
-        "width": 1286,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -538,15 +621,15 @@
         "tag": "DIV",
         "id": "",
         "className": "html-container svelte-1jts93g",
-        "width": 1310,
-        "paddingLeft": "12px",
-        "paddingRight": "12px"
+        "width": 1339,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
       },
       {
         "tag": "DIV",
         "id": "",
         "className": "block  svelte-1plpy97 padded hide-container auto-margin",
-        "width": 1310,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -554,7 +637,7 @@
         "tag": "DIV",
         "id": "",
         "className": "column  svelte-siq5d6",
-        "width": 1310,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -562,7 +645,7 @@
         "tag": "MAIN",
         "id": "",
         "className": "contain svelte-zxu34v",
-        "width": 1310,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -570,7 +653,7 @@
         "tag": "DIV",
         "id": "",
         "className": "wrap svelte-zxu34v",
-        "width": 1310,
+        "width": 1339,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -578,7 +661,7 @@
         "tag": "DIV",
         "id": "",
         "className": "main fillable svelte-99kmwu app fill_width",
-        "width": 1339,
+        "width": 1368,
         "paddingLeft": "14.4px",
         "paddingRight": "14.4px"
       },
@@ -587,8 +670,8 @@
         "id": "",
         "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
         "width": 1440,
-        "paddingLeft": "50.4px",
-        "paddingRight": "50.4px"
+        "paddingLeft": "36px",
+        "paddingRight": "36px"
       },
       {
         "tag": "GRADIO-APP",
@@ -598,218 +681,261 @@
         "paddingLeft": "0px",
         "paddingRight": "0px"
       }
-    ]
+    ],
+    "uploadPromptInsetTop": 10,
+    "uploadPromptInsetBottom": 9
   },
   "mobile_metrics": {
     "viewportWidth": 390,
     "documentWidth": 390,
+    "documentHeight": 2721,
     "header": {
-      "x": 30,
-      "y": 52,
-      "width": 331,
-      "height": 100,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
-    },
-    "h1": {
-      "x": 30,
-      "y": 52,
-      "width": 331,
-      "height": 38,
-      "fontSize": "34px",
-      "lineHeight": "38.08px"
-    },
-    "bodyText": {
-      "x": 30,
-      "y": 98,
-      "width": 331,
-      "height": 54,
-      "fontSize": "18px",
-      "lineHeight": "27px"
-    },
-    "masthead": {
-      "x": 30,
-      "y": 50,
-      "width": 331,
-      "height": 366,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
-    },
-    "workflowGuide": {
-      "x": 30,
-      "y": 170,
-      "width": 331,
-      "height": 244,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
-    },
-    "workflowTitle": {
-      "x": 44,
-      "y": 184,
-      "width": 303,
-      "height": 28,
-      "fontSize": "21px",
-      "lineHeight": "28.35px"
-    },
-    "workflowStepTitle": {
-      "x": 85,
-      "y": 220,
-      "width": 101,
-      "height": 27,
-      "fontSize": "19px",
-      "lineHeight": "26.6px"
-    },
-    "workflowStepCopy": {
-      "x": 85,
-      "y": 248,
-      "width": 101,
-      "height": 46,
-      "fontSize": "17px",
-      "lineHeight": "22.95px"
-    },
-    "sourceHeading": {
-      "x": 59,
-      "y": 608,
-      "width": 273,
-      "height": 28,
-      "fontSize": "19px",
-      "lineHeight": "27.55px"
-    },
-    "sourceText": {
-      "x": 59,
-      "y": 638,
-      "width": 273,
-      "height": 123,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
-    },
-    "demoHeading": {
-      "x": 56,
-      "y": 1088,
-      "width": 279,
-      "height": 28,
+      "x": 17,
+      "y": 33,
+      "width": 356,
+      "height": 139,
       "fontSize": "20px",
       "lineHeight": "28px"
     },
+    "h1": {
+      "x": 34,
+      "y": 51,
+      "width": 322,
+      "height": 41,
+      "fontSize": "36px",
+      "lineHeight": "41.4px"
+    },
+    "bodyText": {
+      "x": 34,
+      "y": 99,
+      "width": 322,
+      "height": 55,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
+    },
+    "masthead": {
+      "x": 16,
+      "y": 32,
+      "width": 358,
+      "height": 318,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "resultLegend": {
+      "x": 17,
+      "y": 172,
+      "width": 356,
+      "height": 176,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "legendTitle": {
+      "x": 29,
+      "y": 184,
+      "width": 84,
+      "height": 26,
+      "fontSize": "21px",
+      "lineHeight": "26.25px"
+    },
+    "legendItem": {
+      "x": 29,
+      "y": 219,
+      "width": 107,
+      "height": 109,
+      "fontSize": "18px",
+      "lineHeight": "24.3px"
+    },
+    "legendLabel": {
+      "x": 38,
+      "y": 248,
+      "width": 40,
+      "height": 24,
+      "fontSize": "20px",
+      "lineHeight": "24px"
+    },
+    "sourceHeading": {
+      "x": 45,
+      "y": 488,
+      "width": 300,
+      "height": 30,
+      "fontSize": "21px",
+      "lineHeight": "30.45px"
+    },
+    "sourceText": {
+      "x": 45,
+      "y": 522,
+      "width": 300,
+      "height": 110,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
+    },
+    "demoHeading": {
+      "x": 32,
+      "y": 866,
+      "width": 326,
+      "height": 31,
+      "fontSize": "22px",
+      "lineHeight": "30.8px"
+    },
     "demoText": {
-      "x": 56,
-      "y": 1117,
-      "width": 279,
-      "height": 25,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 32,
+      "y": 898,
+      "width": 326,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "demoSelectorAccessible": true,
     "documentPickerLabelVisible": true,
     "workbench": {
-      "x": 18,
-      "y": 442,
-      "width": 355,
-      "height": 1779,
+      "x": 16,
+      "y": 366,
+      "width": 358,
+      "height": 1662,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "uploadPanel": {
-      "x": 18,
-      "y": 445,
-      "width": 355,
-      "height": 888,
+      "x": 16,
+      "y": 366,
+      "width": 358,
+      "height": 726,
       "fontSize": "14px",
       "lineHeight": "21.7px"
+    },
+    "sourceBrief": {
+      "x": 32,
+      "y": 478,
+      "width": 326,
+      "height": 164,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadControl": {
+      "x": 32,
+      "y": 650,
+      "width": 326,
+      "height": 132,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "uploadPrompt": {
+      "x": 125,
+      "y": 660,
+      "width": 140,
+      "height": 113,
+      "fontSize": "20px",
+      "lineHeight": "26px"
     },
     "settingsPanel": {
-      "x": 18,
-      "y": 1333,
-      "width": 355,
-      "height": 888,
+      "x": 16,
+      "y": 1092,
+      "width": 358,
+      "height": 354,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
-    "sectionHeading": {
-      "x": 46,
-      "y": 473,
-      "width": 299,
-      "height": 31,
-      "fontSize": "25px",
-      "lineHeight": "31.25px"
+    "actionPanel": {
+      "x": 16,
+      "y": 1446,
+      "width": 358,
+      "height": 582,
+      "fontSize": "14px",
+      "lineHeight": "21.7px"
     },
-    "sectionCopy": {
-      "x": 46,
-      "y": 511,
-      "width": 299,
-      "height": 54,
-      "fontSize": "18px",
-      "lineHeight": "27px"
+    "taskHeading": {
+      "x": 32,
+      "y": 380,
+      "width": 326,
+      "height": 91,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
+    "taskTitle": {
+      "x": 80,
+      "y": 380,
+      "width": 278,
+      "height": 33,
+      "fontSize": "26px",
+      "lineHeight": "32.5px"
+    },
+    "taskCopy": {
+      "x": 80,
+      "y": 415,
+      "width": 278,
+      "height": 55,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
     },
     "fieldLabel": {
-      "x": 34,
-      "y": 1476,
-      "width": 68,
-      "height": 25,
-      "fontSize": "17px",
-      "lineHeight": "24.65px"
+      "x": 32,
+      "y": 1207,
+      "width": 72,
+      "height": 26,
+      "fontSize": "18px",
+      "lineHeight": "26.1px"
     },
     "uploadGuidance": {
-      "x": 46,
-      "y": 986,
-      "width": 299,
-      "height": 60,
+      "x": 32,
+      "y": 790,
+      "width": 326,
+      "height": 68,
       "fontSize": "18px",
       "lineHeight": "25.2px"
     },
     "noticeGrid": {
-      "x": 34,
-      "y": 1706,
-      "width": 323,
-      "height": 325,
+      "x": 32,
+      "y": 1560,
+      "width": 326,
+      "height": 260,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "privacyText": {
-      "x": 63,
-      "y": 1762,
-      "width": 265,
-      "height": 108,
-      "fontSize": "18px",
-      "lineHeight": "27px"
+      "x": 46,
+      "y": 1607,
+      "width": 298,
+      "height": 110,
+      "fontSize": "19px",
+      "lineHeight": "27.55px"
     },
     "actionGrid": {
-      "x": 34,
-      "y": 2043,
-      "width": 323,
-      "height": 160,
+      "x": 32,
+      "y": 1827,
+      "width": 326,
+      "height": 186,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
     "primaryButton": {
-      "x": 34,
-      "y": 2043,
-      "width": 323,
+      "x": 32,
+      "y": 1827,
+      "width": 326,
       "height": 54,
-      "fontSize": "19px",
-      "lineHeight": "29.45px"
+      "fontSize": "20px",
+      "lineHeight": "31px"
     },
     "statusText": {
-      "x": 46,
-      "y": 2119,
-      "width": 299,
-      "height": 74,
-      "fontSize": "18px",
-      "lineHeight": "25.2px"
-    },
-    "actionPlan": {
-      "x": 30,
-      "y": 2403,
-      "width": 331,
-      "height": 112,
+      "x": 32,
+      "y": 1893,
+      "width": 326,
+      "height": 120,
       "fontSize": "19px",
       "lineHeight": "26.6px"
     },
+    "actionPlan": {
+      "x": 16,
+      "y": 2172,
+      "width": 358,
+      "height": 112,
+      "fontSize": "20px",
+      "lineHeight": "28px"
+    },
     "resultTabs": {
-      "x": 18,
-      "y": 2540,
-      "width": 355,
-      "height": 187,
+      "x": 16,
+      "y": 2301,
+      "width": 358,
+      "height": 168,
       "fontSize": "14px",
       "lineHeight": "21.7px"
     },
@@ -819,15 +945,15 @@
         "tag": "SECTION",
         "id": "",
         "className": "masthead",
-        "width": 331,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
       {
         "tag": "DIV",
-        "id": "html-c8c77uh0v",
+        "id": "html-i5dlufifr",
         "className": "prose gradio-style  svelte-26mp0t",
-        "width": 331,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -835,15 +961,15 @@
         "tag": "DIV",
         "id": "",
         "className": "html-container svelte-1jts93g",
-        "width": 355,
-        "paddingLeft": "12px",
-        "paddingRight": "12px"
+        "width": 358,
+        "paddingLeft": "0px",
+        "paddingRight": "0px"
       },
       {
         "tag": "DIV",
         "id": "",
         "className": "block  svelte-1plpy97 padded hide-container auto-margin",
-        "width": 355,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -851,7 +977,7 @@
         "tag": "DIV",
         "id": "",
         "className": "column  svelte-siq5d6",
-        "width": 355,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -859,7 +985,7 @@
         "tag": "MAIN",
         "id": "",
         "className": "contain svelte-zxu34v",
-        "width": 355,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -867,7 +993,7 @@
         "tag": "DIV",
         "id": "",
         "className": "wrap svelte-zxu34v",
-        "width": 355,
+        "width": 358,
         "paddingLeft": "0px",
         "paddingRight": "0px"
       },
@@ -875,7 +1001,7 @@
         "tag": "DIV",
         "id": "",
         "className": "main fillable svelte-99kmwu app fill_width",
-        "width": 363,
+        "width": 366,
         "paddingLeft": "4px",
         "paddingRight": "4px"
       },
@@ -884,8 +1010,8 @@
         "id": "",
         "className": "gradio-container gradio-container-6-20-0 svelte-99kmwu fill_width",
         "width": 390,
-        "paddingLeft": "13.65px",
-        "paddingRight": "13.65px"
+        "paddingLeft": "12px",
+        "paddingRight": "12px"
       },
       {
         "tag": "GRADIO-APP",
@@ -895,7 +1021,9 @@
         "paddingLeft": "0px",
         "paddingRight": "0px"
       }
-    ]
+    ],
+    "uploadPromptInsetTop": 10,
+    "uploadPromptInsetBottom": 9
   },
   "consent_control_default_unchecked": true,
   "consent_error_visible_before_api_call": true,
@@ -904,11 +1032,11 @@
   "demo_file_loaded_without_api": true,
   "demo_status_visible": true,
   "demo_schema_updated": true,
-  "action_plan_checked": true,
-  "action_plan_visible": true,
-  "action_plan_next_step_visible": true,
-  "action_plan_plain_language_visible": true,
-  "action_plan_machine_paths_hidden": true,
+  "action_plan_checked": false,
+  "action_plan_visible": null,
+  "action_plan_next_step_visible": null,
+  "action_plan_plain_language_visible": null,
+  "action_plan_machine_paths_hidden": null,
   "console_errors": [],
   "page_errors": []
 }

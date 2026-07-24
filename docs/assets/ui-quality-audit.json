@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:7862",
+  "url": "http://127.0.0.1:7863",
   "desktop": {
     "title": "文件預檢所｜doc-inspector",
     "lang": "zh-TW",
@@ -11,15 +11,15 @@
       },
       {
         "level": 2,
-        "text": "照這 4 步完成預檢"
+        "text": "結果燈號"
       },
       {
         "level": 2,
-        "text": "上傳待檢文件"
+        "text": "準備要檢查的文件"
       },
       {
         "level": 3,
-        "text": "去哪裡取得？"
+        "text": "文件從哪裡來？"
       },
       {
         "level": 3,
@@ -27,11 +27,15 @@
       },
       {
         "level": 2,
-        "text": "預檢設定"
+        "text": "確認預檢設定"
       },
       {
         "level": 2,
-        "text": "預檢結果"
+        "text": "確認傳送並開始"
+      },
+      {
+        "level": 2,
+        "text": "查看預檢結果"
       },
       {
         "level": 3,
@@ -59,15 +63,15 @@
       },
       {
         "level": 2,
-        "text": "照這 4 步完成預檢"
+        "text": "結果燈號"
       },
       {
         "level": 2,
-        "text": "上傳待檢文件"
+        "text": "準備要檢查的文件"
       },
       {
         "level": 3,
-        "text": "去哪裡取得？"
+        "text": "文件從哪裡來？"
       },
       {
         "level": 3,
@@ -75,11 +79,15 @@
       },
       {
         "level": 2,
-        "text": "預檢設定"
+        "text": "確認預檢設定"
       },
       {
         "level": 2,
-        "text": "預檢結果"
+        "text": "確認傳送並開始"
+      },
+      {
+        "level": 2,
+        "text": "查看預檢結果"
       },
       {
         "level": 3,
@@ -103,8 +111,8 @@
       "role": "",
       "name": "Click to upload or drop files",
       "className": "svelte-8prmba center boundedheight flex",
-      "top": 517,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 333,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -113,8 +121,8 @@
       "role": "combobox",
       "name": "範例文件",
       "className": "border-none svelte-1xfsv4t",
-      "top": 756,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 521,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -123,8 +131,8 @@
       "role": "",
       "name": "載入範例",
       "className": "lg secondary demo-btn svelte-xzq5jh",
-      "top": 745,
-      "outline": "rgb(18, 90, 114) solid 3px",
+      "top": 521,
+      "outline": "oklab(0.49 -0.0906308 -0.0422618) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -133,8 +141,8 @@
       "role": "combobox",
       "name": "文件類型",
       "className": "border-none svelte-1xfsv4t",
-      "top": 405,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 742,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -143,18 +151,18 @@
       "role": "combobox",
       "name": "雲端供應商",
       "className": "border-none svelte-1xfsv4t",
-      "top": 405,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 742,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
     {
       "tag": "input",
       "role": "",
-      "name": "我了解文件會傳送給所選雲端供應商",
+      "name": "我了解並同意傳送這份文件",
       "className": "svelte-1q8xtp9",
-      "top": 515,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 948,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -163,9 +171,9 @@
       "role": "",
       "name": "開始預檢",
       "className": "lg primary primary-btn svelte-xzq5jh",
-      "top": 675,
-      "outline": "rgb(33, 132, 170) solid 3px",
-      "boxShadow": "rgb(10, 64, 84) 0px 3px 0px 0px",
+      "top": 472,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
+      "boxShadow": "none",
       "focusVisible": true
     },
     {
@@ -173,9 +181,9 @@
       "role": "tab",
       "name": "辨識內容",
       "className": "svelte-11gaq1 selected",
-      "top": 550,
-      "outline": "rgb(33, 132, 170) solid 3px",
-      "boxShadow": "rgba(16, 38, 48, 0.08) 0px 1px 4px 0px",
+      "top": 782,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
+      "boxShadow": "none",
       "focusVisible": true
     },
     {
@@ -183,8 +191,8 @@
       "role": "tab",
       "name": "全部檢核",
       "className": "svelte-11gaq1",
-      "top": 550,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 782,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -193,8 +201,8 @@
       "role": "tab",
       "name": "JSON",
       "className": "svelte-11gaq1",
-      "top": 550,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 782,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -203,8 +211,8 @@
       "role": "region",
       "name": "辨識內容",
       "className": "result-table-scroll",
-      "top": 615,
-      "outline": "rgb(33, 132, 170) solid 3px",
+      "top": 838,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
       "boxShadow": "none",
       "focusVisible": true
     },
@@ -213,9 +221,9 @@
       "role": "",
       "name": "下載 JSON",
       "className": "lg secondary download-control svelte-xzq5jh",
-      "top": 882,
-      "outline": "rgb(33, 132, 170) solid 3px",
-      "boxShadow": "rgba(16, 38, 48, 0.035) 0px 2px 8px 0px",
+      "top": 890,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
+      "boxShadow": "none",
       "focusVisible": true
     },
     {
@@ -223,16 +231,16 @@
       "role": "",
       "name": "下載 Excel",
       "className": "lg secondary download-control svelte-xzq5jh",
-      "top": 882,
-      "outline": "rgb(33, 132, 170) solid 3px",
-      "boxShadow": "rgba(16, 38, 48, 0.035) 0px 2px 8px 0px",
+      "top": 890,
+      "outline": "oklch(0.58 0.13 205) solid 3px",
+      "boxShadow": "none",
       "focusVisible": true
     }
   ],
   "focusWithoutVisibleIndicator": [],
   "performance": {
-    "domContentLoadedMs": 21,
-    "loadMs": 35,
+    "domContentLoadedMs": 27,
+    "loadMs": 49,
     "resourceCount": 93,
     "transferBytes": 261911
   },

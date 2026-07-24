@@ -27,33 +27,39 @@ from doc_inspector.types import ProviderName, SchemaName
 
 CIVIC_CSS = """
 :root {
-  --ui-bg: #f1f5f4;
-  --ui-surface: #ffffff;
-  --ui-surface-soft: #f8faf9;
-  --ui-surface-muted: #edf3f3;
-  --ui-surface-accent: #e3eff1;
-  --ui-ink: #102630;
-  --ui-muted: #4c626b;
-  --ui-border: #ccd8db;
-  --ui-border-strong: #aebfc5;
-  --ui-primary: #125a72;
-  --ui-primary-hover: #0b465b;
-  --ui-focus: #2184aa;
-  --ui-danger-bg: #fff1f0;
-  --ui-danger-border: #d64545;
-  --ui-warning-bg: #fff8df;
-  --ui-warning-border: #a86d00;
-  --ui-success-bg: #edf8f1;
-  --ui-success-border: #2e7d4f;
+  --ui-bg: oklch(96.8% 0.009 205);
+  --ui-surface: oklch(99.2% 0.004 205);
+  --ui-surface-soft: oklch(97.7% 0.009 205);
+  --ui-surface-muted: oklch(94.6% 0.015 205);
+  --ui-surface-accent: oklch(92.2% 0.034 205);
+  --ui-ink: oklch(24% 0.036 205);
+  --ui-muted: oklch(43% 0.026 205);
+  --ui-border: oklch(86% 0.018 205);
+  --ui-border-strong: oklch(73% 0.028 205);
+  --ui-primary: oklch(49% 0.1 205);
+  --ui-primary-hover: oklch(40% 0.085 205);
+  --ui-primary-soft: oklch(94.5% 0.03 205);
+  --ui-focus: oklch(58% 0.13 205);
+  --ui-navy: oklch(24% 0.055 205);
+  --ui-navy-soft: oklch(29% 0.05 205);
+  --ui-danger-bg: oklch(96.5% 0.025 25);
+  --ui-danger-border: oklch(57% 0.16 25);
+  --ui-danger-ink: oklch(39% 0.13 25);
+  --ui-warning-bg: oklch(97% 0.04 82);
+  --ui-warning-border: oklch(64% 0.13 75);
+  --ui-warning-ink: oklch(41% 0.085 75);
+  --ui-success-bg: oklch(96% 0.025 150);
+  --ui-success-border: oklch(53% 0.11 150);
+  --ui-success-ink: oklch(37% 0.09 150);
   --space-xs: 8px;
-  --space-sm: 12px;
-  --space-md: 18px;
-  --space-lg: 26px;
-  --space-xl: 36px;
-  --radius-sm: 7px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 22px;
+  --space-xl: 28px;
+  --radius-sm: 8px;
   --radius-md: 10px;
-  --radius-lg: 13px;
-  --shadow-soft: 0 10px 26px rgba(16, 38, 48, 0.065);
+  --radius-lg: 14px;
+  --shadow-soft: 0 6px 14px oklch(24% 0.036 205 / 0.1);
 }
 
 html,
@@ -62,35 +68,37 @@ body {
 }
 
 gradio-app {
-  background:
-    radial-gradient(circle at 12% 0%, #fbfcfb 0, transparent 32%),
-    var(--ui-bg) !important;
+  background: var(--ui-bg) !important;
 }
 
 .gradio-container {
   width: 100% !important;
-  max-width: 1680px !important;
+  max-width: 1700px !important;
   margin: 0 auto !important;
-  padding: 24px clamp(8px, 3.5vw, 56px) 48px !important;
+  padding: 16px clamp(12px, 2.5vw, 40px) 40px !important;
   box-sizing: border-box !important;
   background: transparent !important;
   color: var(--ui-ink) !important;
   font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei UI",
     "Microsoft JhengHei", sans-serif !important;
-  font-size: 20px !important;
+  font-size: 21px !important;
   line-height: 1.55;
-  --text-xs: 16px;
-  --text-sm: 18px;
-  --text-md: 19px;
-  --text-lg: 21px;
-  --text-xl: 25px;
-  --text-xxl: 30px;
+  --text-xs: 17px;
+  --text-sm: 19px;
+  --text-md: 20px;
+  --text-lg: 22px;
+  --text-xl: 27px;
+  --text-xxl: 32px;
 }
 
 .gradio-container div.main.fillable.app {
   padding-right: clamp(4px, 1vw, 16px) !important;
   padding-left: clamp(4px, 1vw, 16px) !important;
   background: transparent !important;
+}
+
+.gradio-container .block.padded.hide-container > .html-container {
+  padding: 0 !important;
 }
 
 .gradio-container p,
@@ -100,223 +108,299 @@ gradio-app {
 .gradio-container button,
 .gradio-container select,
 .gradio-container table {
-  font-size: 19px !important;
+  font-size: 20px !important;
 }
 
 .masthead {
   display: grid;
-  grid-template-columns: minmax(320px, 0.68fr) minmax(0, 1.32fr);
-  gap: var(--space-xl);
-  align-items: center;
-  margin: 0;
-  padding: 2px 0;
+  grid-template-columns: minmax(390px, 0.78fr) minmax(0, 1.22fr);
+  gap: 0;
+  align-items: stretch;
+  overflow: hidden;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 1px solid oklch(79% 0.028 205);
+  border-radius: var(--radius-lg);
+  background: var(--ui-surface);
+  box-shadow: 0 5px 12px oklch(24% 0.036 205 / 0.14);
 }
 
 .app-header {
   min-width: 0;
-  padding: 0;
+  padding: 22px 28px;
   margin: 0;
+  background: var(--ui-navy);
+  color: #ffffff;
 }
 
 .app-header h1 {
   margin: 0;
-  color: var(--ui-ink);
-  font-size: 46px;
+  color: #ffffff;
+  font-size: 44px;
   font-weight: 780;
-  line-height: 1.12;
-  letter-spacing: -0.035em;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
   text-wrap: balance;
 }
 
 .app-header p {
   max-width: 64ch;
-  margin: 8px 0 0;
-  color: var(--ui-muted);
+  margin: 7px 0 0;
+  color: oklch(90% 0.018 205);
   font-size: 20px !important;
+  line-height: 1.5;
   text-wrap: pretty;
 }
 
-.workflow-guide {
+.result-legend {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
   margin: 0;
-  padding: 14px 18px 15px;
-  border: 1px solid #c6d8dc;
-  border-radius: var(--radius-lg);
-  background: linear-gradient(125deg, var(--ui-surface-accent), #f1f7f6);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  padding: 16px 18px;
+  border: 0;
+  border-radius: 0;
+  background: var(--ui-surface-soft);
+  box-shadow: none;
 }
 
-.workflow-guide h2 {
-  margin: 0 0 var(--space-xs);
+.legend-intro {
+  min-width: 0;
+}
+
+.result-legend h2 {
+  margin: 0;
   color: var(--ui-ink);
-  font-size: 21px;
-  font-weight: 760;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.legend-intro p {
+  margin: 3px 0 0;
+  color: var(--ui-muted);
+  font-size: 18px !important;
   line-height: 1.35;
 }
 
-.workflow-steps {
+.legend-items {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.workflow-steps li {
-  display: grid;
-  grid-template-columns: 32px minmax(0, 1fr);
-  gap: var(--space-xs);
+.legend-items li {
+  display: flex;
   min-width: 0;
-  padding: 0 var(--space-sm);
-}
-
-.workflow-steps li:first-child {
-  padding-left: 0;
-}
-
-.workflow-steps li + li {
-  border-left: 1px solid var(--ui-border);
-}
-
-.workflow-number {
-  display: inline-flex;
-  width: 32px;
-  height: 32px;
+  min-height: 64px;
+  gap: 9px;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  border: 2px solid rgba(255, 255, 255, 0.72);
-  background: var(--ui-primary);
-  color: #ffffff;
-  box-shadow: 0 2px 5px rgba(18, 90, 114, 0.18);
-  box-sizing: border-box;
-  font-size: 17px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.workflow-copy strong {
-  display: block;
+  padding: 9px 11px;
+  border: 1px solid;
+  border-radius: var(--radius-sm);
   color: var(--ui-ink);
-  font-size: 19px;
-  font-weight: 760;
-  line-height: 1.4;
+  font-size: 18px;
+  line-height: 1.35;
 }
 
-.workflow-copy p {
-  margin: 1px 0 0;
+.legend-red {
+  border-color: oklch(86% 0.065 25) !important;
+  background: var(--ui-danger-bg);
+}
+
+.legend-yellow {
+  border-color: oklch(87% 0.075 82) !important;
+  background: var(--ui-warning-bg);
+}
+
+.legend-green {
+  border-color: oklch(84% 0.055 150) !important;
+  background: var(--ui-success-bg);
+}
+
+.legend-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.legend-items strong {
+  color: var(--ui-ink);
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.legend-action {
+  margin-top: 2px;
   color: var(--ui-muted);
-  font-size: 17px !important;
-  line-height: 1.35;
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 3px oklch(99% 0 0 / 0.72);
+}
+
+.legend-dot-red {
+  background: oklch(68% 0.18 25);
+}
+
+.legend-dot-yellow {
+  background: oklch(78% 0.15 78);
+}
+
+.legend-dot-green {
+  background: oklch(67% 0.13 150);
 }
 
 .workbench {
   gap: 0 !important;
   align-items: stretch !important;
   overflow: hidden;
-  border: 1px solid var(--ui-border);
-  border-top: 3px solid var(--ui-primary);
+  border: 0;
   border-radius: var(--radius-lg);
   background: var(--ui-surface);
   box-shadow: var(--shadow-soft);
 }
 
-.section-panel {
-  gap: var(--space-sm) !important;
+.workflow-section {
+  gap: 8px !important;
   min-width: 0 !important;
-  padding: var(--space-lg) !important;
+  padding: 16px 28px !important;
   border: 0 !important;
   border-radius: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
-.upload-section {
-  background: var(--ui-surface) !important;
-  border-right: 1px solid var(--ui-border) !important;
+.workflow-section + .workflow-section {
+  border-top: 1px solid var(--ui-border) !important;
 }
 
-.settings-section {
-  gap: var(--space-sm) !important;
+.action-section {
   background: var(--ui-surface-soft) !important;
 }
 
-.section-heading {
-  display: block;
+.task-heading {
+  display: flex;
+  gap: 13px;
+  align-items: flex-start;
   margin: 0;
 }
 
-.section-heading-copy {
+.task-heading-copy {
   min-width: 0;
 }
 
-.section-heading h2,
-.section-heading h3 {
+.task-heading h2,
+.task-heading h3 {
   margin: 0;
   color: var(--ui-ink);
   line-height: 1.25;
   text-wrap: balance;
 }
 
-.section-heading h2 {
+.task-heading h2 {
   font-size: 28px;
-  font-weight: 760;
+  font-weight: 780;
   letter-spacing: -0.02em;
 }
 
-.section-heading h3 {
-  font-size: 24px;
+.task-heading h3 {
+  font-size: 26px;
   font-weight: 740;
 }
 
-.section-heading p {
+.task-heading p {
   max-width: 70ch;
-  margin: 6px 0 0;
+  margin: 3px 0 0;
   color: var(--ui-muted);
-  font-size: 19px !important;
-  line-height: 1.5;
+  font-size: 20px !important;
+  line-height: 1.45;
+}
+
+.task-step {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 38px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ui-primary);
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
 }
 
 .upload-control {
   flex: 0 0 auto !important;
-  height: 150px !important;
-  min-height: 150px !important;
-  border: 1px dashed #9fb3bb !important;
+  height: 132px !important;
+  min-height: 132px !important;
+  border: 2px dashed #a8bbc0 !important;
   border-radius: var(--radius-md) !important;
-  background:
-    linear-gradient(145deg, #ffffff, #f6f9f8) !important;
+  background: #f8fafb !important;
   box-shadow: none !important;
   transition:
     border-color 160ms ease-out,
-    background-color 160ms ease-out,
-    transform 160ms ease-out;
+    background-color 160ms ease-out;
+}
+
+.upload-control > button {
+  height: 100% !important;
+}
+
+.upload-control > button > .wrap {
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 4px 0 6px !important;
+  font-size: 20px !important;
+  line-height: 1.3 !important;
+}
+
+.upload-control > button > .wrap .icon-wrap {
+  margin-bottom: 2px !important;
+}
+
+.upload-control > button > .wrap .or {
+  font-size: 18px !important;
+  line-height: 1.2 !important;
 }
 
 .upload-control:hover {
   border-color: var(--ui-primary) !important;
-  background: #f1f7f7 !important;
-  transform: translateY(-1px);
+  background: var(--ui-primary-soft) !important;
 }
 
 .upload-control,
 .field-control,
 .consent-control,
 .download-control {
-  font-size: 18px !important;
+  font-size: 20px !important;
 }
 
 .field-control label,
 .upload-control label,
 .download-control label {
   color: var(--ui-ink) !important;
-  font-size: 18px !important;
+  font-size: 20px !important;
   font-weight: 700 !important;
 }
 
 #schema-selector [data-testid="block-info"],
 #provider-selector [data-testid="block-info"] {
   color: var(--ui-muted) !important;
-  font-size: 17px !important;
+  font-size: 18px !important;
   font-weight: 650 !important;
   line-height: 1.45 !important;
 }
@@ -324,8 +408,8 @@ gradio-app {
 .field-control input,
 .field-control [role="combobox"],
 .field-control button {
-  min-height: 54px !important;
-  font-size: 19px !important;
+  min-height: 56px !important;
+  font-size: 20px !important;
 }
 
 .field-control,
@@ -340,66 +424,61 @@ gradio-app {
 
 .field-control > .container > .wrap,
 #demo-selector > .container > .wrap {
-  border: 1px solid var(--ui-border) !important;
+  border: 1px solid var(--ui-border-strong) !important;
   border-radius: var(--radius-md) !important;
   background: var(--ui-surface) !important;
-  box-shadow: 0 1px 0 rgba(16, 38, 48, 0.025) !important;
+  box-shadow: none !important;
   transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
 }
 
 .field-control:hover > .container > .wrap,
 #demo-selector:hover > .container > .wrap {
-  border-color: #8eabb5 !important;
-  box-shadow: 0 2px 7px rgba(16, 38, 48, 0.06) !important;
+  border-color: var(--ui-primary) !important;
+  box-shadow: 0 0 0 3px rgba(13, 102, 115, 0.09) !important;
 }
 
 .upload-guidance {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px 22px;
+  gap: 6px 8px;
   color: var(--ui-muted);
   font-size: 18px;
 }
 
 .upload-guidance span {
-  position: relative;
-  padding-left: 15px;
+  position: static;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--ui-surface-muted);
 }
 
 .upload-guidance span::before {
-  position: absolute;
-  top: 0.72em;
-  left: 0;
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background: var(--ui-primary);
-  content: "";
+  content: none;
 }
 
 .source-brief {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
-  gap: var(--space-sm);
-  align-items: baseline;
-  padding: 10px var(--space-sm);
-  border: 1px solid #d4e1e3;
-  border-radius: var(--radius-md);
-  background: linear-gradient(105deg, var(--ui-surface-muted), #f5f8f7);
+  grid-template-columns: 164px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  padding: 9px 12px;
+  border: 1px solid oklch(88% 0.03 205);
+  border-radius: var(--radius-sm);
+  background: var(--ui-primary-soft);
   color: var(--ui-muted);
 }
 
 .source-brief h3 {
   margin: 0;
   color: var(--ui-primary-hover);
-  font-size: 19px;
+  font-size: 21px;
   font-weight: 760;
   line-height: 1.45;
 }
 
 .source-brief p {
   margin: 0;
-  font-size: 17px !important;
+  font-size: 19px !important;
   line-height: 1.45;
 }
 
@@ -415,7 +494,7 @@ gradio-app {
 .demo-heading h3 {
   margin: 0;
   color: var(--ui-ink);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 760;
   line-height: 1.4;
 }
@@ -423,17 +502,17 @@ gradio-app {
 .demo-heading p {
   margin: 1px 0 0;
   color: var(--ui-muted);
-  font-size: 17px !important;
+  font-size: 18px !important;
   line-height: 1.45;
 }
 
 .demo-controls {
   gap: var(--space-sm) !important;
-  align-items: stretch !important;
-  padding: 8px 9px !important;
-  border: 1px solid var(--ui-border) !important;
-  border-radius: var(--radius-md) !important;
-  background: #f7f9f8 !important;
+  align-items: center !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
   box-shadow: none !important;
 }
 
@@ -445,7 +524,8 @@ gradio-app {
 }
 
 .demo-heading-block {
-  min-width: 130px !important;
+  min-width: 220px !important;
+  flex: 0 0 220px !important;
   padding: 0 !important;
   border: 0 !important;
   background: transparent !important;
@@ -461,33 +541,33 @@ gradio-app {
 
 #demo-selector label span {
   color: var(--ui-muted) !important;
-  font-size: 18px !important;
+  font-size: 19px !important;
 }
 
 #demo-selector input,
 #demo-selector [role="combobox"],
 #demo-selector button {
-  min-height: 54px !important;
-  font-size: 19px !important;
+  min-height: 56px !important;
+  font-size: 20px !important;
 }
 
 #demo-selector {
-  min-height: 54px !important;
+  min-height: 56px !important;
 }
 
 .demo-btn {
-  min-height: 54px !important;
+  min-height: 56px !important;
   border: 1px solid var(--ui-primary) !important;
-  border-radius: var(--radius-sm) !important;
+  border-radius: var(--radius-md) !important;
   background: var(--ui-surface) !important;
   color: var(--ui-primary) !important;
-  font-size: 19px !important;
+  font-size: 20px !important;
   font-weight: 740 !important;
 }
 
 .demo-btn:hover {
-  background: #eaf3f4 !important;
-  box-shadow: 0 2px 7px rgba(18, 90, 114, 0.09) !important;
+  background: var(--ui-primary-soft) !important;
+  box-shadow: none !important;
 }
 
 .demo-status {
@@ -501,7 +581,7 @@ gradio-app {
 .demo-status p {
   margin: 0;
   color: var(--ui-muted);
-  font-size: 17px !important;
+  font-size: 18px !important;
   line-height: 1.45;
 }
 
@@ -510,7 +590,7 @@ gradio-app {
 }
 
 .control-grid {
-  gap: 16px !important;
+  gap: 14px !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 0 !important;
@@ -527,13 +607,22 @@ gradio-app {
 
 .notice-grid {
   flex-direction: row !important;
-  gap: 0 !important;
-  align-items: stretch !important;
-  overflow: hidden;
-  border: 1px solid #c8d7da !important;
+  gap: 22px !important;
+  align-items: center !important;
+  overflow: visible;
+  padding: 12px 15px !important;
+  border: 1px solid oklch(86% 0.03 205) !important;
   border-radius: var(--radius-md) !important;
-  background: #edf4f4 !important;
+  background: var(--ui-primary-soft) !important;
   box-shadow: none !important;
+}
+
+.notice-grid > .form {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
 }
 
 .privacy-block {
@@ -542,7 +631,7 @@ gradio-app {
 }
 
 .privacy-note {
-  padding: 14px 16px;
+  padding: 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -553,22 +642,21 @@ gradio-app {
   display: block;
   margin-bottom: 4px;
   color: var(--ui-ink);
-  font-size: 19px;
+  font-size: 21px;
 }
 
 .privacy-note p {
   margin: 0;
   color: var(--ui-muted);
-  font-size: 18px !important;
-  line-height: 1.5;
+  font-size: 19px !important;
+  line-height: 1.45;
 }
 
 #cloud-consent {
-  padding: 14px 16px !important;
+  padding: 0 !important;
   border: 0 !important;
-  border-left: 1px solid #c8d7da !important;
   border-radius: 0 !important;
-  background: rgba(255, 255, 255, 0.58) !important;
+  background: transparent !important;
   box-shadow: none !important;
   overflow: visible !important;
 }
@@ -581,67 +669,68 @@ gradio-app {
 }
 
 #cloud-consent > div,
-#cloud-consent .form {
+#cloud-consent .form,
+#cloud-consent .container,
+#cloud-consent label {
   border: 0 !important;
   background: transparent !important;
   box-shadow: none !important;
 }
 
 #cloud-consent label {
+  display: flex !important;
+  min-height: 44px !important;
+  padding: 0 !important;
+  align-items: center !important;
   color: var(--ui-ink) !important;
   font-weight: 720 !important;
+  cursor: pointer !important;
 }
 
 #cloud-consent input[type="checkbox"] {
-  width: 20px !important;
-  height: 20px !important;
+  width: 22px !important;
+  height: 22px !important;
   accent-color: var(--ui-primary);
 }
 
 #cloud-consent span.label-text {
   color: var(--ui-ink) !important;
-  font-size: 19px !important;
+  font-size: 20px !important;
   line-height: 1.4 !important;
 }
 
 #cloud-consent .info,
 #cloud-consent div.info-text {
   color: var(--ui-muted) !important;
-  font-size: 17px !important;
+  font-size: 18px !important;
   line-height: 1.45 !important;
 }
 
 .primary-btn {
   min-height: 56px !important;
-  border: 1px solid var(--ui-primary) !important;
+  border: 0 !important;
   border-radius: var(--radius-md) !important;
   background: var(--ui-primary) !important;
   color: #ffffff !important;
-  font-size: 19px !important;
+  font-size: 20px !important;
   font-weight: 780 !important;
   letter-spacing: 0.02em;
-  box-shadow: 0 3px 0 #0a4054 !important;
+  box-shadow: none !important;
   transition:
     background-color 160ms ease-out,
-    border-color 160ms ease-out,
-    box-shadow 160ms ease-out,
     transform 160ms ease-out;
 }
 
 .primary-btn:hover {
-  border-color: var(--ui-primary-hover) !important;
   background: var(--ui-primary-hover) !important;
-  box-shadow: 0 4px 0 #073747 !important;
   transform: translateY(-1px);
 }
 
 .primary-btn:active {
-  box-shadow: 0 1px 0 #073747 !important;
-  transform: translateY(2px);
+  transform: translateY(0);
 }
 
 .primary-btn:disabled {
-  border-color: #557888 !important;
   background: #557888 !important;
   cursor: progress !important;
   opacity: 1 !important;
@@ -671,17 +760,17 @@ gradio-app {
   height: 100%;
   box-sizing: border-box;
   padding: 11px 13px;
-  border: 1px solid #c3d0d4;
+  border: 1px solid var(--ui-border);
   border-radius: var(--radius-md);
-  background: #f4f7f7;
+  background: var(--ui-surface);
   color: var(--ui-ink);
-  font-size: 18px;
+  font-size: 19px;
 }
 
 .status-card strong {
   display: block;
   margin-bottom: 2px;
-  font-size: 19px;
+  font-size: 21px;
 }
 
 .status-card p {
@@ -696,16 +785,19 @@ gradio-app {
 .status-card.status-red {
   border-color: var(--ui-danger-border);
   background: var(--ui-danger-bg);
+  color: var(--ui-danger-ink);
 }
 
 .status-card.status-yellow {
   border-color: var(--ui-warning-border);
   background: var(--ui-warning-bg);
+  color: var(--ui-warning-ink);
 }
 
 .status-card.status-green {
   border-color: var(--ui-success-border);
   background: var(--ui-success-bg);
+  color: var(--ui-success-ink);
 }
 
 .status-card.status-processing {
@@ -717,21 +809,33 @@ gradio-app {
   display: block;
   margin-top: var(--space-xs);
   color: var(--ui-muted);
-  font-size: 17px;
+  font-size: 18px;
+}
+
+.status-red .status-meta {
+  color: var(--ui-danger-ink);
+}
+
+.status-yellow .status-meta {
+  color: var(--ui-warning-ink);
+}
+
+.status-green .status-meta {
+  color: var(--ui-success-ink);
 }
 
 .result-link {
   display: inline-block;
   margin-top: 6px;
   color: var(--ui-primary);
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 740;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
 .results-heading {
-  margin-top: 30px;
+  margin-top: 22px;
   margin-bottom: 10px;
   padding: 0 4px;
 }
@@ -739,9 +843,10 @@ gradio-app {
 .action-plan {
   overflow: hidden;
   margin-bottom: 12px;
-  border: 1px solid var(--ui-border);
+  border: 0;
   border-radius: var(--radius-md);
   background: var(--ui-surface);
+  box-shadow: 0 2px 8px rgba(17, 41, 50, 0.06);
 }
 
 .action-plan-header {
@@ -755,7 +860,7 @@ gradio-app {
 .action-plan-header h3 {
   margin: 0;
   color: var(--ui-ink);
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 760;
   line-height: 1.35;
 }
@@ -763,7 +868,7 @@ gradio-app {
 .action-plan-header p {
   margin: 3px 0 0;
   color: var(--ui-muted);
-  font-size: 18px !important;
+  font-size: 19px !important;
   line-height: 1.45;
 }
 
@@ -793,7 +898,7 @@ gradio-app {
   align-self: start;
   padding: 5px 8px;
   border-radius: 7px;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 750;
   line-height: 1.35;
   text-align: center;
@@ -812,20 +917,20 @@ gradio-app {
 .issue-content strong {
   display: block;
   color: var(--ui-ink);
-  font-size: 19px;
+  font-size: 21px;
   line-height: 1.4;
 }
 
 .issue-content p {
   margin: 3px 0 0;
   color: var(--ui-muted);
-  font-size: 18px !important;
+  font-size: 19px !important;
   line-height: 1.5;
 }
 
 .issue-content .issue-values {
   color: #40565f;
-  font-size: 17px !important;
+  font-size: 18px !important;
 }
 
 .issue-content .issue-action {
@@ -838,16 +943,16 @@ gradio-app {
   border-top: 1px solid var(--ui-border);
   background: #f7f9f8;
   color: var(--ui-ink);
-  font-size: 18px !important;
+  font-size: 19px !important;
   line-height: 1.45;
 }
 
 .result-tabs {
   overflow: hidden;
-  border: 1px solid var(--ui-border);
+  border: 0;
   border-radius: var(--radius-md);
   background: var(--ui-surface);
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(17, 41, 50, 0.06);
 }
 
 .result-tabs .tab-wrapper {
@@ -873,14 +978,14 @@ gradio-app {
   border-radius: var(--radius-sm) !important;
   color: var(--ui-muted) !important;
   background: transparent !important;
-  font-size: 18px !important;
+  font-size: 19px !important;
   font-weight: 700 !important;
 }
 
 .result-tabs button[role="tab"][aria-selected="true"] {
   color: var(--ui-primary) !important;
   background: var(--ui-surface) !important;
-  box-shadow: 0 1px 4px rgba(16, 38, 48, 0.08) !important;
+  box-shadow: none !important;
 }
 
 .result-table-scroll {
@@ -895,7 +1000,7 @@ gradio-app {
   border-spacing: 0;
   border-collapse: separate;
   color: var(--ui-ink);
-  font-size: 18px !important;
+  font-size: 19px !important;
   text-align: left;
 }
 
@@ -940,7 +1045,7 @@ gradio-app {
 .result-table th,
 .result-table td {
   padding: 12px 14px !important;
-  font-size: 18px !important;
+  font-size: 19px !important;
   line-height: 1.5 !important;
   overflow-wrap: anywhere;
 }
@@ -959,12 +1064,28 @@ gradio-app {
   padding: 18px !important;
   background: var(--ui-surface-soft);
   color: var(--ui-muted);
-  font-size: 17px;
+  font-size: 18px;
 }
 
 .downloads-heading {
-  margin-top: 22px;
+  display: block;
+  margin-top: 18px;
   padding: 0 4px;
+}
+
+.downloads-heading h3 {
+  margin: 0;
+  color: var(--ui-ink);
+  font-size: 25px;
+  font-weight: 760;
+  line-height: 1.35;
+}
+
+.downloads-heading p {
+  margin: 3px 0 0;
+  color: var(--ui-muted);
+  font-size: 19px !important;
+  line-height: 1.45;
 }
 
 .download-row {
@@ -973,13 +1094,13 @@ gradio-app {
 
 .download-control {
   min-height: 54px !important;
-  border: 1px solid var(--ui-border) !important;
+  border: 1px solid var(--ui-primary) !important;
   border-radius: var(--radius-md) !important;
   background: var(--ui-surface) !important;
   color: var(--ui-primary) !important;
-  font-size: 18px !important;
+  font-size: 20px !important;
   font-weight: 740 !important;
-  box-shadow: 0 2px 8px rgba(16, 38, 48, 0.035) !important;
+  box-shadow: none !important;
   transition:
     border-color 150ms ease-out,
     background-color 150ms ease-out,
@@ -987,8 +1108,8 @@ gradio-app {
 }
 
 .download-control:hover {
-  border-color: #8eabb5 !important;
-  background: #edf5f5 !important;
+  border-color: var(--ui-primary-hover) !important;
+  background: var(--ui-primary-soft) !important;
   transform: translateY(-1px);
 }
 
@@ -1007,13 +1128,24 @@ footer {
   display: none !important;
 }
 
+@media (max-width: 1180px) and (min-width: 821px) {
+  .masthead {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .result-legend {
+    grid-template-columns: 170px minmax(0, 1fr);
+  }
+}
+
 @media (max-width: 820px) {
   .gradio-container.gradio-container-6-20-0.fill_width {
     width: 100vw !important;
     max-width: 100vw !important;
-    padding: 14px 8px 32px !important;
+    padding: 10px 8px 28px !important;
     box-sizing: border-box !important;
-    font-size: 17px !important;
+    font-size: 19px !important;
   }
 
   .gradio-container div.main.fillable.app.fill_width {
@@ -1023,61 +1155,88 @@ footer {
 
   .masthead {
     grid-template-columns: 1fr;
-    gap: var(--space-md);
+    gap: 0;
+    margin-bottom: 10px;
+    padding: 0;
+  }
+
+  .app-header {
+    padding: 18px 17px;
   }
 
   .app-header h1 {
-    font-size: 34px;
+    font-size: 36px;
   }
 
   .app-header p {
-    font-size: 18px !important;
-    line-height: 1.5;
+    font-size: 19px !important;
+    line-height: 1.45;
   }
 
-  .workflow-guide {
-    padding: 13px;
+  .result-legend {
+    display: block;
+    padding: 12px;
   }
 
-  .workflow-guide h2 {
+  .result-legend h2 {
     font-size: 21px;
   }
 
-  .workflow-steps {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 14px;
-  }
-
-  .workflow-steps li {
-    grid-template-columns: 32px minmax(0, 1fr);
+  .legend-intro {
+    display: flex;
     gap: 9px;
-    padding: 0 9px;
+    align-items: baseline;
+    margin-bottom: 8px;
   }
 
-  .workflow-steps li:nth-child(odd) {
-    padding-left: 0;
-    border-left: 0;
+  .legend-intro p {
+    margin: 0;
+    font-size: 18px !important;
   }
 
-  .workflow-copy p {
-    font-size: 17px !important;
-    line-height: 1.35;
+  .legend-items {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
   }
 
-  .workflow-number {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
+  .legend-items li {
+    min-height: 94px;
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+    padding: 8px;
+    font-size: 18px !important;
+  }
+
+  .legend-items strong {
+    font-size: 20px;
+  }
+
+  .legend-copy {
+    flex-direction: column;
+    gap: 2px;
+    align-items: flex-start;
+  }
+
+  .legend-action {
+    margin-top: 0;
+    font-size: 18px;
+    line-height: 1.25;
   }
 
   .upload-control {
-    height: 170px !important;
-    min-height: 170px !important;
+    height: 132px !important;
+    min-height: 132px !important;
+  }
+
+  .demo-heading-block {
+    min-width: 0 !important;
+    flex: 0 0 auto !important;
   }
 
   .workbench {
     overflow: visible;
-    flex-direction: column !important;
   }
 
   .demo-heading {
@@ -1087,26 +1246,25 @@ footer {
   .source-brief {
     grid-template-columns: 1fr;
     gap: 3px;
-    padding: 10px 12px;
+    padding: 9px 12px;
   }
 
-  .section-panel {
+  .workflow-section {
     width: 100% !important;
     flex: 1 1 auto !important;
-    padding: var(--space-md) 16px !important;
+    padding: 14px 16px !important;
   }
 
-  .upload-section {
-    border-right: 0 !important;
-    border-bottom: 1px solid var(--ui-border) !important;
+  .task-heading {
+    gap: 10px;
   }
 
-  .section-heading h2 {
-    font-size: 25px;
+  .task-heading h2 {
+    font-size: 26px;
   }
 
-  .section-heading p {
-    font-size: 18px !important;
+  .task-heading p {
+    font-size: 19px !important;
   }
 
   .control-grid {
@@ -1128,20 +1286,21 @@ footer {
     flex-direction: column !important;
   }
 
+  .notice-grid {
+    gap: 12px !important;
+    align-items: stretch !important;
+    padding: 13px !important;
+  }
+
   .privacy-block,
   .status-output {
     flex: 0 0 auto !important;
     min-width: 100% !important;
   }
 
-  #cloud-consent {
-    border-left: 0 !important;
-    border-top: 1px solid #c9d3d7 !important;
-  }
-
   .privacy-note p,
   #cloud-consent span.label-text {
-    font-size: 18px !important;
+    font-size: 19px !important;
   }
 
   .action-grid > div,
@@ -1151,11 +1310,11 @@ footer {
 
   .primary-btn {
     min-height: 54px !important;
-    font-size: 19px !important;
+    font-size: 20px !important;
   }
 
   .results-heading {
-    margin-top: 28px;
+    margin-top: 22px;
   }
 
   .action-plan-header {
@@ -1773,62 +1932,55 @@ def build_app(
             """<section class="masthead">
             <header class="app-header">
                 <h1>文件預檢所</h1>
-                <p>在送件以前，先檢查欄位缺漏、日期、身分資料與金額問題。</p>
+                <p>上傳填好的申請表或收據，送件前找出缺漏。</p>
             </header>
-            <section class="workflow-guide" aria-labelledby="workflow-title">
-            <h2 id="workflow-title">照這 4 步完成預檢</h2>
-            <ol class="workflow-steps">
-              <li>
-                <span class="workflow-number" aria-hidden="true">1</span>
-                <div class="workflow-copy">
-                  <strong>準備文件</strong>
-                  <p>上傳或載入範例。</p>
-                </div>
+            <section class="result-legend" aria-labelledby="legend-title">
+            <div class="legend-intro">
+              <h2 id="legend-title">結果燈號</h2>
+              <p>完成後照顏色處理</p>
+            </div>
+            <ul class="legend-items">
+              <li class="legend-red">
+                <span class="legend-dot legend-dot-red" aria-hidden="true"></span>
+                <span class="legend-copy">
+                  <strong>紅燈</strong>
+                  <span class="legend-action">送件前先修正</span>
+                </span>
               </li>
-              <li>
-                <span class="workflow-number" aria-hidden="true">2</span>
-                <div class="workflow-copy">
-                  <strong>確認設定</strong>
-                  <p>選類型與供應商。</p>
-                </div>
+              <li class="legend-yellow">
+                <span class="legend-dot legend-dot-yellow" aria-hidden="true"></span>
+                <span class="legend-copy">
+                  <strong>黃燈</strong>
+                  <span class="legend-action">對照原文件確認</span>
+                </span>
               </li>
-              <li>
-                <span class="workflow-number" aria-hidden="true">3</span>
-                <div class="workflow-copy">
-                  <strong>同意並開始</strong>
-                  <p>勾選告知後開始。</p>
-                </div>
+              <li class="legend-green">
+                <span class="legend-dot legend-dot-green" aria-hidden="true"></span>
+                <span class="legend-copy">
+                  <strong>綠燈</strong>
+                  <span class="legend-action">目前未發現問題</span>
+                </span>
               </li>
-              <li>
-                <span class="workflow-number" aria-hidden="true">4</span>
-                <div class="workflow-copy">
-                  <strong>查看結果</strong>
-                  <p>修正後下載。</p>
-                </div>
-              </li>
-            </ol>
+            </ul>
             </section>
             </section>"""
         )
-        with gr.Row(equal_height=False, elem_classes=["workbench"]):
-            with gr.Column(
-                scale=5,
-                min_width=320,
-                elem_classes=["section-panel", "upload-section"],
-            ):
+        with gr.Column(elem_classes=["workbench"]):
+            with gr.Column(elem_classes=["workflow-section", "upload-section"]):
                 gr.HTML(
-                    """<div class="section-heading">
-                    <div class="section-heading-copy">
-                      <h2>上傳待檢文件</h2>
-                      <p>請選填好的申請表或店家收據／發票，不要選空白表格。</p>
+                    """<div class="task-heading">
+                    <span class="task-step" aria-hidden="true">1</span>
+                    <div class="task-heading-copy">
+                      <h2>準備要檢查的文件</h2>
+                      <p>請上傳已填好的申請表、店家收據或發票；不要選空白表格。</p>
                     </div>
                     </div>"""
                 )
                 gr.HTML(
                     """<section class="source-brief" aria-labelledby="source-brief-title">
-                    <h3 id="source-brief-title">去哪裡取得？</h3>
-                    <p><strong>補助申請表：</strong>到補助承辦機關官網的
-                    「補助公告／表單下載」取得，或向承辦窗口索取；填好後拍照或掃描。
+                    <h3 id="source-brief-title">文件從哪裡來？</h3>
+                    <p><strong>補助申請表：</strong>從承辦機關官網的
+                    「補助公告／表單下載」取得，或洽承辦窗口。
                     <strong>收據／發票：</strong>使用店家提供的紙本或電子檔。</p>
                     </section>"""
                 )
@@ -1836,7 +1988,7 @@ def build_app(
                     label="選擇申請表、收據或發票",
                     file_types=[".png", ".jpg", ".jpeg", ".webp", ".pdf"],
                     type="filepath",
-                    height=150,
+                    height=132,
                     elem_id="document-upload",
                     elem_classes=["upload-control"],
                 )
@@ -1851,7 +2003,7 @@ def build_app(
                     gr.HTML(
                         """<div class="demo-heading">
                         <h3>沒有文件？</h3>
-                        <p>載入安全範例，不呼叫雲端。</p>
+                        <p>安全範例，不呼叫雲端。</p>
                         </div>""",
                         scale=2,
                         min_width=130,
@@ -1879,16 +2031,13 @@ def build_app(
                     "",
                     elem_classes=["demo-status"],
                 )
-            with gr.Column(
-                scale=6,
-                min_width=320,
-                elem_classes=["section-panel", "settings-section"],
-            ):
+            with gr.Column(elem_classes=["workflow-section", "settings-section"]):
                 gr.HTML(
-                    """<div class="section-heading">
-                    <div class="section-heading-copy">
-                      <h2>預檢設定</h2>
-                      <p>選擇文件類型與供應商，確認傳送範圍。</p>
+                    """<div class="task-heading">
+                    <span class="task-step" aria-hidden="true">2</span>
+                    <div class="task-heading-copy">
+                      <h2>確認預檢設定</h2>
+                      <p>文件類型會決定檢查項目；雲端供應商會接收這份文件。</p>
                     </div>
                     </div>"""
                 )
@@ -1910,19 +2059,30 @@ def build_app(
                         elem_id="provider-selector",
                         elem_classes=["field-control"],
                     )
+            with gr.Column(elem_classes=["workflow-section", "action-section"]):
+                gr.HTML(
+                    """<div class="task-heading">
+                    <span class="task-step" aria-hidden="true">3</span>
+                    <div class="task-heading-copy">
+                      <h2>確認傳送並開始</h2>
+                      <p>閱讀告知、勾選同意，再按一次開始預檢。</p>
+                    </div>
+                    </div>"""
+                )
                 with gr.Row(elem_classes=["notice-grid"]):
                     gr.HTML(
-                        """<div class="privacy-note"><strong>使用前請確認</strong>
-                        <p>這是送件前技術預檢，不是正式資格或法律判斷。
-                        紅燈需修正、黃燈需核對、綠燈代表目前規則未發現問題。</p>
+                        """<div class="privacy-note"><strong>傳送與保存方式</strong>
+                        <p>文件會送到你選擇的雲端供應商進行技術預檢。
+                        工具不保存 raw API 回應，暫存檔會定期清除；
+                        預檢結果不等於正式資格或法律判斷。</p>
                         </div>""",
                         scale=6,
                         min_width=260,
                         elem_classes=["privacy-block"],
                     )
                     consent = gr.Checkbox(
-                        label="我了解文件會傳送給所選雲端供應商",
-                        info="不保存 raw API 回應；暫存檔定期清除。",
+                        label="我了解並同意傳送這份文件",
+                        info="只傳送給上方選擇的雲端供應商。",
                         scale=5,
                         min_width=240,
                         elem_id="cloud-consent",
@@ -1937,17 +2097,18 @@ def build_app(
                         elem_classes=["primary-btn"],
                     )
                     status = gr.HTML(
-                        '<div class="status-card">等待開始：準備文件並勾選告知後，'
-                        '按一次「開始預檢」。</div>',
+                        '<div class="status-card"><strong>尚未開始</strong>'
+                        '<p>上傳文件、確認設定並勾選同意後，即可開始。</p></div>',
                         scale=7,
                         min_width=300,
                         elem_classes=["status-output"],
                     )
 
         gr.HTML(
-            """<div id="result-section" class="section-heading results-heading">
-            <div class="section-heading-copy">
-              <h2>預檢結果</h2>
+            """<div id="result-section" class="task-heading results-heading">
+            <span class="task-step" aria-hidden="true">4</span>
+            <div class="task-heading-copy">
+              <h2>查看預檢結果</h2>
               <p>先照修正建議處理；需要時再查看辨識內容或全部檢核。</p>
             </div>
             </div>"""
