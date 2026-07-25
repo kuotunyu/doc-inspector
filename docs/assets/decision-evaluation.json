@@ -1,0 +1,1035 @@
+{
+  "benchmark_name": "decision-layer-regression",
+  "benchmark_version": "1.0.0",
+  "rules_version": "1.0.0",
+  "scope": "固定 synthetic extraction 的必填、日期、身分證件與金額規則；不評估 OCR、VLM、版面辨識或雲端模型。",
+  "oracle_method": "由人工依公開規則契約逐案定義預期燈號與 issue signature；預期值不從目前規則引擎輸出自動產生。",
+  "uses_network": false,
+  "uses_api_keys": false,
+  "passed": true,
+  "metrics": {
+    "case_count": 24,
+    "exact_case_matches": 24,
+    "overall_status_correct": 24,
+    "expected_issue_count": 37,
+    "predicted_issue_count": 37,
+    "matched_issue_count": 37,
+    "expected_red_issue_count": 21,
+    "matched_red_issue_count": 21,
+    "expected_yellow_issue_count": 16,
+    "matched_yellow_issue_count": 16,
+    "exact_case_match_rate": 1.0,
+    "overall_status_accuracy": 1.0,
+    "issue_precision": 1.0,
+    "issue_recall": 1.0,
+    "red_issue_recall": 1.0,
+    "yellow_issue_recall": 1.0
+  },
+  "by_expected_level": {
+    "green": {
+      "cases": 2,
+      "passed": 2
+    },
+    "yellow": {
+      "cases": 3,
+      "passed": 3
+    },
+    "red": {
+      "cases": 19,
+      "passed": 19
+    }
+  },
+  "per_rule": {
+    "amount.parse": {
+      "expected": 5,
+      "predicted": 5,
+      "matched": 5
+    },
+    "amount.receipt_line": {
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3
+    },
+    "amount.receipt_subtotal": {
+      "expected": 5,
+      "predicted": 5,
+      "matched": 5
+    },
+    "amount.receipt_total": {
+      "expected": 4,
+      "predicted": 4,
+      "matched": 4
+    },
+    "amount.requested_vs_declared": {
+      "expected": 2,
+      "predicted": 2,
+      "matched": 2
+    },
+    "amount.subsidy_line_total": {
+      "expected": 2,
+      "predicted": 2,
+      "matched": 2
+    },
+    "date.birth_before_application": {
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3
+    },
+    "date.parse": {
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3
+    },
+    "identity.citizen_id": {
+      "expected": 1,
+      "predicted": 1,
+      "matched": 1
+    },
+    "identity.document": {
+      "expected": 1,
+      "predicted": 1,
+      "matched": 1
+    },
+    "identity.manual_review": {
+      "expected": 1,
+      "predicted": 1,
+      "matched": 1
+    },
+    "required.list": {
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3
+    },
+    "required.value": {
+      "expected": 4,
+      "predicted": 4,
+      "matched": 4
+    }
+  },
+  "cases": [
+    {
+      "case_id": "subsidy-green-baseline",
+      "description": "完整且一致的補助申請表應顯示綠燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "green",
+      "predicted_overall_level": "green",
+      "expected_issues": [],
+      "predicted_issues": [],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-passport-manual-review",
+      "description": "護照號碼不套用台灣身分證檢查，應提示人工確認。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "yellow",
+      "predicted_overall_level": "yellow",
+      "expected_issues": [
+        {
+          "rule_id": "identity.manual_review",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "identity.manual_review",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-invalid-application-date",
+      "description": "不存在的申請日期應為紅燈，且相依的先後順序只能人工確認。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        },
+        {
+          "rule_id": "date.parse",
+          "level": "red",
+          "field_paths": [
+            "application_date"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        },
+        {
+          "rule_id": "date.parse",
+          "level": "red",
+          "field_paths": [
+            "application_date"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-birth-after-application",
+      "description": "出生日期晚於申請日期應顯示紅燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-invalid-citizen-id",
+      "description": "台灣身分證字號檢查碼錯誤應顯示紅燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "identity.citizen_id",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "identity.citizen_id",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-missing-id-number",
+      "description": "缺少必填證件號碼應為紅燈，證件規則同時提示人工確認。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "identity.document",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        },
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.id_number"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "identity.document",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.id_number",
+            "applicants.0.id_type"
+          ]
+        },
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "applicants.0.id_number"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-missing-applicants",
+      "description": "申請人清單不可為空。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "applicants"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "applicants"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-missing-program-name",
+      "description": "補助方案名稱是必填欄位。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "program_name"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "program_name"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-missing-line-items",
+      "description": "補助明細不可為空，且無法核對明細加總。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.subsidy_line_total",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "declared_total"
+          ]
+        },
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "line_items"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.subsidy_line_total",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "declared_total"
+          ]
+        },
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "line_items"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-invalid-requested-amount",
+      "description": "非數字申請金額應為紅燈，並停止金額一致性判斷。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "requested_amount"
+          ]
+        },
+        {
+          "rule_id": "amount.requested_vs_declared",
+          "level": "yellow",
+          "field_paths": [
+            "requested_amount",
+            "declared_total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "requested_amount"
+          ]
+        },
+        {
+          "rule_id": "amount.requested_vs_declared",
+          "level": "yellow",
+          "field_paths": [
+            "requested_amount",
+            "declared_total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-line-total-mismatch",
+      "description": "補助明細加總與申報總額不一致應顯示紅燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.subsidy_line_total",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "declared_total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.subsidy_line_total",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "declared_total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-requested-declared-mismatch",
+      "description": "申請金額與申報總額不一致應顯示紅燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.requested_vs_declared",
+          "level": "red",
+          "field_paths": [
+            "requested_amount",
+            "declared_total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.requested_vs_declared",
+          "level": "red",
+          "field_paths": [
+            "requested_amount",
+            "declared_total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "subsidy-missing-birth-date",
+      "description": "缺少出生日期時不可猜測先後順序，應顯示黃燈。",
+      "schema_name": "subsidy_application",
+      "expected_overall_level": "yellow",
+      "predicted_overall_level": "yellow",
+      "expected_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        },
+        {
+          "rule_id": "date.parse",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "date.birth_before_application",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date",
+            "application_date"
+          ]
+        },
+        {
+          "rule_id": "date.parse",
+          "level": "yellow",
+          "field_paths": [
+            "applicants.0.birth_date"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-green-baseline",
+      "description": "完整且金額一致的收據應顯示綠燈。",
+      "schema_name": "receipt",
+      "expected_overall_level": "green",
+      "predicted_overall_level": "green",
+      "expected_issues": [],
+      "predicted_issues": [],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-invalid-date",
+      "description": "不存在的收據日期應顯示紅燈。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "date.parse",
+          "level": "red",
+          "field_paths": [
+            "receipt_date"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "date.parse",
+          "level": "red",
+          "field_paths": [
+            "receipt_date"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-missing-merchant",
+      "description": "店家名稱是收據的必填欄位。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "merchant_name"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "merchant_name"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-missing-line-items",
+      "description": "收據明細不可為空，且無法核對小計。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "line_items"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "required.list",
+          "level": "red",
+          "field_paths": [
+            "line_items"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-invalid-quantity",
+      "description": "無法解析的數量應為紅燈，且該列乘法只能標記待確認。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.quantity"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.quantity"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-missing-line-total",
+      "description": "缺少明細金額時，必填與相依金額核對都要清楚呈現。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.line_total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "yellow",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "required.value",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.line_total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-line-and-subtotal-mismatch",
+      "description": "明細金額不等於數量乘單價，且連帶造成小計不一致時應顯示兩項紅燈。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.receipt_line",
+          "level": "red",
+          "field_paths": [
+            "line_items.0.quantity",
+            "line_items.0.unit_price",
+            "line_items.0.line_total"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-subtotal-and-total-mismatch",
+      "description": "錯誤小計會同時破壞明細加總與應付總額。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "red",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "red",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "red",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-total-mismatch",
+      "description": "應付總額與小計、稅額、折扣及費用計算不一致應顯示紅燈。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "red",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "red",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-missing-subtotal",
+      "description": "缺少小計時應以黃燈表示三項無法完成的判斷。",
+      "schema_name": "receipt",
+      "expected_overall_level": "yellow",
+      "predicted_overall_level": "yellow",
+      "expected_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_subtotal",
+          "level": "yellow",
+          "field_paths": [
+            "line_items",
+            "subtotal"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    },
+    {
+      "case_id": "receipt-invalid-optional-tax",
+      "description": "有填但無法解析的稅額應為紅燈，總額核對則標記待確認。",
+      "schema_name": "receipt",
+      "expected_overall_level": "red",
+      "predicted_overall_level": "red",
+      "expected_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "tax"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "predicted_issues": [
+        {
+          "rule_id": "amount.parse",
+          "level": "red",
+          "field_paths": [
+            "tax"
+          ]
+        },
+        {
+          "rule_id": "amount.receipt_total",
+          "level": "yellow",
+          "field_paths": [
+            "subtotal",
+            "tax",
+            "discount",
+            "fees",
+            "total"
+          ]
+        }
+      ],
+      "missing_issues": [],
+      "unexpected_issues": [],
+      "passed": true
+    }
+  ]
+}
