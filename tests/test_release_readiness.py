@@ -19,8 +19,17 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert completed.returncode == 0
     assert report["ready_for_manual_handoff"] is True
     assert report["missing_files"] == []
+    assert report["expected_release_version"] == "1.0.0"
+    assert report["project_version"] == "1.0.0"
+    assert report["locked_project_versions"] == ["1.0.0"]
+    assert report["release_version_issues"] == []
     assert report["missing_readme_markers"] == []
+    assert report["missing_ci_workflow_markers"] == []
+    assert report["forbidden_ci_workflow_markers"] == []
+    assert report["missing_dependabot_markers"] == []
+    assert report["decision_evaluation_issues"] == []
     assert report["missing_remote_setup_markers"] == []
+    assert report["forbidden_remote_setup_markers"] == []
     assert report["missing_public_safety_markers"] == []
     assert report["private_path_markers"] == []
     assert report["missing_secret_placeholders"] == []

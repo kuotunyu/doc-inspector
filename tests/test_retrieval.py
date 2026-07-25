@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-import torch
+import pytest
+
+
+torch = pytest.importorskip(
+    "torch",
+    reason="需要安裝 local-retrieval extra 才執行視覺檢索測試",
+)
 
 from doc_inspector.config import AppSettings
 from doc_inspector.retrieval import memory_efficient_maxsim, retrieval_metrics
