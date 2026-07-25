@@ -7,11 +7,12 @@
 - Hugging Face Space：`https://huggingface.co/spaces/steven0226/doc-inspector`
 - Public live demo：`https://steven0226-doc-inspector.hf.space`
 
-截至 2026-07-24，GitHub 主倉與 Hugging Face Docker Space 均已發布；Space
+截至 2026-07-25，GitHub 主倉與 Hugging Face Docker Space 均已發布；Space
 已完成 Private 合成範例／Gemini／JSON／Excel 全流程驗收並切換 Public。
 
 發布順序固定為 **GitHub 主倉 → Hugging Face 部署鏡像**。GitHub 保存主要
-程式碼與開發歷史；Hugging Face Space 使用同一份已驗收內容建置公開服務。
+程式碼與開發歷史；Hugging Face Space 使用從 GitHub 對應 commit 匯出的同一份
+已驗收 source snapshot 建置公開服務，兩邊不要求共享 Git commit history。
 這是本專案唯一的遠端發布、私人驗收與復原清單；容器原理與本機啟動方式另見
 [DEPLOYMENT.md](../DEPLOYMENT.md)。協作代理不會代為執行 Git、登入帳號、
 建立遠端或設定 Secrets。
@@ -24,16 +25,18 @@
 Set-Location '<專案資料夾>'
 uv lock --check
 uv run python scripts/verify_deployment.py
-uv run python scripts/verify_release.py
 uv run --all-extras pytest --cov=doc_inspector
-uv build
+uv build --clear --no-build-isolation
+uv run python scripts/verify_distribution.py
+uv run python scripts/verify_release.py
 ```
 
 全部成功才繼續。`verify_release.py` 不讀取 `.env` 真值，也不連線到外部服務。
 
 預期結果：
 
-- dependency lock 無漂移，118 項測試通過且總 coverage 為 89%。
+- dependency lock 無漂移；全 extras 為 126 項測試通過、coverage 89%，
+  GitHub Actions 的 base dependency 路徑為 123 passed、1 skipped、coverage 87%。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。
@@ -87,7 +90,7 @@ git init -b main
 
 逐項確認 `git status --short` 沒有 `.env`、真實文件、模型權重、benchmark、
 outputs 或 logs。若目前變更尚未提交，依功能拆分正體中文 Conventional
-Commits。首版已由維護者建立為本機 commit `1dee3b4`；後續精簡應另作小型
+Commits。首版已由維護者建立為公開 commit `77b2e80`；後續精簡應另作小型
 commit，不改寫首版歷史。
 
 確認所有待發布變更都已提交後，設定實際遠端：
@@ -116,31 +119,50 @@ git push -u origin main
 Space 也是 Git repository，每次 push 後會自動重新建置與啟動：
 [Spaces Overview](https://huggingface.co/docs/hub/main/spaces-overview)。
 
-## 4. 將 GitHub 已驗收版本推到 Space
+## 4. 將 GitHub 已驗收版本同步到 Space
 
-先在 Hugging Face 的 Access Tokens 頁建立具備該 Space 寫入權限的 token，並在
-本機安全登入；token 不要貼到聊天、命令歷史或 repository。接著在專案根目錄
-加入第二個 remote：
-
-```powershell
-git remote add hf https://huggingface.co/spaces/steven0226/doc-inspector
-git fetch hf main
-```
-
-全新 Space 會有平台產生的初始 commit。**只有在確認 remote URL 正確、Space
-是剛建立且沒有要保留的內容時**，才用下列一次性命令，以本機已驗收內容取代
-初始骨架：
+先在 Hugging Face 的 Access Tokens 頁建立具備該 Space 寫入權限的 token，並用
+官方 `hf` CLI 安全登入；token 不要貼到聊天、命令歷史或 repository：
 
 ```powershell
-git push --force-with-lease hf main:main
+uvx --from huggingface_hub hf auth whoami
 ```
 
-第一次對齊後，日後更新使用一般推送，不再強制：
+本專案的公開文件含 PNG。未設定 Xet 的一般 `git push` 會被 Hugging Face 的
+binary policy 拒絕；直接對專案根目錄執行 `hf upload` 又可能把 `.git`、
+`.venv` 或本機 cache 一起掃進去。因此固定從 **GitHub 已推送且工作目錄乾淨的
+HEAD** 建立 source-only staging directory，再交給支援 Xet 的官方 CLI：
 
 ```powershell
-git push origin main
-git push hf main:main
+git status --short
+
+$hfStage = Join-Path $env:TEMP ("doc-inspector-hf-" + [guid]::NewGuid().ToString("N"))
+New-Item -ItemType Directory -Path $hfStage | Out-Null
+
+git archive --format=zip --output (Join-Path $hfStage "repo.zip") HEAD
+Expand-Archive `
+  -LiteralPath (Join-Path $hfStage "repo.zip") `
+  -DestinationPath (Join-Path $hfStage "repo")
+
+(Get-ChildItem -LiteralPath (Join-Path $hfStage "repo") -Recurse -File |
+  Measure-Object).Count
+
+uvx --from huggingface_hub hf upload `
+  steven0226/doc-inspector `
+  (Join-Path $hfStage "repo") `
+  . `
+  --repo-type=space `
+  --commit-message="deploy: 同步已驗收 GitHub 版本"
 ```
+
+第一行 `git status --short` 必須沒有輸出；若有未提交變更，先停止並處理 GitHub
+主倉。檔案數是人工 sanity check，不應突然出現數萬筆；`git archive HEAD`
+天然排除 `.git`、未追蹤檔與被忽略的本機資料。成功時 CLI 會顯示 `Uploaded`
+與 Hugging Face commit URL。
+
+這個 Space 已經完成初始建立，後續每次更新都重複上述 archive/upload 流程；
+不要再對 Space 使用 force push，也不要直接上傳專案根目錄。發布後到 Space
+的 **Files** 檢查 source snapshot，再等待 Docker build 顯示 **Running**。
 
 ## 5. 設定 Space，不把金鑰提交到 Git
 
@@ -211,3 +233,62 @@ uv run python scripts/check_live_space.py `
 2. 從 Space Settings 移除舊 Secrets。
 3. 清理可能含秘密的遠端紀錄，再設定新金鑰。
 4. 重新跑私人驗收；通過前不要切回 Public。
+
+## 8. Phase 7 GitHub 工程可信度設定
+
+以下操作需要 repository owner 登入 GitHub；本機檔案無法代替遠端設定。
+
+### 確認 CI
+
+1. 開啟 repository 的 **Actions**。
+2. 確認 `CI` 在 `ubuntu-latest`、`windows-latest` 都通過。
+3. 若 Actions 尚未啟用，按下啟用按鈕後重新執行 workflow。
+
+CI 不需要 secrets，也不會呼叫模型 API。
+
+### 啟用 CodeQL default setup
+
+1. 進入 **Settings → Security → Advanced Security**。
+2. 在 **CodeQL analysis** 選擇 **Set up → Default**。
+3. 選擇 Python 並啟用。
+
+本專案採 GitHub 建議的 default setup，不另提交 advanced CodeQL workflow，避免同時存在兩份 CodeQL workflow。
+
+### 啟用供應鏈與秘密保護
+
+在 **Settings → Security → Advanced Security** 確認：
+
+- Dependabot alerts。
+- Dependabot security updates。
+- Secret scanning。
+- Push protection。
+- Private vulnerability reporting。
+
+`.github/dependabot.yml` 會每週檢查 uv、GitHub Actions 與 Docker 更新；安全更新仍以 GitHub 遠端設定為準。
+
+### 設定 main branch 保護
+
+在 **Settings → Branches** 或 **Rules → Rulesets** 為 `main` 建立規則：
+
+- Require a pull request before merging。
+- Require status checks to pass。
+- 指定兩個 `CI / Python 3.11` matrix checks。
+- Require branches to be up to date before merging。
+- Block force pushes。
+- Block deletions。
+
+如果是單人作品集，可先不要求 approval 人數，但仍保留 Pull Request 與 CI gate。
+
+### 建立 v1.0.0 Release
+
+只有在 Phase 7 作者驗收、CI 與安全掃描都通過後才執行：
+
+1. 確認 `main` 是要發布的 commit。
+2. 建立 annotated tag `v1.0.0`。
+3. 推送 tag。
+4. 在 GitHub **Releases → Draft a new release** 選擇 `v1.0.0`。
+5. Release title 使用 `v1.0.0｜文件預檢所`。
+6. 內容複製 [`docs/RELEASE_NOTES_v1.0.0.md`](RELEASE_NOTES_v1.0.0.md)，移除最上方候選提示。
+7. 發布後重新確認 Live Demo 與 README 連結。
+
+Tag 與 Release 都是公開且有外部影響的操作，必須由作者人工執行。

@@ -11,11 +11,24 @@ license: mit
 
 # doc-inspector｜文件預檢所
 
+[![CI](https://github.com/kuotunyu/doc-inspector/actions/workflows/ci.yml/badge.svg)](https://github.com/kuotunyu/doc-inspector/actions/workflows/ci.yml)
+[![Python 3.11](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-0B6B69.svg)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Hugging%20Face-FFD21E?logo=huggingface&logoColor=111)](https://steven0226-doc-inspector.hf.space)
+
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
 > 目前狀態：Phase 0–6 已完成工程、驗證及維護者整體驗收；[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 均已發布。這是送件前預檢工具，不取代主管機關的正式資格審查。
 
 **線上試用：[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)**
+
+## 專案導覽
+
+- 想先看成果：開啟 [Live Demo](https://steven0226-doc-inspector.hf.space)，載入紅燈範例並查看修正清單。
+- 想了解設計與取捨：閱讀 [Case Study](docs/CASE_STUDY.md)。
+- 想檢查品質證據：閱讀 [決策層產品評估](docs/DECISION_EVALUATION.md) 與 machine-readable [evaluation report](docs/assets/decision-evaluation.json)。
+- 想在本機重現：依照下方快速開始與測試指令執行。
+- 想參與改善：參考 [CONTRIBUTING.md](CONTRIBUTING.md)、[SECURITY.md](SECURITY.md) 與 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 能做什麼
 
@@ -124,10 +137,29 @@ Windows 使用官方 CUDA 12.8 wheel 與 SDPA，不使用 `flash-attn`、vLLM �
 uv sync --all-extras --all-groups
 uv run --all-extras pytest --cov=doc_inspector
 uv lock --check
-uv build
+uv run python scripts/run_product_evaluation.py --check
+uv run python scripts/verify_public_docs.py
+uv build --clear --no-build-isolation
+uv run python scripts/verify_distribution.py
+uv run python scripts/verify_release.py
 ```
 
-2026-07-24 完整驗收與發布 gate：**118 passed，總 coverage 89%**；wheel 與 sdist 均成功建立。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI。付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-25 Phase 7 release candidate gate：**126 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **123 passed、1 skipped、coverage 87%**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+
+公開 repository 的 `CI` 會在 `windows-latest` 與 `ubuntu-latest` 使用 Python 3.11、locked base／dev dependencies（包含 build backend），執行核心離線測試、85% coverage 下限、決策層產品評估、compileall、wheel／sdist build、archive hygiene、隔離 wheel 安裝 smoke 與 secret-safe release verifier。CI 不安裝可選 GPU extra；`tests/test_retrieval.py` 會明確標示 skip，也不注入或呼叫任何模型 API key。本機以 `--all-extras` 執行時仍會完整驗證檢索計分。
+
+## 決策層產品評估
+
+24 個人工定義的 regression cases 以固定 synthetic extraction 為輸入，涵蓋兩個 schema、三種燈號與 13 個非綠燈 rule ID。每個案例都明確列出欄位 mutation、預期整體燈號與 `rule_id + level + field_paths`，不是由目前規則輸出自動產生。
+
+| 指標 | 結果 |
+|---|---:|
+| Exact case match | 24 / 24 |
+| 整體燈號 accuracy | 100% |
+| Issue precision／recall | 100%／100% |
+| 紅燈／黃燈 issue recall | 100%／100% |
+
+這些數字只證明固定輸入下的**決策層 contract**，不代表 OCR、VLM 或真實文件端到端準確率。評估方法、案例分布與 error analysis 見 [決策層產品評估](docs/DECISION_EVALUATION.md)。
 
 ## XFUND 評估
 
@@ -235,3 +267,7 @@ docker run --rm -p 7861:7861 `
 - XFUND 指標是嚴格 exact match，不能直接等同真實案件可用率。
 - 視覺檢索模型主要以英文訓練；目前中文結果是單一固定資料集的零樣本證據。
 - 公開 live demo 使用維護者設定的雲端 API 配額；程序內共用每小時 60 次上限只能降低一般濫用，不能取代供應商端硬性支出上限。
+
+## 參與與安全
+
+歡迎以 Issue 或 Pull Request 提出可重現的改善。請先閱讀 [貢獻指南](CONTRIBUTING.md)；安全問題請依 [Security Policy](SECURITY.md) 使用 Private vulnerability reporting，不要在公開 Issue 放入 API key、真實個資、完整文件或 raw provider response。
