@@ -1,15 +1,24 @@
 [build-system]
-requires = ["hatchling>=1.27"]
+requires = ["hatchling>=1.27,<2.0"]
 build-backend = "hatchling.build"
 
 [project]
 name = "doc-inspector"
-version = "0.1.0"
+version = "1.0.0"
 description = "政府補助申請表單與收據的智慧抽取及送件前預檢工具"
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = { file = "LICENSE" }
 authors = [{ name = "doc-inspector contributors" }]
+keywords = ["document-ai", "document-validation", "gradio", "taiwan"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Office/Business",
+]
 dependencies = [
   "gradio>=6.0,<7.0",
   "langchain>=1.0,<2.0",
@@ -22,6 +31,13 @@ dependencies = [
   "xlsxwriter>=3.2,<4.0",
 ]
 
+[project.urls]
+Homepage = "https://github.com/kuotunyu/doc-inspector"
+Repository = "https://github.com/kuotunyu/doc-inspector"
+Documentation = "https://github.com/kuotunyu/doc-inspector#readme"
+"Issue Tracker" = "https://github.com/kuotunyu/doc-inspector/issues"
+"Live Demo" = "https://steven0226-doc-inspector.hf.space"
+
 [project.optional-dependencies]
 local-retrieval = [
   "accelerate>=1.12,<2.0",
@@ -31,6 +47,7 @@ local-retrieval = [
 
 [dependency-groups]
 dev = [
+  "hatchling>=1.27,<2.0",
   "playwright>=1.55,<2.0",
   "pytest>=8.3,<10.0",
   "pytest-cov>=6.0,<8.0",
