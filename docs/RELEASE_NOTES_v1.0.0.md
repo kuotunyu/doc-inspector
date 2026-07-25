@@ -1,6 +1,6 @@
-# v1.0.0 Release Notes（候選）
+# v1.0.0 Release Notes
 
-> 這是待維護者完成 GitHub 遠端安全設定與最終驗收後使用的 release draft；目前尚未建立 `v1.0.0` tag 或 GitHub Release。
+> 發布於 2026-07-25。Windows／Ubuntu CI 於 `main` 全綠，發布包驗證與隔離 wheel 安裝 smoke 通過。
 
 ## 文件預檢所
 

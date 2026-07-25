@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-25
+
 ### Added
 
 - Windows／Ubuntu、Python 3.11 的離線 GitHub Actions CI。
@@ -13,6 +15,11 @@
 ### Changed
 
 - Release verifier 同步檢查 CI、評估與開源治理產物。
+
+### Fixed
+
+- CI 在 Linux 補裝 `fonts-noto-cjk`，修正 demo 產圖找不到正體中文字型導致的測試失敗。
+- 離線 wheel smoke 前預熱 runtime 依賴快取，修正冷快取環境下 transitive 依賴解析失敗。
 
 ## [0.1.0] - 2026-07-24
 
