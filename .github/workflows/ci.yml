@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline-quality:
+    name: Python 3.11 · ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    env:
+      PYTHONUTF8: "1"
+
+    steps:
+      - name: 下載原始碼
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: 安裝 uv 與 Python 3.11
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: uv.lock
+
+      - name: 確認 lockfile 未漂移
+        run: uv lock --check
+
+      - name: 依 lockfile 安裝離線測試依賴
+        run: uv sync --locked --all-groups
+
+      - name: 執行核心離線測試與 coverage gate
+        run: uv run --frozen pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
+
+      - name: 檢查 Python 語法
+        run: uv run --frozen python -m compileall -q src scripts tests
+
+      - name: 驗證決策層產品評估
+        run: uv run --frozen python scripts/run_product_evaluation.py --check
+
+      - name: 驗證公開文件連結與隱私邊界
+        run: uv run --frozen python scripts/verify_public_docs.py
+
+      - name: 建立 wheel 與 sdist
+        run: uv build --clear --no-build-isolation
+
+      - name: 驗證發布包內容與 wheel 安裝
+        run: uv run --frozen python scripts/verify_distribution.py
+
+      - name: 驗證公開發布內容
+        run: uv run --frozen python scripts/verify_release.py
