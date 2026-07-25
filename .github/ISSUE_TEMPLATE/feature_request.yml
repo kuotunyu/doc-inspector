@@ -1,0 +1,35 @@
+name: Feature request
+description: 提議新的使用情境、schema、規則或工程改善
+title: "[Feature] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: user_problem
+    attributes:
+      label: 使用者問題
+      description: 請先描述問題，不要只描述想要的功能。
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 建議方案
+      description: 說明預期流程、輸入與輸出。
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 替代方案與取捨
+  - type: checkboxes
+    id: impact
+    attributes:
+      label: 可能影響
+      options:
+        - label: 新增或改變 schema
+        - label: 新增付費 API 或增加成本
+        - label: 保存文件或使用者資料
+        - label: 需要 GPU 或大型模型
+        - label: 改變 JSON／Excel 匯出格式
+

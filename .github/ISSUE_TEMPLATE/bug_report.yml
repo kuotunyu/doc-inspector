@@ -1,0 +1,50 @@
+name: Bug report
+description: 回報可重現的功能、部署或介面問題
+title: "[Bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        請勿貼上 API key、真實個資、完整文件或 raw provider response。
+  - type: textarea
+    id: problem
+    attributes:
+      label: 問題
+      description: 預期行為與實際行為是什麼？
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 最小重現步驟
+      placeholder: |
+        1. 選擇…
+        2. 點擊…
+        3. 看到…
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: 環境
+      options:
+        - Hugging Face live demo
+        - Windows 本機
+        - Linux 本機
+        - Docker
+        - 其他
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version／commit
+      description: 若知道，請填 tag 或 commit SHA。
+  - type: textarea
+    id: logs
+    attributes:
+      label: 去識別後的錯誤訊息
+      render: shell
+
