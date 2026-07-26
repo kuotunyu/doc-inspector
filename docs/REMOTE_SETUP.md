@@ -38,8 +38,8 @@ uv run python scripts/verify_release.py
 
 預期結果：
 
-- dependency lock 無漂移；全 extras 為 148 項測試通過、coverage 89%，
-  GitHub Actions 的 base dependency 路徑為 145 passed、1 skipped、coverage 87%。
+- dependency lock 無漂移；全 extras 為 149 項測試通過、coverage 89%，
+  GitHub Actions 的 base dependency 路徑為 146 passed、1 skipped、coverage 87%。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。
@@ -189,26 +189,67 @@ git status --short
 $hfStage = Join-Path $env:TEMP ("doc-inspector-hf-" + [guid]::NewGuid().ToString("N"))
 New-Item -ItemType Directory -Path $hfStage | Out-Null
 
-git archive --format=zip --output (Join-Path $hfStage "repo.zip") HEAD
+git -c core.autocrlf=false archive `
+  --format=zip `
+  --output (Join-Path $hfStage "repo.zip") `
+  HEAD
 Expand-Archive `
   -LiteralPath (Join-Path $hfStage "repo.zip") `
   -DestinationPath (Join-Path $hfStage "repo")
 
-(Get-ChildItem -LiteralPath (Join-Path $hfStage "repo") -Recurse -File |
-  Measure-Object).Count
+$repoRoot = Join-Path $hfStage "repo"
+$repoPrefix = $repoRoot.TrimEnd('\') + '\'
+$trackedFiles = @(git ls-tree -r --name-only HEAD)
+$archiveFiles = @(
+  Get-ChildItem -LiteralPath $repoRoot -Recurse -File |
+    ForEach-Object {
+      $_.FullName.Substring($repoPrefix.Length).Replace('\', '/')
+    }
+)
+
+$pathDiff = @(
+  Compare-Object `
+    ($trackedFiles | Sort-Object) `
+    ($archiveFiles | Sort-Object)
+)
+if ($pathDiff) {
+  $pathDiff
+  throw 'Archive 與 Git HEAD 的檔案清單不一致。'
+}
+
+$byteMismatches = @(
+  foreach ($path in $trackedFiles) {
+    $expectedBlob = (git rev-parse "HEAD:$path").Trim()
+    $archivePath = Join-Path $repoRoot ($path.Replace('/', '\'))
+    $actualBlob = (git hash-object --no-filters -- $archivePath).Trim()
+    if ($expectedBlob -ne $actualBlob) {
+      $path
+    }
+  }
+)
+if ($byteMismatches) {
+  $byteMismatches
+  throw 'Archive 內容不是 Git HEAD 的 byte-exact blob。'
+}
+
+"Archive verified: $($archiveFiles.Count) byte-exact files"
 
 uvx --from huggingface_hub hf upload `
   steven0226/doc-inspector `
-  (Join-Path $hfStage "repo") `
+  $repoRoot `
   . `
   --repo-type=space `
   --commit-message="deploy: 同步已驗收 GitHub 版本"
 ```
 
 第一行 `git status --short` 必須沒有輸出；若有未提交變更，先停止並處理 GitHub
-主倉。檔案數是人工 sanity check，不應突然出現數萬筆；`git archive HEAD`
-天然排除 `.git`、未追蹤檔與被忽略的本機資料。成功時 CLI 會顯示 `Uploaded`
-與 Hugging Face commit URL。
+主倉。`git -c core.autocrlf=false ...` 只對這一次 archive 覆寫 Git 設定，避免
+Windows 的 CRLF 工作目錄設定改寫 archive 內的文字檔；否則部署雖可執行，
+仍無法通過與 GitHub blob 的 byte-exact source gate。上傳前的兩段 preflight
+會先確認檔案清單相同，再以 `git hash-object --no-filters` 驗證每個 archive
+檔案的原始 bytes 對應 HEAD blob；任一差異都會停止。`git archive HEAD` 天然
+排除 `.git`、未追蹤檔與被忽略的本機資料。成功時 CLI 會顯示 `Uploaded` 與
+Hugging Face commit URL。
 
 這個 Space 已經完成初始建立，後續每次更新都重複上述 archive/upload 流程；
 不要再對 Space 使用 force push，也不要直接上傳專案根目錄。發布後到 Space
@@ -225,8 +266,11 @@ uv run python scripts/check_live_space.py `
 
 第一個報告只比對固定的 runtime／build／dependency 關鍵檔，不宣稱全
 repository snapshot 等同；必須為 `critical_source_match=true` 且
-`mismatched_files=[]`。第二個報告必須為 `healthy=true`。兩者都只讀取公開
-HTTPS 檔案，不使用 token、不上傳文件，也不呼叫模型。
+`mismatched_files=[]`。若失敗時 `line_ending_only_mismatches` 有值但
+`content_mismatches=[]`，代表檔案內容只差 CRLF／LF，應回到上方確認 archive
+使用 `-c core.autocrlf=false`，不可降低 byte-exact gate。第二個報告必須為
+`healthy=true`。兩者都只讀取公開 HTTPS 檔案，不使用 token、不上傳文件，也
+不呼叫模型。
 
 ## 5. 設定 Space，不把金鑰提交到 Git
 

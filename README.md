@@ -36,7 +36,7 @@ license: mit
 |---|---|
 | 公開產品 | [Live Demo](https://steven0226-doc-inspector.hf.space) 可載入不含真實個資的紅／黃／綠合成案例 |
 | 跨平台工程 | GitHub Actions 在 Windows／Ubuntu、Python 3.11 執行 locked install、coverage、部署、文件與發布包 gates；可用完整 commit SHA 唯讀驗證對應 CI |
-| 本機 release gate | 148 passed、coverage 89%；base CI 等價路徑 145 passed、1 skipped、coverage 87% |
+| 本機 release gate | 149 passed、coverage 89%；base CI 等價路徑 146 passed、1 skipped、coverage 87% |
 | 產品決策層 | 24 / 24 人工定義 regression cases exact match；不冒充 OCR／VLM 端到端準確率 |
 | UI 品質 | 1920／1440／390 px 無水平溢出；互動目標至少 44 px；light／dark 系統偏好最低文字對比 6.89:1 |
 | 發布包 | `1.0.0` wheel／sdist 通過 archive hygiene、作者 metadata 與全新環境離線安裝 smoke |
@@ -157,7 +157,7 @@ uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-2026-07-26 v1.0.0 本機 release gate：**148 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **145 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-26 v1.0.0 本機 release gate：**149 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **146 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
 
 公開 repository 的 `CI` 會在 `windows-latest` 與 `ubuntu-latest` 使用 Python 3.11、locked base／dev dependencies（包含 build backend），執行核心離線測試、85% coverage 下限、決策層產品評估、compileall、wheel／sdist build、archive hygiene、隔離 wheel 安裝 smoke 與 secret-safe release verifier。CI 不安裝可選 GPU extra；`tests/test_retrieval.py` 會明確標示 skip，也不注入或呼叫任何模型 API key。本機以 `--all-extras` 執行時仍會完整驗證檢索計分。
 

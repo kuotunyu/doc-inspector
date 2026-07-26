@@ -53,7 +53,8 @@ REMOTE_SETUP_MARKERS = (
     "GitHub 主倉 → Hugging Face 部署鏡像",
     "https://github.com/kuotunyu/doc-inspector",
     "https://huggingface.co/spaces/steven0226/doc-inspector",
-    "git archive --format=zip",
+    "git -c core.autocrlf=false archive",
+    "git hash-object --no-filters",
     "uvx --from huggingface_hub hf upload",
     "不要再對 Space 使用 force push",
     "PUBLIC_MAX_REQUESTS_PER_HOUR=60",
@@ -67,12 +68,14 @@ REMOTE_SETUP_MARKERS = (
     "scripts/check_github_ci.py",
     "scripts/check_github_contributors.py",
     "scripts/check_space_snapshot.py",
+    "line_ending_only_mismatches",
     "https://github.com/kuotunyu/doc-inspector/graphs/contributors",
 )
 
 REMOTE_SETUP_FORBIDDEN_MARKERS = (
     "git push hf",
     "git push --force-with-lease hf",
+    "git archive --format=zip",
 )
 
 README_MARKERS = (
@@ -92,7 +95,7 @@ README_MARKERS = (
     "## 目前限制",
     "v1.0.0 已發布",
     "Hugging Face Docker Space",
-    "148 passed，總 coverage 89%",
+    "149 passed，總 coverage 89%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",

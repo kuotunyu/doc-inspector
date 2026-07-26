@@ -85,6 +85,8 @@ def compare_critical_source(
 
     matched_files: list[str] = []
     mismatched_files: list[str] = []
+    line_ending_only_mismatches: list[str] = []
+    content_mismatches: list[str] = []
     for path in CRITICAL_FILES:
         encoded_path = quote(path, safe="/")
         github_url = (
@@ -109,6 +111,13 @@ def compare_critical_source(
             matched_files.append(path)
         else:
             mismatched_files.append(path)
+            if github_payload.replace(b"\r\n", b"\n") == space_payload.replace(
+                b"\r\n",
+                b"\n",
+            ):
+                line_ending_only_mismatches.append(path)
+            else:
+                content_mismatches.append(path)
 
     return {
         "verified": True,
@@ -120,6 +129,8 @@ def compare_critical_source(
         "critical_file_count": len(CRITICAL_FILES),
         "matched_file_count": len(matched_files),
         "mismatched_files": mismatched_files,
+        "line_ending_only_mismatches": line_ending_only_mismatches,
+        "content_mismatches": content_mismatches,
         "critical_source_match": not mismatched_files,
         "uses_authentication": False,
         "reads_env_truth": False,

@@ -43,6 +43,8 @@ def test_matching_runtime_files_pass_without_authentication_or_writes() -> None:
     assert report["critical_source_match"] is True
     assert report["matched_file_count"] == len(check_space_snapshot.CRITICAL_FILES)
     assert report["mismatched_files"] == []
+    assert report["line_ending_only_mismatches"] == []
+    assert report["content_mismatches"] == []
     assert len(requests) == len(check_space_snapshot.CRITICAL_FILES) * 2
     assert all(request.full_url.startswith("https://") for request in requests)
     assert report["uses_authentication"] is False
@@ -73,6 +75,35 @@ def test_mismatched_file_is_reported_by_path_only() -> None:
 
     assert report["critical_source_match"] is False
     assert report["mismatched_files"] == [mismatched_path]
+    assert report["line_ending_only_mismatches"] == []
+    assert report["content_mismatches"] == [mismatched_path]
+    assert github_payload.decode() not in str(report)
+    assert space_payload.decode() not in str(report)
+
+
+def test_line_ending_only_mismatch_is_diagnosed_without_payloads() -> None:
+    mismatched_path = "src/doc_inspector/ui.py"
+    github_payload = b"first line\nsecond line\n"
+    space_payload = b"first line\r\nsecond line\r\n"
+
+    def opener(request: object, **_: object) -> FakeResponse:
+        payload = github_payload
+        if (
+            "huggingface.co" in request.full_url
+            and request.full_url.endswith(mismatched_path)
+        ):
+            payload = space_payload
+        return FakeResponse(payload)
+
+    report = check_space_snapshot.compare_critical_source(
+        EXPECTED_SHA,
+        opener=opener,
+    )
+
+    assert report["critical_source_match"] is False
+    assert report["mismatched_files"] == [mismatched_path]
+    assert report["line_ending_only_mismatches"] == [mismatched_path]
+    assert report["content_mismatches"] == []
     assert github_payload.decode() not in str(report)
     assert space_payload.decode() not in str(report)
 
