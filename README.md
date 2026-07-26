@@ -18,7 +18,7 @@ license: mit
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
-> 目前狀態：Phase 0–6 已完成工程、驗證及維護者整體驗收；[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 均已發布。這是送件前預檢工具，不取代主管機關的正式資格審查。
+> 目前狀態：**v1.0.0 已發布**；Phase 0–7 的本機工程與 Windows／Ubuntu CI 均已通過，[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 可直接檢視。這是送件前預檢工具，不取代主管機關的正式資格審查。
 
 **線上試用：[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)**
 
@@ -29,6 +29,17 @@ license: mit
 - 想檢查品質證據：閱讀 [決策層產品評估](docs/DECISION_EVALUATION.md) 與 machine-readable [evaluation report](docs/assets/decision-evaluation.json)。
 - 想在本機重現：依照下方快速開始與測試指令執行。
 - 想參與改善：參考 [CONTRIBUTING.md](CONTRIBUTING.md)、[SECURITY.md](SECURITY.md) 與 [CHANGELOG.md](CHANGELOG.md)。
+
+## 可驗證成果
+
+| 證據 | 目前結果 |
+|---|---|
+| 公開產品 | [Live Demo](https://steven0226-doc-inspector.hf.space) 可載入不含真實個資的紅／黃／綠合成案例 |
+| 跨平台工程 | GitHub Actions 在 Windows／Ubuntu、Python 3.11 執行 locked install、coverage、部署、文件與發布包 gates；可用完整 commit SHA 唯讀驗證對應 CI |
+| 本機 release gate | 148 passed、coverage 89%；base CI 等價路徑 145 passed、1 skipped、coverage 87% |
+| 產品決策層 | 24 / 24 人工定義 regression cases exact match；不冒充 OCR／VLM 端到端準確率 |
+| UI 品質 | 1920／1440／390 px 無水平溢出；互動目標至少 44 px；light／dark 系統偏好最低文字對比 6.89:1 |
+| 發布包 | `1.0.0` wheel／sdist 通過 archive hygiene、作者 metadata 與全新環境離線安裝 smoke |
 
 ## 能做什麼
 
@@ -61,17 +72,17 @@ flowchart LR
 
 ## 介面預覽
 
-以下畫面由 Playwright 在本機擷取；介面採低彩度 refined civic desk，整頁只讓主要工作台形成單一浮起表面，並統一上傳、選單、告知、狀態、分頁與下載控制。桌面把標題與四步指引合併為同一 masthead，文件來源與安全範例直接放在上傳區；1440px 工作台從 y=230 開始，390px 手機則從 y=442 開始。流程輔助文字與欄位標籤至少 17px，空結果表格會明確說明資料尚未產生。主要按鈕旁持續顯示等待、處理中、錯誤或完成狀態；雲端同意預設未勾選，因此驗證流程沒有送出 API 請求。
+以下畫面由 Playwright 在本機擷取；介面採低彩度 refined civic desk，整頁只讓主要工作台形成單一浮起表面，並統一上傳、選單、告知、狀態、分頁與下載控制。桌面把標題與結果燈號合併為同一 masthead，文件來源與安全範例直接放在上傳區；1440px 工作台從 y=182 開始，390px 手機則從 y=366 開始。流程輔助文字與欄位標籤至少 18px，空結果表格會明確說明資料尚未產生。主要按鈕旁持續顯示等待、處理中、錯誤或完成狀態；雲端同意預設未勾選，因此驗證流程沒有送出 API 請求。瀏覽器 gate 也會分別模擬 light／dark 系統偏好，避免框架主題 token 讓淺色介面出現低對比文字。
 
 ![文件預檢所 desktop 介面](docs/assets/desktop.png)
 
 ## 模型選型與台灣生態系對照
 
-| 任務 | 台灣模型／生態系候選 | v0.1 實際基準 | 決策 |
+| 任務 | 台灣模型／生態系候選 | v1.0 實際基準 | 決策 |
 |---|---|---|---|
-| 文件結構抽取 | `taide-gemma3-12b`（Ollama） | `GEMINI_MODEL` 主力、`OPENAI_MODEL` 第二供應商 | v0.1 先驗證跨供應商 schema；模組可切換，地端生成留待同一評估集比較 |
-| 文字 embedding | `taide/embeddinggemma-GTAIDE-300m-2605` | `BAAI/bge-m3` 可作基準 | v0.1 沒有文字 RAG；日後加入時必須分別使用 query／document `prompt_name` |
-| Reranker | 尚無已驗證的本土 reranker | `BAAI/bge-reranker-v2-m3` | v0.1 未啟用；保留為未來 RAG 對照 |
+| 文件結構抽取 | `taide-gemma3-12b`（Ollama） | `GEMINI_MODEL` 主力、`OPENAI_MODEL` 第二供應商 | v1.0 先驗證跨供應商 schema；模組可切換，地端生成留待同一評估集比較 |
+| 文字 embedding | `taide/embeddinggemma-GTAIDE-300m-2605` | `BAAI/bge-m3` 可作基準 | v1.0 沒有文字 RAG；日後加入時必須分別使用 query／document `prompt_name` |
+| Reranker | 尚無已驗證的本土 reranker | `BAAI/bge-reranker-v2-m3` | v1.0 未啟用；保留為未來 RAG 對照 |
 | 視覺頁面檢索 | 尚無已驗證的台灣 ColVision 等價模型 | `vidore/colqwen2-v1.0-hf` | Transformers 原生版、BF16、SDPA；英文訓練模型在中文 XFUND 做零樣本評估 |
 
 雲端預設為 `gemini-3.5-flash-lite` 與 `gpt-5-mini`，但程式碼不寫死供應商模型 ID。模型現行能力於 2026-07-23 依官方文件確認；正式執行仍以 `.env` 為準。
@@ -135,8 +146,10 @@ Windows 使用官方 CUDA 12.8 wheel 與 SDPA，不使用 `flash-attn`、vLLM �
 
 ```powershell
 uv sync --all-extras --all-groups
-uv run --all-extras pytest --cov=doc_inspector
 uv lock --check
+uv run python scripts/verify_deployment.py
+uv run --all-extras pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
+uv run python -m compileall -q src scripts tests
 uv run python scripts/run_product_evaluation.py --check
 uv run python scripts/verify_public_docs.py
 uv build --clear --no-build-isolation
@@ -144,9 +157,11 @@ uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-2026-07-25 Phase 7 release candidate gate：**126 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **123 passed、1 skipped、coverage 87%**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-26 v1.0.0 本機 release gate：**148 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **145 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
 
 公開 repository 的 `CI` 會在 `windows-latest` 與 `ubuntu-latest` 使用 Python 3.11、locked base／dev dependencies（包含 build backend），執行核心離線測試、85% coverage 下限、決策層產品評估、compileall、wheel／sdist build、archive hygiene、隔離 wheel 安裝 smoke 與 secret-safe release verifier。CI 不安裝可選 GPU extra；`tests/test_retrieval.py` 會明確標示 skip，也不注入或呼叫任何模型 API key。本機以 `--all-extras` 執行時仍會完整驗證檢索計分。
+
+維護者推送後可用 `scripts/check_github_ci.py --expected-sha <完整 SHA>` 確認綠燈確實屬於該 commit，再用 `scripts/check_github_contributors.py` 確認作者歸屬；同步 Space 後，`scripts/check_space_snapshot.py --github-sha <完整 SHA>` 會逐位元比對固定的 runtime 關鍵檔。三者都只讀取公開 HTTPS 資源、不使用 token，也不放入預設離線 CI。
 
 ## 決策層產品評估
 

@@ -10,15 +10,16 @@
 ```powershell
 uv lock --check
 uv run python scripts/verify_deployment.py
+uv run --all-extras pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
+uv run python -m compileall -q src scripts tests
 uv run python scripts/run_product_evaluation.py --check
 uv run python scripts/verify_public_docs.py
-uv run --all-extras pytest --cov=doc_inspector
 uv build --clear --no-build-isolation
 uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-八個命令都成功後，才進入人工 Git 與遠端平台步驟。`verify_distribution.py` 只檢查乾淨 build 產物，並用 uv cache 在全新 virtual environment 離線安裝 wheel 與完整相依；`verify_release.py` 只讀取公開交付檔與空白設定範例。兩者都不讀取 `.env` 真值。
+九個命令都成功後，才進入人工 Git 與遠端平台步驟。`verify_distribution.py` 只檢查乾淨 build 產物，並用 uv cache 在全新 virtual environment 離線安裝 wheel 與完整相依；`verify_release.py` 只讀取公開交付檔與空白設定範例。兩者都不讀取 `.env` 真值。
 
 ## 本機驗證
 

@@ -14,7 +14,7 @@
 - 紅／黃／綠規則結果與 JSON／Excel 匯出。
 - 不含真實個資的 synthetic 綠／黃／紅 demo。
 - Windows／Ubuntu CI、coverage gate、reproducible build、archive hygiene、隔離 wheel 安裝 smoke 與 release verifier。
-- `1.0.0` wheel／sdist 具備 MIT、Python 版本、關鍵字與 GitHub／Live Demo 等公開 package metadata。
+- `1.0.0` wheel／sdist 具備作者 `kuotunyu`、MIT、Python 版本、關鍵字與 GitHub／Live Demo 等公開 package metadata。
 - 24 個離線決策層 regression cases，完整通過燈號與 issue contract。
 - 公開 Case Study、評估方法、安全政策與貢獻指南。
 

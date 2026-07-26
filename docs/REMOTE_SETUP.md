@@ -25,7 +25,10 @@
 Set-Location '<專案資料夾>'
 uv lock --check
 uv run python scripts/verify_deployment.py
-uv run --all-extras pytest --cov=doc_inspector
+uv run --all-extras pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
+uv run python -m compileall -q src scripts tests
+uv run python scripts/run_product_evaluation.py --check
+uv run python scripts/verify_public_docs.py
 uv build --clear --no-build-isolation
 uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
@@ -35,8 +38,8 @@ uv run python scripts/verify_release.py
 
 預期結果：
 
-- dependency lock 無漂移；全 extras 為 126 項測試通過、coverage 89%，
-  GitHub Actions 的 base dependency 路徑為 123 passed、1 skipped、coverage 87%。
+- dependency lock 無漂移；全 extras 為 148 項測試通過、coverage 89%，
+  GitHub Actions 的 base dependency 路徑為 145 passed、1 skipped、coverage 87%。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。
@@ -93,17 +96,64 @@ outputs 或 logs。若目前變更尚未提交，依功能拆分正體中文 Con
 Commits。首版已由維護者建立為公開 commit `77b2e80`；後續精簡應另作小型
 commit，不改寫首版歷史。
 
-確認所有待發布變更都已提交後，設定實際遠端：
+### 保持唯一 Contributor 身分
+
+建立任何 commit 前先確認：
+
+```powershell
+git config user.name
+git config user.email
+```
+
+電子郵件必須已綁定 GitHub 帳號 `kuotunyu`，或使用該帳號在 GitHub 設定頁提供
+的 noreply 地址；不要使用 bot、協作工具或第二個未綁定身分建立 commit，也
+不要在 commit message 保留其他身分的 `Co-authored-by` trailer。
+
+推送前檢查本次所有 commit 的作者與共同作者：
+
+```powershell
+git log origin/main..HEAD --format='%h  %an <%ae>'
+git log origin/main..HEAD --format='%B' |
+  Select-String -Pattern '^\s*Co-authored-by:' -CaseSensitive:$false
+```
+
+第一個命令的每一筆都必須是 `kuotunyu` 且 email 已綁定該帳號；第二個命令
+預期沒有輸出。若 GitHub 上出現 Dependabot 或其他 bot 建立的 PR，為維持唯一
+Contributor，**不要直接 merge、squash 或 rebase 該 PR**；先在本機重現必要
+更新、完整驗證，再由 `kuotunyu` 自己建立 commit。
+
+確認所有待發布變更都已提交後，先確認既有遠端再推送：
 
 ```powershell
 git branch -M main
-git remote add origin https://github.com/kuotunyu/doc-inspector.git
-git push -u origin main
+git remote -v
+git push origin main
 ```
 
-若 `origin already exists`，不要再新增；先看 `git remote -v`，確認它是否就是
-剛建立的 `doc-inspector`。GitHub 官方步驟見
+本專案的 `origin` 已建立，不要重複新增。只有 `git remote -v` 確認完全沒有
+`origin` 時，才執行
+`git remote add origin https://github.com/kuotunyu/doc-inspector.git`，並以
+`git push -u origin main` 建立 upstream。GitHub 官方步驟見
 [Adding locally hosted code to GitHub](https://docs.github.com/en/migrations/importing-source-code/using-the-command-line-to-import-source-code/adding-locally-hosted-code-to-github)。
+
+Push 完成後，以本機完整 HEAD 驗證「同一個 commit」的 GitHub push CI；不要
+只看先前某一次綠燈：
+
+```powershell
+$publishedHead = git rev-parse HEAD
+uv run python scripts/check_github_ci.py --expected-sha $publishedHead
+uv run python scripts/check_github_contributors.py
+```
+
+第一個報告必須同時為 `sha_matches=true`、`status=completed`、
+`conclusion=success`、`ci_passed=true`；若仍在 `queued`／`in_progress`，等待
+後重跑。第二個報告必須為 `sole_contributor=true`、`logins` 只有 `kuotunyu`
+且 `anonymous_contributor_count=0`。GitHub 官方說明 Contributors endpoint
+可能快取數小時
+（[List repository contributors](https://docs.github.com/en/rest/repos/repos#list-repository-contributors)）；
+若剛 push 後結果未更新，先等候再重跑，不要用刪除或改寫歷史來試誤。也可開啟
+[`kuotunyu/doc-inspector` Contributors](https://github.com/kuotunyu/doc-inspector/graphs/contributors)
+人工確認。任一 checker 失敗都先停止，不要建立或同步 Space archive。
 
 ## 3. 建立同名 Hugging Face Docker Space
 
@@ -163,6 +213,20 @@ uvx --from huggingface_hub hf upload `
 這個 Space 已經完成初始建立，後續每次更新都重複上述 archive/upload 流程；
 不要再對 Space 使用 force push，也不要直接上傳專案根目錄。發布後到 Space
 的 **Files** 檢查 source snapshot，再等待 Docker build 顯示 **Running**。
+
+Space 顯示 Running 後，先比對該部署與已通過 CI 的 GitHub commit 之
+runtime 關鍵檔，再做首頁健康檢查：
+
+```powershell
+uv run python scripts/check_space_snapshot.py --github-sha $publishedHead
+uv run python scripts/check_live_space.py `
+  --url 'https://steven0226-doc-inspector.hf.space'
+```
+
+第一個報告只比對固定的 runtime／build／dependency 關鍵檔，不宣稱全
+repository snapshot 等同；必須為 `critical_source_match=true` 且
+`mismatched_files=[]`。第二個報告必須為 `healthy=true`。兩者都只讀取公開
+HTTPS 檔案，不使用 token、不上傳文件，也不呼叫模型。
 
 ## 5. 設定 Space，不把金鑰提交到 Git
 
@@ -279,16 +343,17 @@ CI 不需要 secrets，也不會呼叫模型 API。
 
 如果是單人作品集，可先不要求 approval 人數，但仍保留 Pull Request 與 CI gate。
 
-### 建立 v1.0.0 Release
+### v1.0.0 Release 與後續版本
 
-只有在 Phase 7 作者驗收、CI 與安全掃描都通過後才執行：
+`v1.0.0` 已於 2026-07-25 發布。若要重建 Release 或發布後續版本，先確認
+作者驗收、CI 與安全掃描都通過，再依序執行：
 
 1. 確認 `main` 是要發布的 commit。
 2. 建立 annotated tag `v1.0.0`。
 3. 推送 tag。
 4. 在 GitHub **Releases → Draft a new release** 選擇 `v1.0.0`。
 5. Release title 使用 `v1.0.0｜文件預檢所`。
-6. 內容複製 [`docs/RELEASE_NOTES_v1.0.0.md`](RELEASE_NOTES_v1.0.0.md)，移除最上方候選提示。
+6. 內容以 [`docs/RELEASE_NOTES_v1.0.0.md`](RELEASE_NOTES_v1.0.0.md) 為基礎，依實際版本更新。
 7. 發布後重新確認 Live Demo 與 README 連結。
 
 Tag 與 Release 都是公開且有外部影響的操作，必須由作者人工執行。

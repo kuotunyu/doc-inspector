@@ -41,10 +41,12 @@ uv run --all-extras pytest
 ```powershell
 uv lock --check
 uv run pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
+uv run python scripts/verify_deployment.py
+uv run python -m compileall -q src scripts tests
 uv run python scripts/run_product_evaluation.py --check
 uv run python scripts/verify_public_docs.py
-uv run python -m compileall -q src scripts tests
-uv build
+uv build --clear --no-build-isolation
+uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 

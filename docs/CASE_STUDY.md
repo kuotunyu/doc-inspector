@@ -89,6 +89,10 @@ flowchart LR
 
 本機 Windows demo 正常，但 Debian slim 容器載入範例時無法產生中文文件。修正方式不是把字型檔提交到 repository，而是在 Docker image 安裝 `fonts-noto-cjk`，並讓字型搜尋同時支援 Windows Fonts 與 Linux Noto 路徑。這個部署落差也加入測試，避免回歸。
 
+### 系統深色偏好讓淺色介面失去對比
+
+介面公開後發現，瀏覽器偏好深色模式時，Gradio 會切換內建文字 token，但既有自訂表面仍維持淺色，導致部分說明文字幾乎看不見。修正時沒有只覆蓋當下出問題的 selector，而是用 Gradio theme API 將 light／dark token 成對綁定到已驗收的淺色 civic palette，並讓 Playwright 分別模擬兩種系統偏好、實際計算七個關鍵文字區塊的對比。最低實測為 6.89:1，高於 WCAG AA 正文門檻 4.5:1；等未來有完整 dark palette 時，再以同一 gate 驗證獨立深色主題。
+
 ### 原始結果對一般使用者太技術化
 
 最初介面直接展示欄位 path 與大表格，使用者不知道下一步。後續把主要流程改成：
