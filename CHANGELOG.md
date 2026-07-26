@@ -6,6 +6,8 @@
 
 ### Changed
 
+- 公開倉庫移除可重建的 UI 稽核報告與非展示截圖，產物改寫入被 Git 忽略的 `outputs/ui-audit/`；產品、UI 與部署說明整合進 Case Study 與單一遠端指南。
+- 貢獻指南與安全政策移至 GitHub 支援的 `.github/` 位置，降低根目錄噪音而不移除社群入口。
 - Package author 與 repository CODEOWNERS 固定為 `kuotunyu`，並納入 release／distribution verifier。
 - README 與遠端指南對齊已發布的 v1.0.0、最新本機測試與 UI 對比證據。
 - Windows／Ubuntu CI 新增 CPU 部署安全 verifier；公開維護文件統一乾淨 build、compileall、distribution 與 release gates。

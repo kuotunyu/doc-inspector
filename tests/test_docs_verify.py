@@ -2,15 +2,27 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from doc_inspector.docs_verify import verify_public_docs
+from doc_inspector.docs_verify import public_markdown_files, verify_public_docs
 
 
 def test_public_documentation_links_are_valid() -> None:
     root = Path(__file__).resolve().parents[1]
     report = verify_public_docs(root)
+    public_paths = {
+        path.relative_to(root).as_posix() for path in public_markdown_files(root)
+    }
 
     assert report["ready"] is True
-    assert report["file_count"] >= 10
+    assert report["file_count"] == len(public_paths)
+    assert {
+        "README.md",
+        "CHANGELOG.md",
+        ".github/CONTRIBUTING.md",
+        ".github/SECURITY.md",
+        "docs/CASE_STUDY.md",
+        "docs/DECISION_EVALUATION.md",
+        "docs/REMOTE_SETUP.md",
+    } <= public_paths
     assert report["missing_links"] == []
     assert report["outside_workspace_links"] == []
     assert report["private_path_markers"] == []

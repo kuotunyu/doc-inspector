@@ -48,3 +48,13 @@ def test_ui_audits_default_to_dedicated_offline_port(validator) -> None:
         validator("https://example.test")
 
     validator("https://example.test", allow_non_fixture=True)
+
+
+def test_ui_audit_artifacts_default_to_ignored_output_directory() -> None:
+    root = Path(__file__).resolve().parents[1]
+    expected_output = root / "outputs" / "ui-audit"
+
+    assert verify_ui_layout.DEFAULT_AUDIT_OUTPUT_DIR == expected_output
+    assert verify_ui_layout.PUBLIC_ASSET_DIR == root / "docs" / "assets"
+    assert audit_ui_quality.DEFAULT_AUDIT_OUTPUT_DIR == expected_output
+    assert audit_ui_quality.REPORT_PATH == expected_output / "ui-quality-audit.json"

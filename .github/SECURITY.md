@@ -36,4 +36,3 @@ uv run python scripts/verify_release.py
 ```
 
 公開 repository 建議另外啟用 GitHub Secret scanning、Push protection、Dependabot security updates 與 CodeQL default setup。
-

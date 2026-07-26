@@ -24,6 +24,7 @@ Thumbs.db
 
 # Local agent workflow and project memory
 .agents/
+AGENTS.md
 CLAUDE.md
 PLAN.md
 PROGRESS.md

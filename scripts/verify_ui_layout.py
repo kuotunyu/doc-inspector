@@ -13,7 +13,11 @@ from playwright.sync_api import Locator, Page, sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[1]
-ASSET_DIR = ROOT / "docs" / "assets"
+PUBLIC_ASSET_DIR = ROOT / "docs" / "assets"
+DEFAULT_AUDIT_OUTPUT_DIR = ROOT / "outputs" / "ui-audit"
+AUDIT_OUTPUT_DIR = Path(
+    os.environ.get("UI_TEST_OUTPUT_DIR", DEFAULT_AUDIT_OUTPUT_DIR)
+)
 URL = os.environ.get("UI_TEST_URL", "http://127.0.0.1:7862")
 VERIFY_ACTION_PLAN = os.environ.get("UI_TEST_EXPECT_ACTION_PLAN") == "1"
 DEMO_DIR = Path(
@@ -261,6 +265,7 @@ def _capture(
     width: int,
     height: int,
     filename: str,
+    output_dir: Path,
     console_errors: list[str],
     page_errors: list[str],
 ) -> tuple[dict, bool]:
@@ -300,7 +305,7 @@ def _capture(
     )
     page.get_by_text("沒有文件？", exact=True).wait_for(state="visible")
     page.get_by_text("尚未產生修正建議", exact=True).wait_for(state="visible")
-    page.screenshot(path=ASSET_DIR / filename, full_page=True)
+    page.screenshot(path=output_dir / filename, full_page=True)
     metrics = _page_metrics(page)
     consent_unchecked = not page.locator("#cloud-consent input").is_checked()
     context.close()
@@ -373,6 +378,7 @@ def _verify_actionable_result(
     browser,
     console_errors: list[str],
     page_errors: list[str],
+    output_dir: Path,
 ) -> tuple[bool, bool, bool, bool]:
     context = browser.new_context(
         viewport={"width": 1440, "height": 1000},
@@ -411,7 +417,7 @@ def _verify_actionable_result(
     machine_paths_hidden = page.locator("#action-plan").get_by_text(
         "applicants.0", exact=False
     ).count() == 0
-    page.screenshot(path=ASSET_DIR / "result-red.png", full_page=True)
+    page.screenshot(path=output_dir / "result-red.png", full_page=True)
     context.close()
     return (
         action_plan_visible,
@@ -428,7 +434,8 @@ def main() -> None:
         URL,
         allow_non_fixture=os.environ.get("UI_TEST_ALLOW_NON_FIXTURE") == "1",
     )
-    ASSET_DIR.mkdir(parents=True, exist_ok=True)
+    PUBLIC_ASSET_DIR.mkdir(parents=True, exist_ok=True)
+    AUDIT_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     console_errors: list[str] = []
     page_errors: list[str] = []
 
@@ -439,6 +446,7 @@ def main() -> None:
             width=1920,
             height=1080,
             filename="wide.png",
+            output_dir=AUDIT_OUTPUT_DIR,
             console_errors=console_errors,
             page_errors=page_errors,
         )
@@ -447,6 +455,7 @@ def main() -> None:
             width=1440,
             height=1000,
             filename="desktop.png",
+            output_dir=PUBLIC_ASSET_DIR,
             console_errors=console_errors,
             page_errors=page_errors,
         )
@@ -455,6 +464,7 @@ def main() -> None:
             width=390,
             height=844,
             filename="mobile.png",
+            output_dir=AUDIT_OUTPUT_DIR,
             console_errors=console_errors,
             page_errors=page_errors,
         )
@@ -484,6 +494,7 @@ def main() -> None:
                 browser,
                 console_errors,
                 page_errors,
+                AUDIT_OUTPUT_DIR,
             )
         else:
             action_plan_visible = None
@@ -524,7 +535,7 @@ def main() -> None:
         "console_errors": console_errors,
         "page_errors": page_errors,
     }
-    (ASSET_DIR / "browser-report.json").write_text(
+    (AUDIT_OUTPUT_DIR / "browser-report.json").write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
