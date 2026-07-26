@@ -13,7 +13,11 @@ from playwright.sync_api import Page, sync_playwright
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REPORT_PATH = ROOT / "docs" / "assets" / "ui-quality-audit.json"
+DEFAULT_AUDIT_OUTPUT_DIR = ROOT / "outputs" / "ui-audit"
+AUDIT_OUTPUT_DIR = Path(
+    os.environ.get("UI_TEST_OUTPUT_DIR", DEFAULT_AUDIT_OUTPUT_DIR)
+)
+REPORT_PATH = AUDIT_OUTPUT_DIR / "ui-quality-audit.json"
 URL = os.environ.get("UI_TEST_URL", "http://127.0.0.1:7862")
 DEMO_DIR = Path(
     os.environ.get(

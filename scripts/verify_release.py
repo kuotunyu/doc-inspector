@@ -17,10 +17,8 @@ REQUIRED_FILES = (
     "README.md",
     "LICENSE",
     "CHANGELOG.md",
-    "CONTRIBUTING.md",
-    "SECURITY.md",
-    "DEPLOYMENT.md",
-    "PRODUCT.md",
+    ".github/CONTRIBUTING.md",
+    ".github/SECURITY.md",
     "Dockerfile",
     ".dockerignore",
     ".env.example",
@@ -33,9 +31,10 @@ REQUIRED_FILES = (
     "data/evaluation/decision_cases.json",
     "docs/CASE_STUDY.md",
     "docs/DECISION_EVALUATION.md",
-    "docs/RELEASE_NOTES_v1.0.0.md",
-    "docs/UI_AUDIT.md",
     "docs/REMOTE_SETUP.md",
+    "docs/assets/desktop.png",
+    "docs/assets/decision-evaluation.json",
+    "scripts/audit_ui_quality.py",
     "scripts/check_github_ci.py",
     "scripts/check_github_contributors.py",
     "scripts/check_live_space.py",
@@ -43,9 +42,18 @@ REQUIRED_FILES = (
     "scripts/serve_ui_fixture.py",
     "scripts/verify_distribution.py",
     "scripts/verify_public_docs.py",
+    "scripts/verify_ui_layout.py",
+)
+
+UNNECESSARY_PUBLIC_FILES = (
+    "PRODUCT.md",
+    "DEPLOYMENT.md",
+    "docs/UI_AUDIT.md",
+    "docs/RELEASE_NOTES_v1.0.0.md",
     "docs/assets/browser-report.json",
-    "docs/assets/decision-evaluation.json",
     "docs/assets/ui-quality-audit.json",
+    "docs/assets/wide.png",
+    "docs/assets/mobile.png",
     "docs/assets/result-red.png",
 )
 
@@ -56,6 +64,7 @@ REMOTE_SETUP_MARKERS = (
     "git -c core.autocrlf=false archive",
     "git hash-object --no-filters",
     "uvx --from huggingface_hub hf upload",
+    "--delete '*'",
     "不要再對 Space 使用 force push",
     "PUBLIC_MAX_REQUESTS_PER_HOUR=60",
     "scripts/check_live_space.py",
@@ -95,7 +104,7 @@ README_MARKERS = (
     "## 目前限制",
     "v1.0.0 已發布",
     "Hugging Face Docker Space",
-    "149 passed，總 coverage 89%",
+    "150 passed，總 coverage 89%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",
@@ -160,6 +169,9 @@ def _parse_env_example(text: str) -> dict[str, str]:
 
 def build_release_report(root: Path = ROOT) -> dict[str, object]:
     missing_files = [path for path in REQUIRED_FILES if not (root / path).is_file()]
+    unexpected_public_files = [
+        path for path in UNNECESSARY_PUBLIC_FILES if (root / path).is_file()
+    ]
 
     pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
     lockfile = tomllib.loads((root / "uv.lock").read_text(encoding="utf-8"))
@@ -282,7 +294,6 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     public_handoff_text = "\n".join(
         (
             readme,
-            (root / "DEPLOYMENT.md").read_text(encoding="utf-8"),
             remote_setup,
         )
     )
@@ -298,6 +309,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
             ".env",
             ".env.*",
             ".agents/",
+            "AGENTS.md",
             "CLAUDE.md",
             "PLAN.md",
             "PROGRESS.md",
@@ -313,6 +325,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
             ".env",
             ".env.*",
             ".agents/",
+            "AGENTS.md",
             "CLAUDE.md",
             "PLAN.md",
             "PROGRESS.md",
@@ -325,6 +338,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
 
     issues = (
         missing_files
+        + unexpected_public_files
         + release_version_issues
         + project_author_issues
         + missing_readme_markers
@@ -347,6 +361,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         "ready_for_manual_handoff": not issues,
         "required_file_count": len(REQUIRED_FILES),
         "missing_files": missing_files,
+        "unexpected_public_files": unexpected_public_files,
         "expected_release_version": EXPECTED_RELEASE_VERSION,
         "project_version": project_version,
         "locked_project_versions": locked_project_versions,

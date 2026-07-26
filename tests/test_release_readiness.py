@@ -18,7 +18,9 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
 
     assert completed.returncode == 0
     assert report["ready_for_manual_handoff"] is True
+    assert report["required_file_count"] == 29
     assert report["missing_files"] == []
+    assert report["unexpected_public_files"] == []
     assert report["expected_release_version"] == "1.0.0"
     assert report["project_version"] == "1.0.0"
     assert report["locked_project_versions"] == ["1.0.0"]

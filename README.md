@@ -28,7 +28,7 @@ license: mit
 - 想了解設計與取捨：閱讀 [Case Study](docs/CASE_STUDY.md)。
 - 想檢查品質證據：閱讀 [決策層產品評估](docs/DECISION_EVALUATION.md) 與 machine-readable [evaluation report](docs/assets/decision-evaluation.json)。
 - 想在本機重現：依照下方快速開始與測試指令執行。
-- 想參與改善：參考 [CONTRIBUTING.md](CONTRIBUTING.md)、[SECURITY.md](SECURITY.md) 與 [CHANGELOG.md](CHANGELOG.md)。
+- 想參與改善：參考 [貢獻指南](.github/CONTRIBUTING.md)、[Security Policy](.github/SECURITY.md) 與 [CHANGELOG.md](CHANGELOG.md)。
 
 ## 可驗證成果
 
@@ -36,7 +36,7 @@ license: mit
 |---|---|
 | 公開產品 | [Live Demo](https://steven0226-doc-inspector.hf.space) 可載入不含真實個資的紅／黃／綠合成案例 |
 | 跨平台工程 | GitHub Actions 在 Windows／Ubuntu、Python 3.11 執行 locked install、coverage、部署、文件與發布包 gates；可用完整 commit SHA 唯讀驗證對應 CI |
-| 本機 release gate | 149 passed、coverage 89%；base CI 等價路徑 146 passed、1 skipped、coverage 87% |
+| 本機 release gate | 150 passed、coverage 89%；base CI 等價路徑 147 passed、1 skipped、coverage 87% |
 | 產品決策層 | 24 / 24 人工定義 regression cases exact match；不冒充 OCR／VLM 端到端準確率 |
 | UI 品質 | 1920／1440／390 px 無水平溢出；互動目標至少 44 px；light／dark 系統偏好最低文字對比 6.89:1 |
 | 發布包 | `1.0.0` wheel／sdist 通過 archive hygiene、作者 metadata 與全新環境離線安裝 smoke |
@@ -157,7 +157,7 @@ uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-2026-07-26 v1.0.0 本機 release gate：**149 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **146 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-26 v1.0.0 本機 release gate：**150 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **147 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
 
 公開 repository 的 `CI` 會在 `windows-latest` 與 `ubuntu-latest` 使用 Python 3.11、locked base／dev dependencies（包含 build backend），執行核心離線測試、85% coverage 下限、決策層產品評估、compileall、wheel／sdist build、archive hygiene、隔離 wheel 安裝 smoke 與 secret-safe release verifier。CI 不安裝可選 GPU extra；`tests/test_retrieval.py` 會明確標示 skip，也不注入或呼叫任何模型 API key。本機以 `--all-extras` 執行時仍會完整驗證檢索計分。
 
@@ -267,7 +267,7 @@ docker run --rm -p 7861:7861 `
   doc-inspector:local
 ```
 
-本機驗證的映像約 357MB、health=healthy、以 UID 10001 執行，且不含 Torch／Transformers／Accelerate。正式上線必須由維護者用平台 Secrets 注入金鑰；不要把 `.env` 複製進映像。容器原理與本機驗證見 [DEPLOYMENT.md](DEPLOYMENT.md)，完整發布、私人驗收與復原順序見 [遠端發布指南](docs/REMOTE_SETUP.md)。
+本機驗證的映像約 357MB、health=healthy、以 UID 10001 執行，且不含 Torch／Transformers／Accelerate。正式上線必須由維護者用平台 Secrets 注入金鑰；不要把 `.env` 複製進映像。容器原理、本機驗證、完整發布、私人驗收與復原順序都集中在 [遠端發布指南](docs/REMOTE_SETUP.md)。
 
 遠端名稱固定為 GitHub `kuotunyu/doc-inspector` 與 Hugging Face
 `steven0226/doc-inspector`；以 GitHub 為主倉、Hugging Face Docker Space
@@ -285,4 +285,4 @@ docker run --rm -p 7861:7861 `
 
 ## 參與與安全
 
-歡迎以 Issue 或 Pull Request 提出可重現的改善。請先閱讀 [貢獻指南](CONTRIBUTING.md)；安全問題請依 [Security Policy](SECURITY.md) 使用 Private vulnerability reporting，不要在公開 Issue 放入 API key、真實個資、完整文件或 raw provider response。
+歡迎以 Issue 或 Pull Request 提出可重現的改善。請先閱讀 [貢獻指南](.github/CONTRIBUTING.md)；安全問題請依 [Security Policy](.github/SECURITY.md) 使用 Private vulnerability reporting，不要在公開 Issue 放入 API key、真實個資、完整文件或 raw provider response。

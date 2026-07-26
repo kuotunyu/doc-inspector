@@ -13,9 +13,8 @@
 發布順序固定為 **GitHub 主倉 → Hugging Face 部署鏡像**。GitHub 保存主要
 程式碼與開發歷史；Hugging Face Space 使用從 GitHub 對應 commit 匯出的同一份
 已驗收 source snapshot 建置公開服務，兩邊不要求共享 Git commit history。
-這是本專案唯一的遠端發布、私人驗收與復原清單；容器原理與本機啟動方式另見
-[DEPLOYMENT.md](../DEPLOYMENT.md)。協作代理不會代為執行 Git、登入帳號、
-建立遠端或設定 Secrets。
+這是本專案唯一的容器、本機啟動、遠端發布、私人驗收與復原清單。協作代理不會
+代為執行 Git、登入帳號、建立遠端或設定 Secrets。
 
 ## 0. 先跑本機 gate
 
@@ -38,8 +37,8 @@ uv run python scripts/verify_release.py
 
 預期結果：
 
-- dependency lock 無漂移；全 extras 為 149 項測試通過、coverage 89%，
-  GitHub Actions 的 base dependency 路徑為 146 passed、1 skipped、coverage 87%。
+- dependency lock 無漂移；全 extras 為 150 項測試通過、coverage 89%，
+  GitHub Actions 的 base dependency 路徑為 147 passed、1 skipped、coverage 87%。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。
@@ -59,7 +58,33 @@ uv run python scripts/audit_ui_quality.py
 ```
 
 完成後在終端 A 按 `Ctrl+C`。兩個稽核腳本預設拒絕 7861 或遠端網址，避免測試
-誤觸真實模型；離線 fixture 不讀 `.env`、不呼叫模型。
+誤觸真實模型；離線 fixture 不讀 `.env`、不呼叫模型。可重建的報告及
+wide／mobile／結果截圖會寫入被 Git 忽略的 `outputs/ui-audit/`，只有 README
+使用的 `docs/assets/desktop.png` 留在公開倉庫。
+
+### 容器設計與本機啟動
+
+公開映像只執行雲端 provider 模式，不安裝 `local-retrieval` extra，因此不會把
+CUDA、Torch 或 ColQwen2 權重放進免費 CPU 容器。原始文件只存在工作程序的暫存
+空間；上傳與匯出檔都放在 Gradio 管理的 cache，每 10 分鐘清理且關閉時再清空。
+介面要求使用者勾選雲端傳輸同意；analytics、monitoring 與事件 API 不公開，
+等待佇列最多 8 件。
+
+本機容器驗證：
+
+```powershell
+docker build -t doc-inspector:local .
+docker run --rm -p 7861:7861 `
+  -e GOOGLE_API_KEY `
+  -e GEMINI_MODEL `
+  -e OPENAI_API_KEY `
+  -e OPENAI_MODEL `
+  doc-inspector:local
+```
+
+開啟 `http://127.0.0.1:7861`。7860 保留給其他專案；不要把 `.env` 複製進
+映像。正式平台應以 Secrets 管理介面注入金鑰。若平台提供 `PORT`，設定會自動
+採用；否則預設為 7861。
 
 ## 1. 建立同名 GitHub repository
 
@@ -169,6 +194,18 @@ uv run python scripts/check_github_contributors.py
 Space 也是 Git repository，每次 push 後會自動重新建置與啟動：
 [Spaces Overview](https://huggingface.co/docs/hub/main/spaces-overview)。
 
+### 平台成本與生命週期
+
+- CPU Basic 本身沒有每小時計算費，但建立頁面會顯示帳戶是否符合當時的平台條件。
+- CPU Basic 的資源足以執行本專案不含 GPU extra 的雲端 provider 模式。
+- 免費硬體閒置後可能休眠；下一位訪客會觸發喚醒。
+- Space 磁碟不是永久儲存；本專案不需要持久資料，上傳文件只存在暫存與 cache
+  生命週期內。
+- 公開使用者的模型請求會消耗 Space 擁有者的 API key 配額；公開前必須設定
+  供應商端硬性支出上限。
+- 映像預設以單一執行程序共用的滾動時窗限制每小時 60 次預檢；重啟後會重置，
+  不是 per-user 身分辨識或防禦邊界。
+
 ## 4. 將 GitHub 已驗收版本同步到 Space
 
 先在 Hugging Face 的 Access Tokens 頁建立具備該 Space 寫入權限的 token，並用
@@ -239,6 +276,7 @@ uvx --from huggingface_hub hf upload `
   $repoRoot `
   . `
   --repo-type=space `
+  --delete '*' `
   --commit-message="deploy: 同步已驗收 GitHub 版本"
 ```
 
@@ -249,7 +287,9 @@ Windows 的 CRLF 工作目錄設定改寫 archive 內的文字檔；否則部署
 會先確認檔案清單相同，再以 `git hash-object --no-filters` 驗證每個 archive
 檔案的原始 bytes 對應 HEAD blob；任一差異都會停止。`git archive HEAD` 天然
 排除 `.git`、未追蹤檔與被忽略的本機資料。成功時 CLI 會顯示 `Uploaded` 與
-Hugging Face commit URL。
+Hugging Face commit URL。`--delete '*'` 會在同一次 commit 刪除 Space 上已不在
+本次 archive 的舊檔；沒有這個參數時 folder upload 只會新增或更新，這次公開
+倉庫瘦身移除的檔案會殘留在 Space。
 
 這個 Space 已經完成初始建立，後續每次更新都重複上述 archive/upload 流程；
 不要再對 Space 使用 force push，也不要直接上傳專案根目錄。發布後到 Space
@@ -397,7 +437,8 @@ CI 不需要 secrets，也不會呼叫模型 API。
 3. 推送 tag。
 4. 在 GitHub **Releases → Draft a new release** 選擇 `v1.0.0`。
 5. Release title 使用 `v1.0.0｜文件預檢所`。
-6. 內容以 [`docs/RELEASE_NOTES_v1.0.0.md`](RELEASE_NOTES_v1.0.0.md) 為基礎，依實際版本更新。
+6. 內容依 `CHANGELOG.md` 與該版本實際驗收結果撰寫；一次性 release notes 留在
+   GitHub Release，不在 `main` 重複保存。
 7. 發布後重新確認 Live Demo 與 README 連結。
 
 Tag 與 Release 都是公開且有外部影響的操作，必須由作者人工執行。
