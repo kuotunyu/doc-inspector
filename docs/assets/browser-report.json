@@ -1,9 +1,10 @@
 {
-  "url": "http://127.0.0.1:7863",
+  "url": "http://127.0.0.1:7862",
   "screenshots": [
     "wide.png",
     "desktop.png",
-    "mobile.png"
+    "mobile.png",
+    "result-red.png"
   ],
   "wide_metrics": {
     "viewportWidth": 1920,
@@ -271,7 +272,7 @@
       },
       {
         "tag": "DIV",
-        "id": "html-5ec4za67r",
+        "id": "html-ow96lhp2m",
         "className": "prose gradio-style  svelte-26mp0t",
         "width": 1588,
         "paddingLeft": "0px",
@@ -611,7 +612,7 @@
       },
       {
         "tag": "DIV",
-        "id": "html-vwcew6cr5",
+        "id": "html-k2ot3qp9e",
         "className": "prose gradio-style  svelte-26mp0t",
         "width": 1339,
         "paddingLeft": "0px",
@@ -951,7 +952,7 @@
       },
       {
         "tag": "DIV",
-        "id": "html-i5dlufifr",
+        "id": "html-zzq73rkuo",
         "className": "prose gradio-style  svelte-26mp0t",
         "width": 358,
         "paddingLeft": "0px",
@@ -1025,6 +1026,102 @@
     "uploadPromptInsetTop": 10,
     "uploadPromptInsetBottom": 9
   },
+  "theme_contrast": {
+    "light": {
+      "requestedColorScheme": "light",
+      "theme": {
+        "browserPrefersDark": false,
+        "renderedColorScheme": "light",
+        "bodyTextColor": "oklch(24% 0.036 205)",
+        "inputBackground": "oklch(99.2% 0.004 205)"
+      },
+      "samples": {
+        ".source-brief p": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(215, 243, 246)",
+          "contrastRatio": 14.01
+        },
+        ".upload-guidance span": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(226, 240, 242)",
+          "contrastRatio": 13.96
+        },
+        "#document-upload button .wrap": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(248, 250, 251)",
+          "contrastRatio": 15.57
+        },
+        "#demo-selector input": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 15.92
+        },
+        "#schema-selector input": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 15.92
+        },
+        ".privacy-note p": {
+          "color": "oklch(0.43 0.026 205)",
+          "backgroundColor": "rgb(215, 243, 246)",
+          "contrastRatio": 6.89
+        },
+        ".task-heading p": {
+          "color": "oklch(0.43 0.026 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 7.84
+        }
+      },
+      "minimumContrastRatio": 6.89
+    },
+    "dark_system_preference": {
+      "requestedColorScheme": "dark",
+      "theme": {
+        "browserPrefersDark": true,
+        "renderedColorScheme": "light",
+        "bodyTextColor": "oklch(24% 0.036 205)",
+        "inputBackground": "oklch(99.2% 0.004 205)"
+      },
+      "samples": {
+        ".source-brief p": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(215, 243, 246)",
+          "contrastRatio": 14.01
+        },
+        ".upload-guidance span": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(226, 240, 242)",
+          "contrastRatio": 13.96
+        },
+        "#document-upload button .wrap": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(248, 250, 251)",
+          "contrastRatio": 15.57
+        },
+        "#demo-selector input": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 15.92
+        },
+        "#schema-selector input": {
+          "color": "oklch(0.24 0.036 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 15.92
+        },
+        ".privacy-note p": {
+          "color": "oklch(0.43 0.026 205)",
+          "backgroundColor": "rgb(215, 243, 246)",
+          "contrastRatio": 6.89
+        },
+        ".task-heading p": {
+          "color": "oklch(0.43 0.026 205)",
+          "backgroundColor": "rgb(249, 253, 254)",
+          "contrastRatio": 7.84
+        }
+      },
+      "minimumContrastRatio": 6.89
+    }
+  },
   "consent_control_default_unchecked": true,
   "consent_error_visible_before_api_call": true,
   "persistent_status_near_action": true,
@@ -1032,11 +1129,11 @@
   "demo_file_loaded_without_api": true,
   "demo_status_visible": true,
   "demo_schema_updated": true,
-  "action_plan_checked": false,
-  "action_plan_visible": null,
-  "action_plan_next_step_visible": null,
-  "action_plan_plain_language_visible": null,
-  "action_plan_machine_paths_hidden": null,
+  "action_plan_checked": true,
+  "action_plan_visible": true,
+  "action_plan_next_step_visible": true,
+  "action_plan_plain_language_visible": true,
+  "action_plan_machine_paths_hidden": true,
   "console_errors": [],
   "page_errors": []
 }

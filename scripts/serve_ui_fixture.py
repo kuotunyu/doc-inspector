@@ -13,6 +13,7 @@ from doc_inspector.schemas import InspectionBundle
 from doc_inspector.types import ProviderName, SchemaName
 from doc_inspector.ui import (
     CIVIC_CSS,
+    CIVIC_THEME,
     build_app,
     ensure_local_port_available,
     prepare_gradio_temp_root,
@@ -76,6 +77,7 @@ def main(argv: list[str] | None = None) -> None:
         server_name="127.0.0.1",
         server_port=args.port,
         share=False,
+        theme=CIVIC_THEME,
         css=CIVIC_CSS,
         show_error=False,
         max_file_size=25 * 1024 * 1024,

@@ -302,7 +302,30 @@ def test_launch_applies_public_resource_limits(
     assert launch_kwargs["max_threads"] == 4
     assert launch_kwargs["state_session_capacity"] == 200
     assert launch_kwargs["enable_monitoring"] is False
+    assert launch_kwargs["theme"] is ui_module.CIVIC_THEME
     assert "allowed_paths" not in launch_kwargs
+
+
+def test_civic_theme_keeps_light_and_dark_tokens_consistent() -> None:
+    theme = ui_module.CIVIC_THEME.to_dict()["theme"]
+    paired_tokens = (
+        "body_background_fill",
+        "body_text_color",
+        "body_text_color_subdued",
+        "background_fill_primary",
+        "background_fill_secondary",
+        "block_background_fill",
+        "block_info_text_color",
+        "block_label_text_color",
+        "input_background_fill",
+        "input_placeholder_color",
+        "button_primary_background_fill",
+        "button_secondary_background_fill",
+        "button_secondary_text_color",
+    )
+
+    for token in paired_tokens:
+        assert theme[token] == theme[f"{token}_dark"]
 
 
 def test_load_demo_document_selects_file_and_matching_schema(tmp_path: Path) -> None:

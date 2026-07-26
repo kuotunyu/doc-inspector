@@ -1,5 +1,5 @@
 {
-  "url": "http://127.0.0.1:7863",
+  "url": "http://127.0.0.1:7862",
   "desktop": {
     "title": "文件預檢所｜doc-inspector",
     "lang": "zh-TW",
@@ -240,9 +240,9 @@
   "focusWithoutVisibleIndicator": [],
   "performance": {
     "domContentLoadedMs": 27,
-    "loadMs": 49,
+    "loadMs": 45,
     "resourceCount": 93,
-    "transferBytes": 261911
+    "transferBytes": 261794
   },
   "resultCases": {
     "subsidy_green": {

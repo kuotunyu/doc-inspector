@@ -209,7 +209,10 @@ def _performance_scan(page: Page) -> dict:
 
 
 def _result_case(browser, key: str, expected_level: str) -> dict:
-    context = browser.new_context(viewport={"width": 1440, "height": 1000})
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 1000},
+        color_scheme="light",
+    )
     page = context.new_page()
     console_errors: list[str] = []
     page_errors: list[str] = []
@@ -264,7 +267,8 @@ def main() -> None:
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=True)
         desktop_context = browser.new_context(
-            viewport={"width": 1440, "height": 1000}
+            viewport={"width": 1440, "height": 1000},
+            color_scheme="light",
         )
         desktop_page = desktop_context.new_page()
         desktop_page.goto(URL, wait_until="networkidle")
@@ -277,6 +281,7 @@ def main() -> None:
             viewport={"width": 390, "height": 844},
             device_scale_factor=2,
             has_touch=True,
+            color_scheme="light",
         )
         mobile_page = mobile_context.new_page()
         mobile_page.goto(URL, wait_until="networkidle")

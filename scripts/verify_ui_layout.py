@@ -133,6 +133,128 @@ def _page_metrics(page: Page) -> dict:
     return metrics
 
 
+def _theme_contrast(browser, color_scheme: str) -> dict:
+    """Measure rendered text contrast under a browser color preference."""
+
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 1000},
+        color_scheme=color_scheme,
+    )
+    page = context.new_page()
+    page.goto(URL, wait_until="networkidle")
+    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
+    selectors = (
+        ".source-brief p",
+        ".upload-guidance span",
+        "#document-upload button .wrap",
+        "#demo-selector input",
+        "#schema-selector input",
+        ".privacy-note p",
+        ".task-heading p",
+    )
+    samples = {}
+    for selector in selectors:
+        samples[selector] = page.locator(selector).first.evaluate(
+            """element => {
+              const canvas = document.createElement("canvas");
+              canvas.width = 1;
+              canvas.height = 1;
+              const context = canvas.getContext("2d", {willReadFrequently: true});
+              const parseColor = value => {
+                context.clearRect(0, 0, 1, 1);
+                context.fillStyle = "rgba(0, 0, 0, 0)";
+                context.fillStyle = value;
+                context.fillRect(0, 0, 1, 1);
+                const [red, green, blue, alpha] = context.getImageData(
+                  0, 0, 1, 1
+                ).data;
+                return [red, green, blue, alpha / 255];
+              };
+              const composite = (front, back) => {
+                const alpha = front[3] + back[3] * (1 - front[3]);
+                if (alpha === 0) return [0, 0, 0, 0];
+                return [
+                  (front[0] * front[3]
+                    + back[0] * back[3] * (1 - front[3])) / alpha,
+                  (front[1] * front[3]
+                    + back[1] * back[3] * (1 - front[3])) / alpha,
+                  (front[2] * front[3]
+                    + back[2] * back[3] * (1 - front[3])) / alpha,
+                  alpha
+                ];
+              };
+              const layers = [];
+              let current = element;
+              while (current) {
+                const background = parseColor(
+                  getComputedStyle(current).backgroundColor
+                );
+                if (background[3] > 0) layers.push(background);
+                current = current.parentElement;
+              }
+              let background = [255, 255, 255, 1];
+              for (const layer of layers.reverse()) {
+                background = composite(layer, background);
+              }
+              const foreground = composite(
+                parseColor(getComputedStyle(element).color),
+                background
+              );
+              const luminance = color => {
+                const channels = color.slice(0, 3).map(channel => {
+                  const value = channel / 255;
+                  return value <= 0.04045
+                    ? value / 12.92
+                    : ((value + 0.055) / 1.055) ** 2.4;
+                });
+                return (
+                  0.2126 * channels[0]
+                  + 0.7152 * channels[1]
+                  + 0.0722 * channels[2]
+                );
+              };
+              const foregroundLuminance = luminance(foreground);
+              const backgroundLuminance = luminance(background);
+              const ratio = (
+                Math.max(foregroundLuminance, backgroundLuminance) + 0.05
+              ) / (
+                Math.min(foregroundLuminance, backgroundLuminance) + 0.05
+              );
+              return {
+                color: getComputedStyle(element).color,
+                backgroundColor: `rgb(${background.slice(0, 3)
+                  .map(Math.round).join(", ")})`,
+                contrastRatio: Math.round(ratio * 100) / 100
+              };
+            }"""
+        )
+    container_theme = page.locator(".gradio-container").first.evaluate(
+        """element => {
+          const style = getComputedStyle(element);
+          return {
+            browserPrefersDark: matchMedia(
+              "(prefers-color-scheme: dark)"
+            ).matches,
+            renderedColorScheme: style.colorScheme,
+            bodyTextColor: style.getPropertyValue("--body-text-color").trim(),
+            inputBackground: style.getPropertyValue(
+              "--input-background-fill"
+            ).trim()
+          };
+        }"""
+    )
+    result = {
+        "requestedColorScheme": color_scheme,
+        "theme": container_theme,
+        "samples": samples,
+        "minimumContrastRatio": min(
+            sample["contrastRatio"] for sample in samples.values()
+        ),
+    }
+    context.close()
+    return result
+
+
 def _capture(
     browser,
     *,
@@ -142,7 +264,10 @@ def _capture(
     console_errors: list[str],
     page_errors: list[str],
 ) -> tuple[dict, bool]:
-    context = browser.new_context(viewport={"width": width, "height": height})
+    context = browser.new_context(
+        viewport={"width": width, "height": height},
+        color_scheme="light",
+    )
     page = context.new_page()
     page.on(
         "console",
@@ -187,7 +312,10 @@ def _verify_consent_gate(
     console_errors: list[str],
     page_errors: list[str],
 ) -> tuple[bool, bool, bool]:
-    context = browser.new_context(viewport={"width": 1280, "height": 900})
+    context = browser.new_context(
+        viewport={"width": 1280, "height": 900},
+        color_scheme="light",
+    )
     page = context.new_page()
     page.on(
         "console",
@@ -214,7 +342,10 @@ def _verify_demo_loader(
     console_errors: list[str],
     page_errors: list[str],
 ) -> tuple[bool, bool, bool]:
-    context = browser.new_context(viewport={"width": 1280, "height": 1000})
+    context = browser.new_context(
+        viewport={"width": 1280, "height": 1000},
+        color_scheme="light",
+    )
     page = context.new_page()
     page.on(
         "console",
@@ -243,7 +374,10 @@ def _verify_actionable_result(
     console_errors: list[str],
     page_errors: list[str],
 ) -> tuple[bool, bool, bool, bool]:
-    context = browser.new_context(viewport={"width": 1440, "height": 1000})
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 1000},
+        color_scheme="light",
+    )
     page = context.new_page()
     page.on(
         "console",
@@ -324,6 +458,8 @@ def main() -> None:
             console_errors=console_errors,
             page_errors=page_errors,
         )
+        light_theme_contrast = _theme_contrast(browser, "light")
+        dark_preference_contrast = _theme_contrast(browser, "dark")
         (
             consent_error_visible,
             status_near_action,
@@ -367,6 +503,10 @@ def main() -> None:
         "wide_metrics": wide,
         "desktop_metrics": desktop,
         "mobile_metrics": mobile,
+        "theme_contrast": {
+            "light": light_theme_contrast,
+            "dark_system_preference": dark_preference_contrast,
+        },
         "consent_control_default_unchecked": (
             wide_unchecked and desktop_unchecked and mobile_unchecked
         ),
@@ -451,6 +591,12 @@ def main() -> None:
     assert mobile["demoSelectorAccessible"]
     assert desktop["documentPickerLabelVisible"]
     assert mobile["documentPickerLabelVisible"]
+    assert not light_theme_contrast["theme"]["browserPrefersDark"]
+    assert dark_preference_contrast["theme"]["browserPrefersDark"]
+    assert light_theme_contrast["theme"]["renderedColorScheme"] == "light"
+    assert dark_preference_contrast["theme"]["renderedColorScheme"] == "light"
+    for preference in (light_theme_contrast, dark_preference_contrast):
+        assert preference["minimumContrastRatio"] >= 4.5
     assert report["consent_control_default_unchecked"]
     assert report["consent_error_visible_before_api_call"]
     assert report["persistent_status_near_action"]
