@@ -18,6 +18,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 DIST = ROOT / "dist"
 PROJECT_NAME = "doc-inspector"
+PROJECT_AUTHOR = "kuotunyu"
 PACKAGE_NAME = "doc_inspector"
 PROJECT_SUMMARY = "政府補助申請表單與收據的智慧抽取及送件前預檢工具"
 PROJECT_URLS = {
@@ -94,6 +95,8 @@ def _verify_wheel(wheel: Path, version: str) -> dict[str, object]:
         metadata_issues.append("Version")
     if str(metadata.get("Summary")) != PROJECT_SUMMARY:
         metadata_issues.append("Summary")
+    if metadata.get("Author") != PROJECT_AUTHOR:
+        metadata_issues.append("Author")
     if metadata.get("Requires-Python") != "<3.12,>=3.11":
         metadata_issues.append("Requires-Python")
     if "LICENSE" not in metadata.get_all("License-File", []):

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import sys
 
 from doc_inspector.product_eval import (
     evaluate_decision_suite,
@@ -36,6 +37,8 @@ def _arguments() -> argparse.Namespace:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     args = _arguments()
     suite = load_decision_suite(args.cases)
     report = evaluate_decision_suite(suite)

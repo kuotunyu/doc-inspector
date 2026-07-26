@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from copy import deepcopy
 import json
-import os
 from pathlib import Path
 import subprocess
 import sys
@@ -150,7 +149,6 @@ def test_product_evaluation_cli_writes_machine_readable_report(tmp_path: Path) -
         capture_output=True,
         text=True,
         encoding="utf-8",
-        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
     )
 
     assert completed.returncode == 0, completed.stderr
@@ -174,6 +172,5 @@ def test_product_evaluation_cli_writes_machine_readable_report(tmp_path: Path) -
         capture_output=True,
         text=True,
         encoding="utf-8",
-        env={**os.environ, "PYTHONIOENCODING": "utf-8"},
     )
     assert checked.returncode == 0, checked.stderr

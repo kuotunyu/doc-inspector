@@ -9,7 +9,7 @@ description = "政府補助申請表單與收據的智慧抽取及送件前預�
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 license = { file = "LICENSE" }
-authors = [{ name = "doc-inspector contributors" }]
+authors = [{ name = "kuotunyu" }]
 keywords = ["document-ai", "document-validation", "gradio", "taiwan"]
 classifiers = [
   "Development Status :: 4 - Beta",

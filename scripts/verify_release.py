@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import sys
 import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
 EXPECTED_RELEASE_VERSION = "1.0.0"
+EXPECTED_PROJECT_AUTHOR = "kuotunyu"
+EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 
 REQUIRED_FILES = (
     "README.md",
@@ -22,6 +25,7 @@ REQUIRED_FILES = (
     ".dockerignore",
     ".env.example",
     ".github/workflows/ci.yml",
+    ".github/CODEOWNERS",
     ".github/dependabot.yml",
     ".github/pull_request_template.md",
     "pyproject.toml",
@@ -32,7 +36,10 @@ REQUIRED_FILES = (
     "docs/RELEASE_NOTES_v1.0.0.md",
     "docs/UI_AUDIT.md",
     "docs/REMOTE_SETUP.md",
+    "scripts/check_github_ci.py",
+    "scripts/check_github_contributors.py",
     "scripts/check_live_space.py",
+    "scripts/check_space_snapshot.py",
     "scripts/serve_ui_fixture.py",
     "scripts/verify_distribution.py",
     "scripts/verify_public_docs.py",
@@ -54,6 +61,13 @@ REMOTE_SETUP_MARKERS = (
     "私人驗收清單",
     "回復方式",
     "Set-Location '<專案資料夾>'",
+    "git config user.email",
+    "Co-authored-by",
+    "不要直接 merge、squash 或 rebase",
+    "scripts/check_github_ci.py",
+    "scripts/check_github_contributors.py",
+    "scripts/check_space_snapshot.py",
+    "https://github.com/kuotunyu/doc-inspector/graphs/contributors",
 )
 
 REMOTE_SETUP_FORBIDDEN_MARKERS = (
@@ -76,12 +90,13 @@ README_MARKERS = (
     "## Demo 資料與授權",
     "## CPU 容器與部署",
     "## 目前限制",
-    "維護者整體驗收",
+    "v1.0.0 已發布",
     "Hugging Face Docker Space",
-    "126 passed，總 coverage 89%",
+    "148 passed，總 coverage 89%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",
+    "## 可驗證成果",
     "## 決策層產品評估",
     "docs/CASE_STUDY.md",
     "docs/DECISION_EVALUATION.md",
@@ -96,6 +111,7 @@ CI_WORKFLOW_MARKERS = (
     "uv lock --check",
     "uv sync --locked --all-groups",
     "--cov-fail-under=85",
+    "python scripts/verify_deployment.py",
     "python -m compileall -q src scripts tests",
     "python scripts/run_product_evaluation.py --check",
     "python scripts/verify_public_docs.py",
@@ -113,6 +129,10 @@ DEPENDABOT_MARKERS = (
     'package-ecosystem: "uv"',
     'package-ecosystem: "github-actions"',
     'package-ecosystem: "docker"',
+)
+
+CODEOWNERS_MARKERS = (
+    "* @kuotunyu",
 )
 
 SECRET_PLACEHOLDERS = (
@@ -141,6 +161,12 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     pyproject = tomllib.loads((root / "pyproject.toml").read_text(encoding="utf-8"))
     lockfile = tomllib.loads((root / "uv.lock").read_text(encoding="utf-8"))
     project_version = pyproject.get("project", {}).get("version")
+    project_authors = pyproject.get("project", {}).get("authors", [])
+    project_author = (
+        project_authors[0].get("name")
+        if len(project_authors) == 1 and isinstance(project_authors[0], dict)
+        else None
+    )
     locked_project_versions = [
         package.get("version")
         for package in lockfile.get("package", [])
@@ -151,6 +177,9 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         release_version_issues.append("pyproject.toml")
     if locked_project_versions != [EXPECTED_RELEASE_VERSION]:
         release_version_issues.append("uv.lock")
+    project_author_issues = []
+    if project_author != EXPECTED_PROJECT_AUTHOR:
+        project_author_issues.append("pyproject.toml")
 
     readme = (root / "README.md").read_text(encoding="utf-8")
     missing_readme_markers = [
@@ -169,6 +198,18 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     missing_dependabot_markers = [
         marker for marker in DEPENDABOT_MARKERS if marker not in dependabot
     ]
+    codeowners = (root / ".github" / "CODEOWNERS").read_text(encoding="utf-8")
+    missing_codeowners_markers = [
+        marker for marker in CODEOWNERS_MARKERS if marker not in codeowners
+    ]
+    codeowners_rules = tuple(
+        line.strip()
+        for line in codeowners.splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    )
+    codeowners_issues = []
+    if codeowners_rules != EXPECTED_CODEOWNERS_RULES:
+        codeowners_issues.append(".github/CODEOWNERS")
     decision_evaluation = json.loads(
         (root / "docs" / "assets" / "decision-evaluation.json").read_text(
             encoding="utf-8"
@@ -282,10 +323,13 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     issues = (
         missing_files
         + release_version_issues
+        + project_author_issues
         + missing_readme_markers
         + missing_ci_workflow_markers
         + forbidden_ci_workflow_markers
         + missing_dependabot_markers
+        + missing_codeowners_markers
+        + codeowners_issues
         + decision_evaluation_issues
         + missing_remote_setup_markers
         + forbidden_remote_setup_markers
@@ -304,10 +348,15 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         "project_version": project_version,
         "locked_project_versions": locked_project_versions,
         "release_version_issues": release_version_issues,
+        "project_author": project_author,
+        "project_author_issues": project_author_issues,
         "missing_readme_markers": missing_readme_markers,
         "missing_ci_workflow_markers": missing_ci_workflow_markers,
         "forbidden_ci_workflow_markers": forbidden_ci_workflow_markers,
         "missing_dependabot_markers": missing_dependabot_markers,
+        "missing_codeowners_markers": missing_codeowners_markers,
+        "codeowners_rules": codeowners_rules,
+        "codeowners_issues": codeowners_issues,
         "decision_evaluation_issues": decision_evaluation_issues,
         "missing_remote_setup_markers": missing_remote_setup_markers,
         "forbidden_remote_setup_markers": forbidden_remote_setup_markers,
@@ -323,6 +372,8 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
     report = build_release_report()
     print(json.dumps(report, ensure_ascii=False))
     return 0 if report["ready_for_manual_handoff"] else 1

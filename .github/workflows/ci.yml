@@ -61,6 +61,9 @@ jobs:
       - name: 執行核心離線測試與 coverage gate
         run: uv run --frozen pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
 
+      - name: 驗證 CPU 部署安全邊界
+        run: uv run --frozen python scripts/verify_deployment.py
+
       - name: 檢查 Python 語法
         run: uv run --frozen python -m compileall -q src scripts tests
 

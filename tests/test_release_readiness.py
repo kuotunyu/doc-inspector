@@ -23,10 +23,15 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["project_version"] == "1.0.0"
     assert report["locked_project_versions"] == ["1.0.0"]
     assert report["release_version_issues"] == []
+    assert report["project_author"] == "kuotunyu"
+    assert report["project_author_issues"] == []
     assert report["missing_readme_markers"] == []
     assert report["missing_ci_workflow_markers"] == []
     assert report["forbidden_ci_workflow_markers"] == []
     assert report["missing_dependabot_markers"] == []
+    assert report["missing_codeowners_markers"] == []
+    assert report["codeowners_rules"] == ["* @kuotunyu"]
+    assert report["codeowners_issues"] == []
     assert report["decision_evaluation_issues"] == []
     assert report["missing_remote_setup_markers"] == []
     assert report["forbidden_remote_setup_markers"] == []
