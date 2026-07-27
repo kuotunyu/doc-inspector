@@ -52,13 +52,61 @@ def _metrics(locator: Locator) -> dict[str, float | str]:
             width: Math.round(box.width),
             height: Math.round(box.height),
             fontSize: style.fontSize,
-            lineHeight: style.lineHeight
+            fontWeight: style.fontWeight,
+            lineHeight: style.lineHeight,
+            borderTopWidth: style.borderTopWidth
           };
         }"""
     )
 
 
+def _all_metrics(locator: Locator) -> list[dict[str, float | str]]:
+    return locator.evaluate_all(
+        """elements => elements.map(element => {
+          const box = element.getBoundingClientRect();
+          const style = window.getComputedStyle(element);
+          return {
+            x: Math.round(box.x),
+            y: Math.round(box.y),
+            width: Math.round(box.width),
+            height: Math.round(box.height),
+            fontSize: style.fontSize,
+            fontWeight: style.fontWeight,
+            lineHeight: style.lineHeight,
+            borderTopWidth: style.borderTopWidth
+          };
+        })"""
+    )
+
+
+def _dropdown_metrics(page: Page) -> dict:
+    combo = page.locator("#demo-selector [role='combobox']").first
+    combo.click()
+    listbox = page.locator('#demo-selector [role="listbox"]').first
+    option = page.locator(
+        '#demo-selector [role="listbox"] [role="option"]'
+    ).first
+    option.wait_for(state="visible")
+    metrics = {
+        "control": _metrics(combo),
+        "listbox": _metrics(listbox),
+        "option": _metrics(option),
+        "frontmostRole": option.evaluate(
+            """element => {
+              const box = element.getBoundingClientRect();
+              return document.elementFromPoint(
+                box.left + 16,
+                box.top + box.height / 2
+              )?.getAttribute("role") ?? "";
+            }"""
+        ),
+    }
+    page.keyboard.press("Escape")
+    return metrics
+
+
 def _page_metrics(page: Page) -> dict:
+    dropdown = _dropdown_metrics(page)
     metrics = {
         "viewportWidth": page.evaluate("window.innerWidth"),
         "documentWidth": page.evaluate("document.documentElement.scrollWidth"),
@@ -70,11 +118,18 @@ def _page_metrics(page: Page) -> dict:
         "resultLegend": _metrics(page.locator(".result-legend").first),
         "legendTitle": _metrics(page.locator(".result-legend h2").first),
         "legendItem": _metrics(page.locator(".legend-items li").first),
+        "legendCards": _all_metrics(page.locator(".legend-items li")),
         "legendLabel": _metrics(page.locator(".legend-items strong").first),
+        "legendAction": _metrics(page.locator(".legend-action").first),
+        "legendDots": _all_metrics(page.locator(".legend-dot")),
         "sourceHeading": _metrics(page.locator(".source-brief h3").first),
         "sourceText": _metrics(page.locator(".source-brief p").first),
         "demoHeading": _metrics(page.locator(".demo-heading h3").first),
         "demoText": _metrics(page.locator(".demo-heading p").first),
+        "demoDropdownControl": dropdown["control"],
+        "demoDropdownListbox": dropdown["listbox"],
+        "demoDropdownOption": dropdown["option"],
+        "demoDropdownFrontmostRole": dropdown["frontmostRole"],
         "demoSelectorAccessible": page.get_by_label("範例文件").is_visible(),
         "documentPickerLabelVisible": page.locator(
             "#document-upload"
@@ -91,6 +146,7 @@ def _page_metrics(page: Page) -> dict:
         "settingsPanel": _metrics(page.locator(".settings-section").first),
         "actionPanel": _metrics(page.locator(".action-section").first),
         "taskHeading": _metrics(page.locator(".task-heading").first),
+        "stepMarkers": _all_metrics(page.locator(".task-step")),
         "taskTitle": _metrics(page.locator(".task-heading h2").first),
         "taskCopy": _metrics(page.locator(".task-heading p").first),
         "fieldLabel": _metrics(
@@ -540,14 +596,62 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    desktop_step_x = [marker["x"] for marker in desktop["stepMarkers"]]
+    mobile_step_x = [marker["x"] for marker in mobile["stepMarkers"]]
+    desktop_dot_widths = [dot["width"] for dot in desktop["legendDots"]]
+    desktop_dot_heights = [dot["height"] for dot in desktop["legendDots"]]
+    mobile_dot_widths = [dot["width"] for dot in mobile["legendDots"]]
+    mobile_dot_heights = [dot["height"] for dot in mobile["legendDots"]]
+
+    for viewport_name, metrics in (
+        ("wide", wide),
+        ("desktop", desktop),
+        ("mobile", mobile),
+    ):
+        legend_cards = metrics["legendCards"]
+        assert len(legend_cards) == 3, (
+            f"{viewport_name} viewport should render exactly three legend cards"
+        )
+        legend_widths = [card["width"] for card in legend_cards]
+        legend_heights = [card["height"] for card in legend_cards]
+        assert max(legend_widths) - min(legend_widths) <= 1, (
+            f"{viewport_name} legend cards should have equal widths: {legend_widths}"
+        )
+        assert max(legend_heights) - min(legend_heights) <= 1, (
+            f"{viewport_name} legend cards should have equal heights: {legend_heights}"
+        )
+
     assert desktop["viewportWidth"] == desktop["documentWidth"]
     assert mobile["viewportWidth"] == mobile["documentWidth"]
     assert float(desktop["bodyText"]["fontSize"].removesuffix("px")) >= 20
     assert float(desktop["legendTitle"]["fontSize"].removesuffix("px")) >= 22
     assert float(desktop["legendItem"]["fontSize"].removesuffix("px")) >= 18
-    assert float(desktop["legendLabel"]["fontSize"].removesuffix("px")) >= 20
+    assert float(desktop["legendLabel"]["fontSize"].removesuffix("px")) >= 22
+    assert float(desktop["legendAction"]["fontSize"].removesuffix("px")) >= 20
+    assert len(desktop["legendDots"]) == 3
+    assert desktop_dot_widths == [18, 18, 18]
+    assert desktop_dot_heights == [18, 18, 18]
     assert float(desktop["sourceText"]["fontSize"].removesuffix("px")) >= 19
     assert float(desktop["demoText"]["fontSize"].removesuffix("px")) >= 18
+    assert (
+        float(desktop["demoDropdownControl"]["fontSize"].removesuffix("px"))
+        >= 21
+    )
+    assert (
+        float(desktop["demoDropdownOption"]["fontSize"].removesuffix("px"))
+        >= 20
+    )
+    assert desktop["demoDropdownOption"]["height"] >= 44
+    assert (
+        desktop["demoDropdownListbox"]["y"]
+        >= desktop["demoDropdownControl"]["y"]
+        + desktop["demoDropdownControl"]["height"]
+    )
+    assert desktop["demoDropdownFrontmostRole"] == "option"
+    assert len(desktop["stepMarkers"]) == 4
+    assert all(marker["width"] >= 46 for marker in desktop["stepMarkers"])
+    assert all(marker["height"] >= 46 for marker in desktop["stepMarkers"])
+    assert max(desktop_step_x) - min(desktop_step_x) <= 1
     assert float(desktop["taskTitle"]["fontSize"].removesuffix("px")) >= 28
     assert float(desktop["taskCopy"]["fontSize"].removesuffix("px")) >= 20
     assert float(desktop["fieldLabel"]["fontSize"].removesuffix("px")) >= 18
@@ -558,7 +662,27 @@ def main() -> None:
     assert float(desktop["statusText"]["fontSize"].removesuffix("px")) >= 19
     assert float(mobile["bodyText"]["fontSize"].removesuffix("px")) >= 19
     assert float(mobile["legendItem"]["fontSize"].removesuffix("px")) >= 18
+    assert float(mobile["legendLabel"]["fontSize"].removesuffix("px")) >= 21
+    assert float(mobile["legendAction"]["fontSize"].removesuffix("px")) >= 19
+    assert len(mobile["legendDots"]) == 3
+    assert mobile_dot_widths == [18, 18, 18]
+    assert mobile_dot_heights == [18, 18, 18]
     assert float(mobile["sourceText"]["fontSize"].removesuffix("px")) >= 19
+    assert (
+        float(mobile["demoDropdownOption"]["fontSize"].removesuffix("px"))
+        >= 20
+    )
+    assert mobile["demoDropdownOption"]["height"] >= 44
+    assert (
+        mobile["demoDropdownListbox"]["y"]
+        >= mobile["demoDropdownControl"]["y"]
+        + mobile["demoDropdownControl"]["height"]
+    )
+    assert mobile["demoDropdownFrontmostRole"] == "option"
+    assert len(mobile["stepMarkers"]) == 4
+    assert all(marker["width"] >= 46 for marker in mobile["stepMarkers"])
+    assert all(marker["height"] >= 46 for marker in mobile["stepMarkers"])
+    assert max(mobile_step_x) - min(mobile_step_x) <= 1
     assert float(mobile["fieldLabel"]["fontSize"].removesuffix("px")) >= 18
     assert desktop["masthead"]["height"] <= 150
     assert desktop["resultLegend"]["height"] <= 140
@@ -569,6 +693,16 @@ def main() -> None:
     assert desktop["uploadPromptInsetTop"] >= 6
     assert desktop["uploadPromptInsetBottom"] >= 6
     assert desktop["documentHeight"] <= 1900
+    assert (
+        float(
+            desktop["settingsPanel"]["borderTopWidth"].removesuffix("px")
+        )
+        >= 8
+    )
+    assert (
+        float(desktop["actionPanel"]["borderTopWidth"].removesuffix("px"))
+        >= 8
+    )
     assert (
         abs(
             desktop["settingsPanel"]["y"]

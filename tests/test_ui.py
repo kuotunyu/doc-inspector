@@ -328,6 +328,39 @@ def test_civic_theme_keeps_light_and_dark_tokens_consistent() -> None:
         assert theme[token] == theme[f"{token}_dark"]
 
 
+def test_civic_css_keeps_steps_and_dropdowns_readable() -> None:
+    css = ui_module.CIVIC_CSS
+
+    assert ".workflow-section + .workflow-section" in css
+    assert "border-top: 10px solid var(--ui-bg)" in css
+    assert "box-shadow: inset 0 2px 0 var(--ui-border)" in css
+    assert "width: 18px" in css
+    assert "min-width: 18px" in css
+    assert "max-width: 18px" in css
+    assert "flex: 0 0 18px" in css
+    assert "font-size: 22px" in css
+    assert '.gradio-container [role="listbox"] [role="option"]' in css
+    assert "position: absolute !important" in css
+    assert "top: calc(100% + 6px) !important" in css
+    assert "bottom: auto !important" in css
+    assert '.workflow-section:has([role="listbox"])' in css
+    assert "min-height: 46px" in css
+    assert "font-size: 20px" in css
+    assert "width: 46px" in css
+    assert "flex: 0 0 46px" in css
+    assert "padding: 18px 28px 0" in css
+    assert ".results-heading::before" not in css
+
+
+def test_civic_css_keeps_legend_cards_equal_sized() -> None:
+    css = ui_module.CIVIC_CSS
+
+    assert "grid-auto-rows: 1fr" in css
+    assert "align-items: stretch" in css
+    assert "height: 100%" in css
+    assert "align-self: stretch" in css
+
+
 def test_load_demo_document_selects_file_and_matching_schema(tmp_path: Path) -> None:
     file_path, schema, status = load_demo_document_callback(
         "receipt_green",
