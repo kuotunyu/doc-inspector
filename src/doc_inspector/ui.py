@@ -290,6 +290,8 @@ gradio-app {
 .legend-items {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 1fr;
+  align-items: stretch;
   gap: 10px;
   margin: 0;
   padding: 0;
@@ -298,10 +300,13 @@ gradio-app {
 
 .legend-items li {
   display: flex;
+  height: 100%;
   min-width: 0;
-  min-height: 64px;
-  gap: 9px;
+  min-height: 68px;
+  gap: 10px;
+  align-self: stretch;
   align-items: center;
+  box-sizing: border-box;
   padding: 9px 11px;
   border: 1px solid;
   border-radius: var(--radius-sm);
@@ -333,7 +338,7 @@ gradio-app {
 
 .legend-items strong {
   color: var(--ui-ink);
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -341,16 +346,22 @@ gradio-app {
 .legend-action {
   margin-top: 2px;
   color: var(--ui-muted);
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.3;
 }
 
 .legend-dot {
-  width: 14px;
-  height: 14px;
-  flex: 0 0 14px;
+  width: 18px;
+  min-width: 18px;
+  max-width: 18px;
+  height: 18px;
+  min-height: 18px;
+  max-height: 18px;
+  flex: 0 0 18px;
+  box-sizing: border-box;
+  border: 2px solid oklch(99% 0 0 / 0.84);
   border-radius: 50%;
-  box-shadow: 0 0 0 3px oklch(99% 0 0 / 0.72);
+  box-shadow: none;
 }
 
 .legend-dot-red {
@@ -376,26 +387,40 @@ gradio-app {
 }
 
 .workflow-section {
+  position: relative;
   gap: 8px !important;
   min-width: 0 !important;
   padding: 16px 28px !important;
   border: 0 !important;
   border-radius: 0 !important;
-  background: transparent !important;
+  background: var(--ui-surface) !important;
   box-shadow: none !important;
 }
 
 .workflow-section + .workflow-section {
-  border-top: 1px solid var(--ui-border) !important;
+  border-top: 10px solid var(--ui-bg) !important;
+  box-shadow: inset 0 2px 0 var(--ui-border) !important;
+}
+
+.settings-section {
+  background: oklch(98.4% 0.007 205) !important;
 }
 
 .action-section {
   background: var(--ui-surface-soft) !important;
 }
 
+.workbench .form {
+  overflow: visible !important;
+}
+
+.workflow-section:has([role="listbox"]) {
+  z-index: 20;
+}
+
 .task-heading {
   display: flex;
-  gap: 13px;
+  gap: 15px;
   align-items: flex-start;
   margin: 0;
 }
@@ -433,17 +458,26 @@ gradio-app {
 
 .task-step {
   display: inline-flex;
-  width: 38px;
-  height: 38px;
-  flex: 0 0 38px;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 46px;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   background: var(--ui-primary);
   color: #ffffff;
-  font-size: 20px;
+  font-size: 23px;
   font-weight: 800;
   line-height: 1;
+  box-shadow: 0 0 0 4px var(--ui-surface);
+}
+
+.settings-section .task-step {
+  box-shadow: 0 0 0 4px oklch(98.4% 0.007 205);
+}
+
+.action-section .task-step {
+  box-shadow: 0 0 0 4px var(--ui-surface-soft);
 }
 
 .upload-control {
@@ -512,7 +546,8 @@ gradio-app {
 .field-control [role="combobox"],
 .field-control button {
   min-height: 56px !important;
-  font-size: 20px !important;
+  font-size: 21px !important;
+  font-weight: 620 !important;
 }
 
 .field-control,
@@ -651,11 +686,50 @@ gradio-app {
 #demo-selector [role="combobox"],
 #demo-selector button {
   min-height: 56px !important;
-  font-size: 20px !important;
+  font-size: 21px !important;
+  font-weight: 620 !important;
 }
 
 #demo-selector {
   min-height: 56px !important;
+}
+
+.gradio-container [role="listbox"] {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-height: min(320px, 42vh) !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
+  padding: 6px !important;
+  border: 1px solid var(--ui-border-strong) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--ui-surface) !important;
+  box-shadow: 0 12px 28px oklch(24% 0.036 205 / 0.16) !important;
+}
+
+.gradio-container [role="listbox"] [role="option"] {
+  min-height: 46px !important;
+  padding: 9px 12px !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--ui-ink) !important;
+  font-size: 20px !important;
+  font-weight: 620 !important;
+  line-height: 1.4 !important;
+}
+
+.gradio-container [role="listbox"] [role="option"]:hover,
+.gradio-container [role="listbox"] [role="option"].active {
+  background: var(--ui-surface-muted) !important;
+}
+
+.gradio-container [role="listbox"] [role="option"][aria-selected="true"] {
+  background: var(--ui-primary-soft) !important;
+  color: var(--ui-primary-hover) !important;
+  font-weight: 760 !important;
 }
 
 .demo-btn {
@@ -938,9 +1012,9 @@ gradio-app {
 }
 
 .results-heading {
-  margin-top: 22px;
+  margin-top: 18px;
   margin-bottom: 10px;
-  padding: 0 4px;
+  padding: 18px 28px 0;
 }
 
 .action-plan {
@@ -1278,7 +1352,7 @@ footer {
 
   .result-legend {
     display: block;
-    padding: 12px;
+    padding: 10px 12px;
   }
 
   .result-legend h2 {
@@ -1313,7 +1387,7 @@ footer {
   }
 
   .legend-items strong {
-    font-size: 20px;
+    font-size: 21px;
   }
 
   .legend-copy {
@@ -1324,7 +1398,7 @@ footer {
 
   .legend-action {
     margin-top: 0;
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.25;
   }
 
@@ -1356,6 +1430,10 @@ footer {
     width: 100% !important;
     flex: 1 1 auto !important;
     padding: 14px 16px !important;
+  }
+
+  .workflow-section + .workflow-section {
+    border-top-width: 8px !important;
   }
 
   .task-heading {
@@ -1417,7 +1495,8 @@ footer {
   }
 
   .results-heading {
-    margin-top: 22px;
+    margin-top: 16px;
+    padding: 16px 16px 0;
   }
 
   .action-plan-header {
