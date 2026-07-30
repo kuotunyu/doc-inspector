@@ -18,12 +18,12 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
 
     assert completed.returncode == 0
     assert report["ready_for_manual_handoff"] is True
-    assert report["required_file_count"] == 29
+    assert report["required_file_count"] == 35
     assert report["missing_files"] == []
     assert report["unexpected_public_files"] == []
-    assert report["expected_release_version"] == "1.0.0"
-    assert report["project_version"] == "1.0.0"
-    assert report["locked_project_versions"] == ["1.0.0"]
+    assert report["expected_release_version"] == "1.1.0"
+    assert report["project_version"] == "1.1.0"
+    assert report["locked_project_versions"] == ["1.1.0"]
     assert report["release_version_issues"] == []
     assert report["project_author"] == "kuotunyu"
     assert report["project_author_issues"] == []
@@ -35,6 +35,7 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["codeowners_rules"] == ["* @kuotunyu"]
     assert report["codeowners_issues"] == []
     assert report["decision_evaluation_issues"] == []
+    assert report["provenance_evaluation_issues"] == []
     assert report["missing_remote_setup_markers"] == []
     assert report["forbidden_remote_setup_markers"] == []
     assert report["missing_public_safety_markers"] == []
