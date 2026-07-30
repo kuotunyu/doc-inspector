@@ -18,7 +18,7 @@ license: mit
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
-> 目前狀態：**v1.1.0 本機驗收完成**（v1.0.0 已公開發布）；Phase 0–7 的本機工程與 Windows／Ubuntu CI 均已通過，[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 可直接檢視。這是送件前預檢工具，不取代主管機關的正式資格審查。
+> 目前版本：**v1.1.0**；各階段的本機工程與 Windows／Ubuntu CI 均已通過，[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 可直接檢視。歷次版本見 [Releases](https://github.com/kuotunyu/doc-inspector/releases) 與 [CHANGELOG.md](CHANGELOG.md)。這是送件前預檢工具，不取代主管機關的正式資格審查。
 
 **線上試用：[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)**
 
