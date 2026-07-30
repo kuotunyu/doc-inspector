@@ -271,14 +271,34 @@ if ($byteMismatches) {
 
 "Archive verified: $($archiveFiles.Count) byte-exact files"
 
-uvx --from huggingface_hub hf upload `
-  steven0226/doc-inspector `
-  $repoRoot `
-  . `
-  --repo-type=space `
-  --delete '*' `
-  --commit-message="deploy: 同步已驗收 GitHub 版本"
+$emptyCwd = Join-Path $hfStage "emptycwd"
+New-Item -ItemType Directory -Path $emptyCwd | Out-Null
+
+Push-Location $emptyCwd
+try {
+  uvx --from huggingface_hub hf upload `
+    steven0226/doc-inspector `
+    $repoRoot `
+    . `
+    --repo-type=space `
+    --delete '*' `
+    --commit-message="deploy: 同步已驗收 GitHub 版本"
+  $uploadExit = $LASTEXITCODE
+} finally {
+  Pop-Location
+}
+if ($uploadExit -ne 0) {
+  throw "hf upload 失敗（exit $uploadExit），沒有發布任何內容。"
+}
 ```
+
+`hf` CLI 會把 glob 參數**對當前工作目錄展開**（`LOCAL_PATH` 的說明就寫著支援
+wildcard）。在專案根目錄執行時，`--delete '*'` 會被展開成一長串本機檔名，
+指令直接解析失敗並印出 `Got unexpected extra arguments (...)`。從空目錄執行
+可讓 `*` 保持字面值，送到 Hub 端才會被當成「刪除所有不在本次 archive 的檔案」。
+
+`$LASTEXITCODE` 的檢查不可省略：PowerShell 的 `$ErrorActionPreference = 'Stop'`
+**不會**攔截原生執行檔的非零退出碼，少了這一段，上傳失敗仍會往下走完並看起來像成功。
 
 第一行 `git status --short` 必須沒有輸出；若有未提交變更，先停止並處理 GitHub
 主倉。`git -c core.autocrlf=false ...` 只對這一次 archive 覆寫 Git 設定，避免
@@ -311,6 +331,24 @@ repository snapshot 等同；必須為 `critical_source_match=true` 且
 使用 `-c core.autocrlf=false`，不可降低 byte-exact gate。第二個報告必須為
 `healthy=true`。兩者都只讀取公開 HTTPS 檔案，不使用 token、不上傳文件，也
 不呼叫模型。
+
+**這兩個檢查都不足以證明「新版已經在服務」。** `check_space_snapshot.py` 比對的是
+Space 上的**原始碼**，`check_live_space.py` 只確認首頁回 200 且含固定字串——舊容器
+同樣會通過這兩項。上傳後 Space 會進入 `RUNNING_BUILDING`：原始碼已更新，但對外仍由
+**舊映像**提供服務。因此務必先確認 runtime 真的回到 `RUNNING`，再驗證頁面確實換版：
+
+```powershell
+$stage = (Invoke-RestMethod `
+  -Uri 'https://huggingface.co/api/spaces/steven0226/doc-inspector').runtime.stage
+$stage
+
+$page = Invoke-WebRequest `
+  -Uri 'https://steven0226-doc-inspector.hf.space/' -UseBasicParsing
+$page.Content -match '來源核驗'
+```
+
+`stage` 必須是 `RUNNING`（不是 `RUNNING_BUILDING`），第二個運算式必須為 `True`。
+換版時把 `來源核驗` 換成該版本新增、且舊版一定沒有的字串。
 
 ## 5. 設定 Space，不把金鑰提交到 Git
 
