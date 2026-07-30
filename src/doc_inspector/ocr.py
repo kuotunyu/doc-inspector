@@ -27,11 +27,12 @@ class TesseractEvidenceOcr:
     def page_tokens(self, page: NormalizedPage) -> tuple[PageToken, ...]:
         """Return positioned OCR words in the normalized bbox space."""
 
+        if page.width <= 0 or page.height <= 0:
+            return ()
+
         import pytesseract  # noqa: PLC0415 - optional dependency, imported lazily
         from PIL import Image  # noqa: PLC0415
 
-        if page.width <= 0 or page.height <= 0:
-            return ()
         with Image.open(BytesIO(page.data)) as image:
             image.load()
             data = pytesseract.image_to_data(

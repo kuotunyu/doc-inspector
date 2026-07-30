@@ -7,11 +7,16 @@ from PIL import Image
 
 from doc_inspector.demo import (
     DEMO_SEED,
+    PROVENANCE_DEMO_NAME,
     WATERMARK,
     _font_path,
     demo_extractions,
     generate_demo_artifacts,
+    provenance_demo_extraction,
+    render_provenance_demo_pdf,
 )
+from doc_inspector.ingest import normalize_document
+from doc_inspector.provenance import resolve_provenance
 from doc_inspector.rules import inspect_extraction
 
 
@@ -44,6 +49,61 @@ def test_generate_demo_artifacts_writes_safe_manifest_and_exports(tmp_path: Path
         assert artifact.workbook_path.is_file()
         with Image.open(artifact.image_path) as image:
             assert image.size == (1600, 2200)
+
+
+def test_provenance_demo_pdf_is_deterministic_and_small(tmp_path: Path) -> None:
+    first = render_provenance_demo_pdf(tmp_path / "a.pdf").read_bytes()
+    second = render_provenance_demo_pdf(tmp_path / "b.pdf").read_bytes()
+
+    assert first == second
+    assert len(first) < 200_000
+
+
+def test_provenance_demo_stays_green_while_showing_every_source_state(
+    tmp_path: Path,
+) -> None:
+    pdf = render_provenance_demo_pdf(tmp_path / f"{PROVENANCE_DEMO_NAME}.pdf")
+    extraction = provenance_demo_extraction()
+    document = normalize_document(pdf)
+
+    review = inspect_extraction(extraction)
+    collection = resolve_provenance(
+        extraction, document.text_layer, pages=document.pages
+    )
+
+    assert review.overall_level == "green"
+    assert len(document.pages) == 3
+    assert [layer.source for layer in document.text_layer.pages] == [
+        "native_pdf_text",
+        "native_pdf_text",
+        "unavailable",
+    ]
+    assert {field.verification_status for field in collection.fields} == {
+        "verified",
+        "approximate",
+        "ambiguous",
+        "page_only",
+        "unresolved",
+    }
+    assert all(
+        field.bbox is None
+        for field in collection.fields
+        if field.verification_status
+        in {"ambiguous", "page_only", "unresolved"}
+    )
+
+
+def test_manifest_records_the_provenance_demo_document(tmp_path: Path) -> None:
+    generate_demo_artifacts(tmp_path)
+    manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    entry = manifest["provenance_demo"]
+
+    assert entry["name"] == PROVENANCE_DEMO_NAME
+    assert entry["document"] == f"{PROVENANCE_DEMO_NAME}.pdf"
+    assert entry["pages_with_text_layer"] == [1, 2]
+    assert entry["image_only_pages"] == [3]
+    assert len(entry["pdf_sha256"]) == 64
+    assert (tmp_path / entry["document"]).is_file()
 
 
 def test_font_path_supports_debian_noto_cjk(tmp_path: Path) -> None:
