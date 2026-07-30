@@ -425,7 +425,7 @@ CI 不需要 secrets，也不會呼叫模型 API。
 - Block force pushes。
 - Block deletions。
 
-如果是單人作品集，可先不要求 approval 人數，但仍保留 Pull Request 與 CI gate。
+單一維護者的專案可先不要求 approval 人數，但仍保留 Pull Request 與 CI gate。
 
 ### v1.0.0 Release 與後續版本
 
