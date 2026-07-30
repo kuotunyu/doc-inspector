@@ -67,6 +67,14 @@ class AppSettings(BaseSettings):
         default="vidore/colqwen2-v1.0-hf",
         validation_alias="COLQWEN_MODEL",
     )
+    evidence_ocr_enabled: bool = Field(
+        default=False,
+        validation_alias="EVIDENCE_OCR",
+    )
+    evidence_ocr_languages: str = Field(
+        default="chi_tra+chi_sim+eng",
+        validation_alias="EVIDENCE_OCR_LANGUAGES",
+    )
 
     max_file_bytes: int = 25 * 1024 * 1024
     max_pdf_pages: int = 10

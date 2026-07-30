@@ -9,7 +9,14 @@ from typing import Any, Iterable
 from pydantic import BaseModel
 import xlsxwriter
 
-from doc_inspector.schemas import InspectionBundle, LocatedIdType, LocatedValue
+from doc_inspector.provenance import iter_located_fields
+from doc_inspector.schemas import (
+    FieldProvenance,
+    InspectionBundle,
+    LocatedIdType,
+    LocatedValue,
+    NormalizedBBox,
+)
 
 
 def export_bundle_json(bundle: InspectionBundle, destination: Path) -> Path:
@@ -63,6 +70,54 @@ def extraction_table_rows(bundle: InspectionBundle) -> list[tuple[str, Any, int 
     """Return UI-ready extraction rows without exposing local paths."""
 
     return list(_walk_located(bundle.extraction))
+
+
+def format_bbox(bbox: NormalizedBBox | None) -> str | None:
+    """Render a bbox as a compact, locale-independent ``x0,y0,x1,y1`` string."""
+
+    if bbox is None:
+        return None
+    return ",".join(
+        f"{value:.1f}" for value in (bbox.x0, bbox.y0, bbox.x1, bbox.y1)
+    )
+
+
+def provenance_table_rows(
+    bundle: InspectionBundle,
+) -> list[tuple[str, Any, str | None, int | None, int | None, str, str, str | None, float | None, str | None]]:
+    """Return machine-readable provenance rows without local paths or page dumps."""
+
+    collection = bundle.provenance
+    if collection is None:
+        return []
+    values = {
+        path: located.value
+        for path, located in iter_located_fields(bundle.extraction)
+    }
+    return [
+        (
+            field.field_path,
+            values.get(field.field_path),
+            field.evidence_text,
+            field.claimed_page_number,
+            field.resolved_page_number,
+            field.verification_status,
+            field.resolution_method,
+            format_bbox(field.bbox),
+            field.match_score,
+            field.warning,
+        )
+        for field in collection.fields
+    ]
+
+
+def provenance_field_index(bundle: InspectionBundle) -> dict[str, FieldProvenance]:
+    """Return provenance keyed by field path for UI lookups."""
+
+    collection = bundle.provenance
+    if collection is None:
+        return {}
+    return {field.field_path: field for field in collection.fields}
 
 
 def check_table_rows(bundle: InspectionBundle) -> list[tuple[str, str, str, str, str | None, str | None]]:
@@ -175,9 +230,37 @@ def export_bundle_excel(bundle: InspectionBundle, destination: Path) -> Path:
                     {"type": "text", "criteria": "containing", "value": level, "format": status_format},
                 )
 
+        _write_table_sheet(
+            workbook,
+            "provenance",
+            [
+                "field_path",
+                "value",
+                "evidence_text",
+                "claimed_page",
+                "resolved_page",
+                "verification_status",
+                "resolution_method",
+                "bbox",
+                "match_score",
+                "warning",
+            ],
+            provenance_table_rows(bundle),
+            [34, 24, 44, 14, 14, 20, 22, 26, 13, 44],
+        )
+
+        provenance = bundle.provenance
         metadata = [
             ("schema_version", bundle.schema_version),
             ("rules_version", bundle.rules_version),
+            (
+                "provenance_version",
+                provenance.provenance_version if provenance else None,
+            ),
+            (
+                "provenance_coordinate_space",
+                provenance.coordinate_space if provenance else None,
+            ),
             ("provider", bundle.provider),
             ("model", bundle.model),
             ("source_file_name", bundle.source_file_name),
@@ -188,6 +271,26 @@ def export_bundle_excel(bundle: InspectionBundle, destination: Path) -> Path:
             ("total_tokens", bundle.usage.total_tokens),
             ("overall_level", bundle.review_report.overall_level),
             ("warning_count", len(bundle.warnings)),
+            (
+                "provenance_verified",
+                provenance.summary.verified if provenance else None,
+            ),
+            (
+                "provenance_approximate",
+                provenance.summary.approximate if provenance else None,
+            ),
+            (
+                "provenance_ambiguous",
+                provenance.summary.ambiguous if provenance else None,
+            ),
+            (
+                "provenance_page_only",
+                provenance.summary.page_only if provenance else None,
+            ),
+            (
+                "provenance_unresolved",
+                provenance.summary.unresolved if provenance else None,
+            ),
         ]
         _write_table_sheet(workbook, "metadata", ["key", "value"], metadata, [28, 54])
     finally:

@@ -52,14 +52,16 @@ def test_inspect_single_image_returns_safe_bundle(tmp_path: Path) -> None:
     )
     extractor = FakeExtractor(parsed)
 
-    bundle = _inspect_document(
+    artifacts = _inspect_document(
         path,
         "subsidy_application",
         "gemini",
         settings=offline_settings(),
         extractor=extractor,
     )
+    bundle = artifacts.bundle
 
+    assert [page.page_number for page in artifacts.pages] == [1]
     assert bundle.source_file_name == path.name
     assert bundle.page_count == 1
     assert bundle.usage.total_tokens == 10
@@ -84,7 +86,7 @@ def test_inspect_multipage_pdf_passes_all_pages_to_extractor(tmp_path: Path) -> 
         "openai",
         settings=offline_settings(),
         extractor=extractor,
-    )
+    ).bundle
 
     assert bundle.page_count == 2
     assert extractor.received_document is not None

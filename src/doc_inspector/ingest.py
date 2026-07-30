@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
 from pathlib import Path
+from typing import Literal
 import warnings
 
 import pymupdf
@@ -18,10 +19,56 @@ from doc_inspector.errors import (
     PageLimitError,
     UnsupportedFileTypeError,
 )
+from doc_inspector.schemas import BBOX_SCALE, NormalizedBBox
 
 SUPPORTED_IMAGE_SUFFIXES = frozenset({".png", ".jpg", ".jpeg", ".webp"})
 SUPPORTED_IMAGE_FORMATS = frozenset({"PNG", "JPEG", "WEBP"})
 SUPPORTED_SUFFIXES = SUPPORTED_IMAGE_SUFFIXES | {".pdf"}
+
+TextLayerSource = Literal["native_pdf_text", "optional_local_ocr", "unavailable"]
+
+_MIN_BBOX_EXTENT = 1e-6
+
+
+@dataclass(frozen=True, slots=True)
+class PageWord:
+    """One positioned token of a page's local text layer."""
+
+    text: str
+    bbox: NormalizedBBox
+    confidence: float | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class PageTextLayer:
+    """Positioned tokens for one page, or an explicit absence of them."""
+
+    page_number: int
+    source: TextLayerSource = "unavailable"
+    words: tuple[PageWord, ...] = ()
+
+    @property
+    def has_text(self) -> bool:
+        return bool(self.words)
+
+
+@dataclass(frozen=True, slots=True)
+class DocumentTextLayer:
+    """Ordered per-page text layers used to verify provider evidence claims."""
+
+    pages: tuple[PageTextLayer, ...] = ()
+
+    @property
+    def has_text(self) -> bool:
+        return any(page.has_text for page in self.pages)
+
+    def page(self, page_number: int) -> PageTextLayer | None:
+        """Return the layer for a one-based page number, or ``None``."""
+
+        for candidate in self.pages:
+            if candidate.page_number == page_number:
+                return candidate
+        return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -41,6 +88,63 @@ class NormalizedDocument:
 
     source_file_name: str
     pages: tuple[NormalizedPage, ...]
+    text_layer: DocumentTextLayer = field(default_factory=DocumentTextLayer)
+
+
+def normalized_bbox_from_rect(
+    rect: pymupdf.Rect,
+    page_rect: pymupdf.Rect,
+) -> NormalizedBBox | None:
+    """Map a display-space PDF rectangle into the normalized bbox space.
+
+    ``page_rect`` is ``Page.rect``, which already accounts for the crop box and
+    page rotation, so the result is independent of render DPI and of any later
+    image downscaling. Rectangles that clip away to nothing return ``None``.
+    """
+
+    if page_rect.width <= 0 or page_rect.height <= 0:
+        return None
+
+    def _scale(value: float, origin: float, extent: float) -> float:
+        return min(BBOX_SCALE, max(0.0, (value - origin) / extent * BBOX_SCALE))
+
+    x0 = _scale(min(rect.x0, rect.x1), page_rect.x0, page_rect.width)
+    x1 = _scale(max(rect.x0, rect.x1), page_rect.x0, page_rect.width)
+    y0 = _scale(min(rect.y0, rect.y1), page_rect.y0, page_rect.height)
+    y1 = _scale(max(rect.y0, rect.y1), page_rect.y0, page_rect.height)
+    if x1 - x0 < _MIN_BBOX_EXTENT or y1 - y0 < _MIN_BBOX_EXTENT:
+        return None
+    return NormalizedBBox(x0=x0, y0=y0, x1=x1, y1=y1)
+
+
+def extract_page_text_layer(page: pymupdf.Page, page_number: int) -> PageTextLayer:
+    """Read one PDF page's native words without rasterizing or storing the page."""
+
+    page_rect = page.rect
+    rotation_matrix = page.rotation_matrix
+    words: list[PageWord] = []
+    try:
+        raw_words = page.get_text("words", sort=True)
+    except (RuntimeError, ValueError):
+        return PageTextLayer(page_number=page_number)
+
+    for raw in raw_words:
+        text = str(raw[4])
+        if not text.strip():
+            continue
+        rotated = pymupdf.Rect(raw[0], raw[1], raw[2], raw[3]) * rotation_matrix
+        bbox = normalized_bbox_from_rect(rotated, page_rect)
+        if bbox is None:
+            continue
+        words.append(PageWord(text=text, bbox=bbox))
+
+    if not words:
+        return PageTextLayer(page_number=page_number)
+    return PageTextLayer(
+        page_number=page_number,
+        source="native_pdf_text",
+        words=tuple(words),
+    )
 
 
 def _validate_path(path: Path, max_file_bytes: int) -> Path:
@@ -110,6 +214,7 @@ def _normalize_image(path: Path, max_long_edge: int) -> NormalizedDocument:
     return NormalizedDocument(
         source_file_name=path.name,
         pages=(NormalizedPage(page_number=1, data=data, width=width, height=height),),
+        text_layer=DocumentTextLayer(pages=(PageTextLayer(page_number=1),)),
     )
 
 
@@ -137,7 +242,9 @@ def _normalize_pdf(
                 raise PageLimitError(f"PDF 超過 {max_pdf_pages} 頁上限。")
 
             pages: list[NormalizedPage] = []
+            text_layers: list[PageTextLayer] = []
             for index, page in enumerate(document):
+                page_number = index + 1
                 pixmap = page.get_pixmap(dpi=render_dpi, alpha=False)
                 png_bytes = pixmap.tobytes("png")
                 with Image.open(BytesIO(png_bytes)) as image:
@@ -145,18 +252,23 @@ def _normalize_pdf(
                     data, width, height = _encode_normalized_image(image, max_long_edge)
                 pages.append(
                     NormalizedPage(
-                        page_number=index + 1,
+                        page_number=page_number,
                         data=data,
                         width=width,
                         height=height,
                     )
                 )
+                text_layers.append(extract_page_text_layer(page, page_number))
     except (EncryptedPdfError, PageLimitError, DocumentDecodeError):
         raise
     except (pymupdf.EmptyFileError, pymupdf.FileDataError, RuntimeError, ValueError, OSError) as exc:
         raise DocumentDecodeError("PDF 損毀或無法解碼。") from exc
 
-    return NormalizedDocument(source_file_name=path.name, pages=tuple(pages))
+    return NormalizedDocument(
+        source_file_name=path.name,
+        pages=tuple(pages),
+        text_layer=DocumentTextLayer(pages=tuple(text_layers)),
+    )
 
 
 def normalize_document(

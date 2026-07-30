@@ -2,13 +2,16 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from time import perf_counter
 from typing import Protocol
 
 from doc_inspector.config import AppSettings, load_settings
-from doc_inspector.ingest import NormalizedDocument, normalize_document
+from doc_inspector.ingest import NormalizedDocument, NormalizedPage, normalize_document
+from doc_inspector.ocr import load_evidence_ocr_provider
 from doc_inspector.providers import ExtractionResult, LangChainStructuredExtractor
+from doc_inspector.provenance import resolve_provenance
 from doc_inspector.rules import inspect_extraction
 from doc_inspector.schemas import InspectionBundle, SchemaRegistry
 from doc_inspector.types import ProviderName, SchemaName
@@ -25,6 +28,18 @@ class DocumentExtractor(Protocol):
     ) -> ExtractionResult: ...
 
 
+@dataclass(frozen=True, slots=True)
+class InspectionArtifacts:
+    """An inspection plus the in-memory pages needed to show verified evidence.
+
+    ``bundle`` stays free of image bytes and local paths so it can be exported
+    as-is; ``pages`` never leaves the process except as an on-demand preview.
+    """
+
+    bundle: InspectionBundle
+    pages: tuple[NormalizedPage, ...]
+
+
 def _inspect_document(
     path: Path,
     schema: SchemaName,
@@ -32,7 +47,7 @@ def _inspect_document(
     *,
     settings: AppSettings | None = None,
     extractor: DocumentExtractor | None = None,
-) -> InspectionBundle:
+) -> InspectionArtifacts:
     """Normalize, extract, validate, and package one document without persisting its contents."""
 
     SchemaRegistry.get(schema)
@@ -48,10 +63,19 @@ def _inspect_document(
     )
     active_extractor = extractor or LangChainStructuredExtractor(active_settings)
     result = active_extractor.extract(normalized, schema, provider)
+    provenance = resolve_provenance(
+        result.parsed,
+        normalized.text_layer,
+        pages=normalized.pages,
+        ocr_provider=load_evidence_ocr_provider(
+            enabled=active_settings.evidence_ocr_enabled,
+            languages=active_settings.evidence_ocr_languages,
+        ),
+    )
     elapsed_ms = max(0, round((perf_counter() - start) * 1000))
 
     warnings = [*result.warnings, *result.parsed.extraction_warnings]
-    return InspectionBundle(
+    bundle = InspectionBundle(
         provider=result.provider,
         model=result.model,
         source_file_name=normalized.source_file_name,
@@ -61,7 +85,19 @@ def _inspect_document(
         extraction=result.parsed,
         warnings=warnings,
         review_report=inspect_extraction(result.parsed),
+        provenance=provenance,
     )
+    return InspectionArtifacts(bundle=bundle, pages=normalized.pages)
+
+
+def inspect_document_detailed(
+    path: Path,
+    schema: SchemaName,
+    provider: ProviderName,
+) -> InspectionArtifacts:
+    """Inspect one local document and keep its rendered pages for evidence preview."""
+
+    return _inspect_document(path, schema, provider)
 
 
 def inspect_document(
@@ -71,4 +107,4 @@ def inspect_document(
 ) -> InspectionBundle:
     """Public fixed interface for inspecting one local document."""
 
-    return _inspect_document(path, schema, provider)
+    return _inspect_document(path, schema, provider).bundle
