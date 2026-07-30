@@ -70,6 +70,9 @@ jobs:
       - name: 驗證決策層產品評估
         run: uv run --frozen python scripts/run_product_evaluation.py --check
 
+      - name: 驗證來源核驗評估
+        run: uv run --frozen python scripts/run_provenance_evaluation.py --check
+
       - name: 驗證公開文件連結與隱私邊界
         run: uv run --frozen python scripts/verify_public_docs.py
 

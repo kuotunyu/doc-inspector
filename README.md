@@ -1,4 +1,4 @@
----
+﻿---
 title: 文件預檢所
 emoji: 📄
 colorFrom: blue
@@ -18,7 +18,7 @@ license: mit
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是表單欄位、日期、身分資料、金額或附件稍有疏漏，就必須花時間往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉這個專案實作一套面向台灣公共服務情境、透明、可測試且可重現的文件智慧流程。
 
-> 目前狀態：**v1.0.0 已發布**；Phase 0–7 的本機工程與 Windows／Ubuntu CI 均已通過，[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 可直接檢視。這是送件前預檢工具，不取代主管機關的正式資格審查。
+> 目前狀態：**v1.1.0 本機驗收完成**（v1.0.0 已公開發布）；Phase 0–7 的本機工程與 Windows／Ubuntu CI 均已通過，[Public GitHub repository](https://github.com/kuotunyu/doc-inspector) 與 [Hugging Face 公開 live demo](https://steven0226-doc-inspector.hf.space) 可直接檢視。這是送件前預檢工具，不取代主管機關的正式資格審查。
 
 **線上試用：[開啟文件預檢所](https://steven0226-doc-inspector.hf.space)**
 
@@ -26,7 +26,8 @@ license: mit
 
 - 想先看成果：開啟 [Live Demo](https://steven0226-doc-inspector.hf.space)，載入紅燈範例並查看修正清單。
 - 想了解設計與取捨：閱讀 [Case Study](docs/CASE_STUDY.md)。
-- 想檢查品質證據：閱讀 [決策層產品評估](docs/DECISION_EVALUATION.md) 與 machine-readable [evaluation report](docs/assets/decision-evaluation.json)。
+- 想知道「這個欄位到底從哪裡來」：閱讀 [來源核驗設計與評估](docs/EVIDENCE_PROVENANCE.md)。
+- 想檢查品質證據：閱讀 [決策層產品評估](docs/DECISION_EVALUATION.md) 與 machine-readable [decision report](docs/assets/decision-evaluation.json)、[provenance report](docs/assets/provenance-evaluation.json)。
 - 想在本機重現：依照下方快速開始與測試指令執行。
 - 想參與改善：參考 [貢獻指南](.github/CONTRIBUTING.md)、[Security Policy](.github/SECURITY.md) 與 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -36,20 +37,22 @@ license: mit
 |---|---|
 | 公開產品 | [Live Demo](https://steven0226-doc-inspector.hf.space) 可載入不含真實個資的紅／黃／綠合成案例 |
 | 跨平台工程 | GitHub Actions 在 Windows／Ubuntu、Python 3.11 執行 locked install、coverage、部署、文件與發布包 gates；可用完整 commit SHA 唯讀驗證對應 CI |
-| 本機 release gate | 150 passed、coverage 89%；base CI 等價路徑 147 passed、1 skipped、coverage 87% |
+| 本機 release gate | 252 passed，總 coverage 91% |
 | 產品決策層 | 24 / 24 人工定義 regression cases exact match；不冒充 OCR／VLM 端到端準確率 |
+| 欄位來源可核驗 | 61 個合成語料欄位：**false verified rate 0%**、可解析欄位 page accuracy 100%、verified bbox hit rate 100%；找不到可靠位置時明說不知道 |
 | UI 品質 | 1920／1440／390 px 無水平溢出；互動目標至少 44 px；light／dark 系統偏好最低文字對比 6.89:1 |
-| 發布包 | `1.0.0` wheel／sdist 通過 archive hygiene、作者 metadata 與全新環境離線安裝 smoke |
+| 發布包 | `1.1.0` wheel／sdist 通過 archive hygiene、作者 metadata 與全新環境離線安裝 smoke |
 
 ## 能做什麼
 
 - 接受 PNG、JPEG、WebP 或最多 10 頁的 PDF。
 - 以 `subsidy_application` 或 `receipt` 固定 schema 抽取欄位、頁碼與短證據。
+- **在本機文字層核驗模型引用的原文**，在原始頁面上標出證據位置；無法確認時明確說不知道。
 - 可切換兩個雲端供應商；模型 ID 全由 `.env` 設定。
 - 以純函式規則檢查必填、日期、身分證格式與金額一致性，輸出紅／黃／綠結果。
-- 下載不含本機絕對路徑與 raw API 回應的 JSON、四工作表 Excel。
+- 下載不含本機絕對路徑與 raw API 回應的 JSON、五工作表 Excel。
 - 提供固定種子、明顯浮水印且不含真實個資的合成 demo。
-- 另有可選的 ColQwen2 本機視覺頁面檢索，以及不含 GPU 依賴的 CPU 容器。
+- 另有可選的 ColQwen2 本機視覺頁面檢索、可選的本機證據 OCR，以及不含 GPU 依賴的 CPU 容器。
 
 ## 架構
 
@@ -61,14 +64,19 @@ flowchart LR
     D --> E["LangChain 1.x Provider Adapter"]
     E --> F["Pydantic 結構驗證"]
     F --> G["純函式規則引擎"]
+    B --> M["本機文字層（逐字 bbox）"]
+    F --> N["Evidence Provenance Resolver"]
+    M --> N
+    N --> H
     G --> H["InspectionBundle"]
     H --> I["Gradio 文件預檢所"]
     H --> J["JSON"]
-    H --> K["Excel：extraction／line_items／checks／metadata"]
+    H --> K["Excel：extraction／line_items／checks／provenance／metadata"]
     C -. "可選" .-> L["ColQwen2 SDPA 頁面檢索"]
+    M -. "可選" .-> O["本機 OCR（掃描頁）"]
 ```
 
-抽取路徑使用 `init_chat_model(...).with_structured_output(..., include_raw=True)`，不建立 Agent loop。PDF 由 PyMuPDF 以 200 DPI 轉圖；圖片會套用 EXIF 方向、轉成 RGB，長邊限制為 2400 px。
+抽取路徑使用 `init_chat_model(...).with_structured_output(..., include_raw=True)`，不建立 Agent loop。PDF 由 PyMuPDF 以 200 DPI 轉圖；圖片會套用 EXIF 方向、轉成 RGB，長邊限制為 2400 px。模型不輸出座標；bounding box 一律由抽取完成後的確定性後處理，在文件自己的文字層中比對產生。
 
 ## 介面預覽
 
@@ -151,13 +159,14 @@ uv run python scripts/verify_deployment.py
 uv run --all-extras pytest --cov=doc_inspector --cov-report=term --cov-fail-under=85
 uv run python -m compileall -q src scripts tests
 uv run python scripts/run_product_evaluation.py --check
+uv run python scripts/run_provenance_evaluation.py --check
 uv run python scripts/verify_public_docs.py
 uv build --clear --no-build-isolation
 uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-2026-07-26 v1.0.0 本機 release gate：**150 passed，總 coverage 89%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.0.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。未安裝 GPU extra 的 CI 等價環境為 **147 passed、1 skipped、coverage 87%**。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
+2026-07-30 v1.1.0 本機 release gate：**252 passed，總 coverage 91%**；wheel 與 sdist 均成功建立，發布包檢查確認只含 `1.1.0` 產物，且 wheel 可在全新 virtual environment 由 uv cache 離線安裝完整相依並載入。UI gate 另在瀏覽器 light／dark 系統偏好下抽查關鍵文字對比，最低為 **6.89:1**，並在 1440／390 px 逐一驗證五種來源核驗狀態。預設單元測試不需網路、API key、Tesseract、GPU 或啟動對外 UI；付費 API、benchmark、GPU 與瀏覽器驗證由明確腳本分開執行。
 
 公開 repository 的 `CI` 會在 `windows-latest` 與 `ubuntu-latest` 使用 Python 3.11、locked base／dev dependencies（包含 build backend），執行核心離線測試、85% coverage 下限、決策層產品評估、compileall、wheel／sdist build、archive hygiene、隔離 wheel 安裝 smoke 與 secret-safe release verifier。CI 不安裝可選 GPU extra；`tests/test_retrieval.py` 會明確標示 skip，也不注入或呼叫任何模型 API key。本機以 `--all-extras` 執行時仍會完整驗證檢索計分。
 
@@ -175,6 +184,46 @@ uv run python scripts/verify_release.py
 | 紅燈／黃燈 issue recall | 100%／100% |
 
 這些數字只證明固定輸入下的**決策層 contract**，不代表 OCR、VLM 或真實文件端到端準確率。評估方法、案例分布與 error analysis 見 [決策層產品評估](docs/DECISION_EVALUATION.md)。
+
+## 來源核驗
+
+模型回傳的 `page_number` 與 `evidence_text` **也是模型生成的**，本身無法證明那段文字真的在文件裡。v1.1 因此把「模型宣稱」與「已驗證來源」拆開：抽取完成後，系統用確定性後處理在文件自己的文字層中比對模型引用的原文，找到唯一一處才標位置。
+
+![來源核驗介面：選擇欄位後顯示核驗結果與證據位置](docs/assets/evidence-provenance.png)
+
+五種狀態各自有不同且不誤導的說明：
+
+| 狀態 | 意義 | 會不會給位置 |
+|---|---|---|
+| `verified` | 證據在文字層中唯一精確命中，頁碼也相符 | 會 |
+| `approximate` | 找到唯一位置但有保留（部分相符、頁碼不符） | 會 |
+| `ambiguous` | 文件中有多處一模一樣的內容 | 不會 |
+| `page_only` | 該頁沒有文字層，頁碼來自模型且未經驗證 | 不會 |
+| `unresolved` | 本機找不到這段證據 | 不會 |
+
+固定合成語料共 4 份 PDF、61 個欄位（51 個有 ground-truth 頁碼與 bbox），涵蓋重複值、錯誤頁碼、幻覺證據、換行接合、旋轉頁、算繪後縮放、巢狀清單與純影像頁。Ground truth 由文件生成器的版面規格直接記錄，不從系統輸出反推。
+
+| 指標 | 結果 | 事前 gate |
+|---|---:|---|
+| False verified rate | **0.00%** | = 0% ✅ |
+| 可解析欄位 page accuracy | **100.00%** | ≥ 95% ✅ |
+| Verified bbox hit rate（IoU ≥ 0.5） | **100.00%** | ≥ 90% ✅ |
+| 所有有宣稱欄位的 bbox 覆蓋率 | 85.00% | — |
+| 定位延遲 p50／p95 | 0.036／0.102 ms | — |
+
+85% 是刻意的取捨：其餘 15% 的欄位系統選擇說「不知道」，而不是給一個猜測的框。設計、威脅模型、比對政策、完整 error analysis 與已知限制見 [來源核驗設計與評估](docs/EVIDENCE_PROVENANCE.md)；機器可讀結果見 [provenance-evaluation.json](docs/assets/provenance-evaluation.json)。
+
+```powershell
+uv run python scripts/run_provenance_evaluation.py
+```
+
+掃描件沒有文字層時預設維持 `page_only`。若需要，可安裝可選的本機 OCR（另需系統 Tesseract 5）：
+
+```powershell
+uv sync --extra local-ocr
+```
+
+並在 `.env` 設定 `EVIDENCE_OCR=true`。未安裝時不會報錯，也不會中斷預檢。
 
 ## XFUND 評估
 
@@ -240,6 +289,9 @@ charged-or-reserved 為 **US$0.87104350**，低於核准硬上限 US$15。實際
 - UI 必須先勾選「文件會傳送給雲端供應商」才會執行。
 - 不保存 raw API 回應；錯誤摘要只包含錯誤型別與欄位路徑。
 - 匯出資料沒有來源絕對路徑；Excel 關閉公式與 URL 自動解析，避免公式注入。
+- 來源核驗只匯出 field path、短證據、頁碼、狀態、bbox 與說明；不輸出整頁文字或
+  OCR dump。頁面預覽只寫進 Gradio 受管快取，不進入任何匯出檔；provenance 檢視
+  資料放在 server-side session state，不送到瀏覽器。
 - 上傳與匯出檔共用 Gradio 管理的 cache，每 10 分鐘清理，伺服器關閉時再清空；
   不開放任意 `allowed_paths`。
 - Gradio analytics、monitoring 與事件 API 均停用或設為 private；等待佇列最多
@@ -278,6 +330,8 @@ docker run --rm -p 7861:7861 `
 
 - 只有補助申請與收據兩個固定 schema。
 - 規則集是技術預檢，不包含各機關完整資格法規。
+- 來源核驗只能驗證有原生文字層的頁面；掃描件在預設安裝下永遠是 `page_only`。
+  合成語料的 IoU 接近 1.0 反映的是語料性質，不等於真實版面的定位精度。
 - 雲端模型可能誤讀手寫、低解析、旋轉或極密集表格，仍需人工核對 evidence。
 - XFUND 指標是嚴格 exact match，不能直接等同真實案件可用率。
 - 視覺檢索模型主要以英文訓練；目前中文結果是單一固定資料集的零樣本證據。

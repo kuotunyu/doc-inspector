@@ -1,4 +1,4 @@
-"""Secret-safe static verification for the public release handoff."""
+﻿"""Secret-safe static verification for the public release handoff."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_RELEASE_VERSION = "1.0.0"
+EXPECTED_RELEASE_VERSION = "1.1.0"
 EXPECTED_PROJECT_AUTHOR = "kuotunyu"
 EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 
@@ -29,12 +29,18 @@ REQUIRED_FILES = (
     "pyproject.toml",
     "uv.lock",
     "data/evaluation/decision_cases.json",
+    "data/evaluation/provenance/manifest.json",
     "docs/CASE_STUDY.md",
     "docs/DECISION_EVALUATION.md",
+    "docs/EVIDENCE_PROVENANCE.md",
     "docs/REMOTE_SETUP.md",
     "docs/assets/desktop.png",
+    "docs/assets/evidence-provenance.png",
     "docs/assets/decision-evaluation.json",
+    "docs/assets/provenance-evaluation.json",
     "scripts/audit_ui_quality.py",
+    "scripts/build_provenance_corpus.py",
+    "scripts/run_provenance_evaluation.py",
     "scripts/check_github_ci.py",
     "scripts/check_github_contributors.py",
     "scripts/check_live_space.py",
@@ -102,17 +108,20 @@ README_MARKERS = (
     "## Demo 資料與授權",
     "## CPU 容器與部署",
     "## 目前限制",
-    "v1.0.0 已發布",
+    "v1.1.0",
     "Hugging Face Docker Space",
-    "150 passed，總 coverage 89%",
+    "252 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",
     "## 可驗證成果",
     "## 決策層產品評估",
+    "## 來源核驗",
     "docs/CASE_STUDY.md",
     "docs/DECISION_EVALUATION.md",
+    "docs/EVIDENCE_PROVENANCE.md",
     "24 / 24",
+    "false verified rate",
 )
 
 CI_WORKFLOW_MARKERS = (
@@ -126,6 +135,7 @@ CI_WORKFLOW_MARKERS = (
     "python scripts/verify_deployment.py",
     "python -m compileall -q src scripts tests",
     "python scripts/run_product_evaluation.py --check",
+    "python scripts/run_provenance_evaluation.py --check",
     "python scripts/verify_public_docs.py",
     "uv build --clear --no-build-isolation",
     "python scripts/verify_distribution.py",
@@ -264,6 +274,51 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
             decision_evaluation_issues.append(f"metrics.{metric_name}")
     if any(case.get("passed") is not True for case in decision_evaluation.get("cases", [])):
         decision_evaluation_issues.append("cases.passed")
+
+    provenance_evaluation = json.loads(
+        (root / "docs" / "assets" / "provenance-evaluation.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    provenance_corpus = json.loads(
+        (root / "data" / "evaluation" / "provenance" / "manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    provenance_issues: list[str] = []
+    if provenance_evaluation.get("passed") is not True:
+        provenance_issues.append("provenance.passed")
+    if provenance_evaluation.get("gate_failures"):
+        provenance_issues.append("provenance.gate_failures")
+    if provenance_evaluation.get("corpus_checksums_verified") is not True:
+        provenance_issues.append("provenance.corpus_checksums_verified")
+    for flag in ("uses_network", "uses_api_keys", "uses_gpu"):
+        if provenance_evaluation.get(flag) is not False:
+            provenance_issues.append(f"provenance.{flag}")
+    if provenance_evaluation.get("corpus_version") != provenance_corpus.get("version"):
+        provenance_issues.append("provenance.corpus_version")
+    if provenance_corpus.get("contains_real_personal_data") is not False:
+        provenance_issues.append("provenance.contains_real_personal_data")
+    if provenance_corpus.get("localizable_field_count", 0) < 40:
+        provenance_issues.append("provenance.localizable_field_count")
+    provenance_metrics = provenance_evaluation.get("metrics", {})
+    if provenance_metrics.get("false_verified_rate") != 0.0:
+        provenance_issues.append("provenance.false_verified_rate")
+    if provenance_metrics.get("page_localization_accuracy", 0.0) < 0.95:
+        provenance_issues.append("provenance.page_localization_accuracy")
+    if provenance_metrics.get("verified_bbox_hit_rate", 0.0) < 0.90:
+        provenance_issues.append("provenance.verified_bbox_hit_rate")
+    if any(
+        outcome.get("false_verified") is True
+        for outcome in provenance_evaluation.get("outcomes", [])
+    ):
+        provenance_issues.append("provenance.outcomes.false_verified")
+    if not (root / "data" / "evaluation" / "provenance").glob("*.pdf"):
+        provenance_issues.append("provenance.corpus_documents")
+    for entry in provenance_corpus.get("documents", []):
+        document_path = root / "data" / "evaluation" / "provenance" / str(entry.get("file"))
+        if not document_path.is_file():
+            provenance_issues.append(f"provenance.missing:{entry.get('file')}")
     remote_setup = (root / "docs" / "REMOTE_SETUP.md").read_text(encoding="utf-8")
     missing_remote_setup_markers = [
         marker for marker in REMOTE_SETUP_MARKERS if marker not in remote_setup
@@ -348,6 +403,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         + missing_codeowners_markers
         + codeowners_issues
         + decision_evaluation_issues
+        + provenance_issues
         + missing_remote_setup_markers
         + forbidden_remote_setup_markers
         + missing_public_safety_markers
@@ -376,6 +432,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         "codeowners_rules": codeowners_rules,
         "codeowners_issues": codeowners_issues,
         "decision_evaluation_issues": decision_evaluation_issues,
+        "provenance_evaluation_issues": provenance_issues,
         "missing_remote_setup_markers": missing_remote_setup_markers,
         "forbidden_remote_setup_markers": forbidden_remote_setup_markers,
         "missing_public_safety_markers": missing_public_safety_markers,

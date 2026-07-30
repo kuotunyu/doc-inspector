@@ -4,6 +4,22 @@
 
 ## [Unreleased]
 
+### Added
+
+- 來源核驗（verified evidence provenance）：抽取完成後以確定性後處理，在文件自己的
+  文字層比對模型引用的原文，區分 `verified`／`approximate`／`ambiguous`／`page_only`／
+  `unresolved` 五種狀態。找不到唯一可靠位置時明確說不知道，不生成 bounding box。
+- `InspectionBundle` 新增向後相容的 `provenance` 欄位（`provenance_version` 1.0.0），
+  座標採與 DPI、crop box、頁面旋轉及縮放無關的 `normalized_1000_top_left` 空間。
+- 介面新增「來源核驗」分頁：可選欄位、查看核驗結果，並在原始頁面畫出半透明的證據
+  highlight；狀態文字、色塊與說明各自不同，`unresolved` 不會顯示成成功綠燈。
+- Excel 匯出新增 `provenance` 工作表；`metadata` 工作表加上 provenance 版本與統計。
+- 獨立的來源核驗評估：4 份合成 PDF、61 個欄位（51 個有 ground-truth 位置），涵蓋
+  重複值、錯誤頁碼、幻覺證據、換行接合、旋轉頁、算繪後縮放與純影像頁；ground truth
+  由文件生成器直接記錄並以 SHA-256 鎖定，另附 machine-readable 報告與 CI gate。
+- 可選的本機證據 OCR extra（`local-ocr`）；未安裝時安全退化為 `page_only`，不中斷預檢。
+- 三頁合成 PDF 範例，前兩頁有真實文字層、第三頁只有影像，可一次示範五種核驗狀態。
+
 ### Changed
 
 - 公開倉庫移除可重建的 UI 稽核報告與非展示截圖，產物改寫入被 Git 忽略的 `outputs/ui-audit/`；產品、UI 與部署說明整合進 Case Study 與單一遠端指南。
@@ -14,6 +30,10 @@
 - 遠端指南加入 GitHub commit identity、共同作者／bot PR 防護、唯一 Contributor 人工確認與無認證唯讀 API 檢查。
 - 新增以完整 commit SHA 驗證指定 GitHub push CI 的無認證唯讀檢查，避免把舊 workflow 綠燈誤當成新版本已通過。
 - 新增 GitHub 指定 commit 與 Hugging Face Space 的 runtime 關鍵檔逐位元比對，讓部署來源漂移可被機器驗證。
+- PDF 文字層改用逐字 bbox。`get_text("words")` 不在全形空白斷詞，會讓整行中文變成單一
+  token，使證據 highlight 框到不相干的內容。
+- 瀏覽器 gate 改以 `domcontentloaded` 加元素等待取代 `networkidle`：介面現在有 Gradio
+  session state，其 heartbeat 串流會持續開著，`networkidle` 永遠不會觸發。
 
 ### Fixed
 
