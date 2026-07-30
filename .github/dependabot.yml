@@ -10,6 +10,13 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps"
+    ignore:
+      # torch 只存在於可選的 local-retrieval GPU extra，且必須來自 cu128 index，
+      # 該 index 對 cp311 目前最新只到 2.11.0，沒有已修補版本可用。Dependabot 會
+      # 反覆嘗試並失敗。setuptools 由 torch 的 metadata 連帶約束，只要 torch 停在
+      # 2.11.0 就無法單獨升級。理由與重新評估條件見 .github/SECURITY.md。
+      - dependency-name: "torch"
+      - dependency-name: "setuptools"
 
   - package-ecosystem: "github-actions"
     directory: "/"
