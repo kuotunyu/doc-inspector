@@ -1,4 +1,4 @@
-"""Audit measurable accessibility, responsive, and result-state UI behavior."""
+﻿"""Audit measurable accessibility, responsive, and result-state UI behavior."""
 
 from __future__ import annotations
 
@@ -38,6 +38,18 @@ def validate_test_target(url: str, *, allow_non_fixture: bool = False) -> None:
             "UI 稽核預設只允許 127.0.0.1:7862 離線 fixture；"
             "若確定要測其他目標，請顯式設定 UI_TEST_ALLOW_NON_FIXTURE=1。"
         )
+
+
+def open_app(page: Page, url: str = URL) -> None:
+    """Load the interface and wait for the rendered shell rather than network idle.
+
+    The source-verification panel keeps its data in Gradio session state, and
+    Gradio holds a heartbeat stream open for the life of such a page, so
+    ``networkidle`` never fires.
+    """
+
+    page.goto(url, wait_until="domcontentloaded")
+    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
 
 
 def _dom_scan(page: Page) -> dict:
@@ -227,7 +239,7 @@ def _result_case(browser, key: str, expected_level: str) -> dict:
         else None,
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
-    page.goto(URL, wait_until="networkidle")
+    open_app(page)
     demo_path = DEMO_DIR / f"{key}.png"
     page.locator('#document-upload input[type="file"]').set_input_files(
         demo_path
@@ -275,7 +287,7 @@ def main() -> None:
             color_scheme="light",
         )
         desktop_page = desktop_context.new_page()
-        desktop_page.goto(URL, wait_until="networkidle")
+        open_app(desktop_page)
         desktop = _dom_scan(desktop_page)
         focus = _focus_scan(desktop_page)
         performance = _performance_scan(desktop_page)
@@ -288,7 +300,7 @@ def main() -> None:
             color_scheme="light",
         )
         mobile_page = mobile_context.new_page()
-        mobile_page.goto(URL, wait_until="networkidle")
+        open_app(mobile_page)
         mobile = _dom_scan(mobile_page)
         mobile_overflow = mobile_page.evaluate(
             "document.documentElement.scrollWidth > window.innerWidth"
