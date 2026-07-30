@@ -4,9 +4,11 @@ import json
 from pathlib import Path
 
 from PIL import Image
+import pymupdf
 
 from doc_inspector.demo import (
     DEMO_SEED,
+    PDF_FONT_NAME,
     PROVENANCE_DEMO_NAME,
     WATERMARK,
     _font_path,
@@ -49,6 +51,14 @@ def test_generate_demo_artifacts_writes_safe_manifest_and_exports(tmp_path: Path
         assert artifact.workbook_path.is_file()
         with Image.open(artifact.image_path) as image:
             assert image.size == (1600, 2200)
+
+
+def test_pdf_demo_font_is_bundled_and_covers_traditional_chinese() -> None:
+    font = pymupdf.Font(PDF_FONT_NAME)
+
+    for character in "補助申請人金額頁證":
+        assert font.has_glyph(ord(character)), f"缺少字符：{character}"
+    assert font.text_length("補助方案", 12) > 0
 
 
 def test_provenance_demo_pdf_is_deterministic_and_small(tmp_path: Path) -> None:

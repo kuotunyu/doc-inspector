@@ -206,11 +206,24 @@ class TestReproducibility:
 
         assert (staged / "manifest.json").read_bytes() == before
 
+    def test_the_bundled_font_covers_traditional_chinese(self, corpus) -> None:
+        font = pymupdf.Font(corpus.generator.font)
+
+        assert font.name == corpus.generator.font_face
+        for character in "補助申請人金額頁證":
+            assert font.has_glyph(ord(character)), f"缺少字符：{character}"
+        assert font.text_length("補助方案", 12) > 0
+
     def test_regeneration_reproduces_the_committed_bytes(self, corpus, tmp_path: Path) -> None:
-        if pymupdf.VersionBind != corpus.generator.library_version:
+        runtime_face = pymupdf.Font(corpus.generator.font).name
+        if (
+            pymupdf.VersionBind != corpus.generator.library_version
+            or runtime_face != corpus.generator.font_face
+        ):
             pytest.skip(
-                "PDF bytes are only guaranteed for the recorded PyMuPDF build; "
-                f"manifest={corpus.generator.library_version} runtime={pymupdf.VersionBind}"
+                "PDF bytes are only guaranteed for the recorded PyMuPDF build and font; "
+                f"manifest={corpus.generator.library_version}/{corpus.generator.font_face} "
+                f"runtime={pymupdf.VersionBind}/{runtime_face}"
             )
         builder = load_script_module("build_provenance_corpus")
 

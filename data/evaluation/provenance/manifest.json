@@ -11,7 +11,8 @@
     "library": "pymupdf",
     "library_version": "1.28.0",
     "mupdf_version": "1.29.0",
-    "font": "china-t"
+    "font": "china-t",
+    "font_face": "Droid Sans Fallback Regular"
   },
   "documents": [
     {
