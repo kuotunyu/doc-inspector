@@ -5,20 +5,32 @@ import socket
 from types import SimpleNamespace
 
 import gradio as gr
+from PIL import Image
 import pytest
 
 import doc_inspector.ui as ui_module
-from doc_inspector.demo import demo_extractions
+from doc_inspector.demo import (
+    PROVENANCE_DEMO_NAME,
+    demo_extractions,
+    provenance_demo_extraction,
+    render_provenance_demo_pdf,
+)
+from doc_inspector.ingest import DocumentTextLayer, PageTextLayer, normalize_document
+from doc_inspector.provenance import resolve_provenance
 from doc_inspector.rules import inspect_extraction
 from doc_inspector.schemas import InspectionBundle, LocatedValue, Receipt
+from doc_inspector.service import InspectionArtifacts
 from doc_inspector.ui import (
+    annotate_page_preview,
     build_app,
+    build_provenance_view,
     ensure_local_port_available,
     gradio_temp_root,
     inspection_update_stream,
     load_demo_document_callback,
     prepare_gradio_temp_root,
     run_inspection_callback,
+    select_provenance_field_callback,
 )
 
 
@@ -377,9 +389,230 @@ def test_load_demo_document_selects_file_and_matching_schema(tmp_path: Path) -> 
     assert "不含真實個資" in status
 
 
+def test_load_demo_document_offers_the_verifiable_pdf_example(tmp_path: Path) -> None:
+    file_path, schema, status = load_demo_document_callback(
+        PROVENANCE_DEMO_NAME,
+        demo_root=tmp_path,
+    )
+
+    assert Path(file_path).suffix == ".pdf"
+    assert Path(file_path).name == f"{PROVENANCE_DEMO_NAME}.pdf"
+    assert schema == "subsidy_application"
+    assert "不含真實個資" in status
+
+
 def test_load_demo_document_rejects_unknown_choice(tmp_path: Path) -> None:
     with pytest.raises(ValueError, match="請先選擇"):
         load_demo_document_callback("unknown", demo_root=tmp_path)
+
+
+def provenance_inspector(
+    path: Path,
+    schema: str,
+    provider: str,
+) -> InspectionArtifacts:
+    """Replay the provenance demo through real ingestion and resolution."""
+
+    extraction = provenance_demo_extraction()
+    document = normalize_document(path)
+    bundle = InspectionBundle(
+        provider=provider,
+        model="mock-model",
+        source_file_name=path.name,
+        page_count=len(document.pages),
+        elapsed_ms=5,
+        extraction=extraction,
+        review_report=inspect_extraction(extraction),
+        provenance=resolve_provenance(
+            extraction, document.text_layer, pages=document.pages
+        ),
+    )
+    return InspectionArtifacts(bundle=bundle, pages=document.pages)
+
+
+def _run_provenance_demo(tmp_path: Path):
+    source = render_provenance_demo_pdf(tmp_path / "subsidy_provenance.pdf")
+    result = run_inspection_callback(
+        str(source),
+        "subsidy_application",
+        "gemini",
+        True,
+        inspector=provenance_inspector,
+        export_root=tmp_path / "exports",
+    )
+    return result
+
+
+def test_source_verification_defaults_to_a_field_with_a_verified_location(
+    tmp_path: Path,
+) -> None:
+    *_, view, selector, detail, preview = _run_provenance_demo(tmp_path)
+
+    assert selector["value"] == "program_name"
+    assert selector["choices"][0][0].startswith("補助方案")
+    assert "已核驗來源" in selector["choices"][0][0]
+    assert "已核驗來源" in detail
+    assert "PDF 內建文字層" in detail
+    assert "provenance-verified" in detail
+    assert preview is not None
+    assert Path(preview).is_file()
+    assert set(view) == {"run_dir", "fields", "values", "labels", "previews"}
+
+
+@pytest.mark.parametrize(
+    ("field_path", "expected_marker", "expected_class", "has_preview"),
+    [
+        ("requested_amount", "位置為近似結果", "provenance-approximate", True),
+        ("declared_total", "找到多處相同證據", "provenance-ambiguous", True),
+        (
+            "additional_fields.0.located_value",
+            "只有頁碼，位置未經本機驗證",
+            "provenance-page_only",
+            True,
+        ),
+        (
+            "additional_fields.1.located_value",
+            "本機找不到這段證據",
+            "provenance-unresolved",
+            False,
+        ),
+    ],
+)
+def test_each_verification_status_reads_differently_and_never_looks_verified(
+    tmp_path: Path,
+    field_path: str,
+    expected_marker: str,
+    expected_class: str,
+    has_preview: bool,
+) -> None:
+    *_, view, _selector, _detail, _preview = _run_provenance_demo(tmp_path)
+
+    detail, preview = select_provenance_field_callback(view, field_path)
+
+    assert expected_marker in detail
+    assert expected_class in detail
+    assert "provenance-verified" not in detail
+    assert "已核驗來源" not in detail
+    assert (preview is not None) is has_preview
+
+
+def test_only_trustworthy_locations_get_a_drawn_highlight(tmp_path: Path) -> None:
+    *_, view, _selector, _detail, _preview = _run_provenance_demo(tmp_path)
+
+    _, verified_preview = select_provenance_field_callback(view, "program_name")
+    _, ambiguous_preview = select_provenance_field_callback(view, "declared_total")
+
+    assert verified_preview is not None
+    assert ambiguous_preview is not None
+    assert Path(verified_preview).name.startswith("evidence-")
+    assert Path(ambiguous_preview).name.startswith("page-")
+
+
+def test_additional_fields_are_named_by_their_document_label(tmp_path: Path) -> None:
+    *_, view, selector, _detail, _preview = _run_provenance_demo(tmp_path)
+
+    labels = {value: label for label, value in selector["choices"]}
+    detail, _ = select_provenance_field_callback(
+        view, "additional_fields.0.located_value"
+    )
+
+    assert labels["additional_fields.0.located_value"].startswith("其他欄位：附件金額")
+    assert "其他欄位：附件金額" in detail
+
+
+def test_provenance_panel_escapes_model_supplied_text(tmp_path: Path) -> None:
+    view = build_provenance_view(
+        InspectionArtifacts(
+            bundle=InspectionBundle(
+                provider="gemini",
+                model="m",
+                source_file_name="x.png",
+                page_count=1,
+                elapsed_ms=0,
+                extraction=Receipt(
+                    merchant_name=LocatedValue(
+                        value="<script>alert(1)</script>",
+                        page_number=1,
+                        evidence_text='<img src=x onerror="alert(2)">',
+                    )
+                ),
+                review_report=inspect_extraction(Receipt()),
+                provenance=resolve_provenance(
+                    Receipt(
+                        merchant_name=LocatedValue(
+                            value="<script>alert(1)</script>",
+                            page_number=1,
+                            evidence_text='<img src=x onerror="alert(2)">',
+                        )
+                    ),
+                    DocumentTextLayer(pages=(PageTextLayer(page_number=1),)),
+                ),
+            ),
+            pages=(),
+        ),
+        tmp_path / "run",
+    )
+
+    detail, preview = select_provenance_field_callback(view, "merchant_name")
+
+    assert "<script>" not in detail
+    assert "<img" not in detail
+    assert "&lt;script&gt;" in detail
+    assert preview is None
+    assert "只顯示文字結果" in detail
+
+
+def test_unknown_or_missing_selection_renders_a_safe_placeholder(tmp_path: Path) -> None:
+    *_, view, _selector, _detail, _preview = _run_provenance_demo(tmp_path)
+
+    for missing_view, missing_field in (
+        (None, "program_name"),
+        (view, None),
+        (view, "not.a.real.field"),
+    ):
+        detail, preview = select_provenance_field_callback(missing_view, missing_field)
+
+        assert "尚未選擇欄位" in detail
+        assert preview is None
+
+
+def test_bundle_without_provenance_leaves_the_panel_empty(tmp_path: Path) -> None:
+    source = tmp_path / "receipt.png"
+    source.write_bytes(b"not-read-by-fake")
+
+    *_, view, selector, detail, preview = run_inspection_callback(
+        str(source),
+        "receipt",
+        "openai",
+        True,
+        inspector=fake_inspector,
+        export_root=tmp_path / "exports",
+    )
+
+    assert selector["choices"] == []
+    assert selector["value"] is None
+    assert "尚未選擇欄位" in detail
+    assert preview is None
+    assert view["fields"] == {}
+
+
+def test_annotated_preview_keeps_the_page_readable(tmp_path: Path) -> None:
+    page = tmp_path / "page.png"
+    Image.new("RGB", (200, 300), "white").save(page)
+
+    annotated = annotate_page_preview(page, (100.0, 200.0, 400.0, 300.0), tmp_path / "out.png")
+
+    with Image.open(annotated) as image:
+        image.load()
+        pixels = image.convert("RGB")
+    inside = pixels.getpixel((60, 75))
+    outside = pixels.getpixel((10, 10))
+
+    assert annotated.is_file()
+    assert pixels.size == (200, 300)
+    assert outside == (255, 255, 255)
+    assert inside != (255, 255, 255)
+    assert min(inside) > 180
 
 
 def test_red_demo_result_leads_with_plain_language_actions(tmp_path: Path) -> None:

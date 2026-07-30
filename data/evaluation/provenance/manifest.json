@@ -1,0 +1,1312 @@
+{
+  "corpus_name": "doc-inspector-evidence-provenance",
+  "version": "1.0.0",
+  "seed": 20260730,
+  "contains_real_personal_data": false,
+  "coordinate_space": "normalized_1000_top_left",
+  "coordinate_scale": 1000.0,
+  "ground_truth_source": "由文件生成器的版面規格與字型量測直接記錄，未讀取 PyMuPDF 文字抽取或 resolver 輸出。",
+  "generator": {
+    "script": "scripts/build_provenance_corpus.py",
+    "library": "pymupdf",
+    "library_version": "1.28.0",
+    "mupdf_version": "1.29.0",
+    "font": "china-t"
+  },
+  "documents": [
+    {
+      "name": "doc_a_subsidy_four_pages",
+      "file": "doc_a_subsidy_four_pages.pdf",
+      "sha256": "526f13389d757670c16699cc14c5f9a9f58ba7724650ce3c652780ba392fc611",
+      "byte_size": 27998,
+      "schema_name": "subsidy_application",
+      "page_count": 4,
+      "note": "四頁標準補助申請表，所有欄位都應可由本機文字層唯一定位。",
+      "page_geometry": [
+        {
+          "page_number": 1,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        },
+        {
+          "page_number": 2,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        },
+        {
+          "page_number": 3,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        },
+        {
+          "page_number": 4,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        }
+      ],
+      "fields": [
+        {
+          "field_path": "program_name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "安心生活居家支持試辦計畫",
+            "page_number": 1,
+            "evidence_text": "補助方案：安心生活居家支持試辦計畫",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            169.17,
+            478.992,
+            189.374
+          ]
+        },
+        {
+          "field_path": "application_date",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "2026-05-18",
+            "page_number": 1,
+            "evidence_text": "申請日期：2026-05-18",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            204.8,
+            327.075,
+            225.004
+          ]
+        },
+        {
+          "field_path": "applicants.0.role",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "主要照顧者",
+            "page_number": 1,
+            "evidence_text": "身分別：主要照顧者本人",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            240.429,
+            347.899,
+            260.633
+          ]
+        },
+        {
+          "field_path": "applicants.0.name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試申請人卡拉",
+            "page_number": 1,
+            "evidence_text": "申請人姓名：測試申請人卡拉",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            276.059,
+            391.597,
+            296.263
+          ]
+        },
+        {
+          "field_path": "applicants.0.id_type",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "citizen_id",
+            "page_number": 1,
+            "evidence_text": "證件種類：國民身分證",
+            "is_id_type": true,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            311.688,
+            326.05,
+            331.892
+          ]
+        },
+        {
+          "field_path": "applicants.0.id_number",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "A123456789",
+            "page_number": 1,
+            "evidence_text": "證件號碼：A123456789",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            347.318,
+            338.426,
+            367.522
+          ]
+        },
+        {
+          "field_path": "applicants.0.birth_date",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "1978-03-02",
+            "page_number": 1,
+            "evidence_text": "出生日期：1978-03-02",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            382.947,
+            327.075,
+            403.151
+          ]
+        },
+        {
+          "field_path": "contact_phone",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "0912-345-678",
+            "page_number": 2,
+            "evidence_text": "聯絡電話：0912-345-678",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            169.17,
+            351.142,
+            189.374
+          ]
+        },
+        {
+          "field_path": "contact_email",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "kara.demo@example.invalid",
+            "page_number": 2,
+            "evidence_text": "電子郵件：kara.demo@example.invalid",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            204.8,
+            495.549,
+            225.004
+          ]
+        },
+        {
+          "field_path": "address",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試市示範區永續路 88 巷 12 號 5 樓",
+            "page_number": 2,
+            "evidence_text": "通訊地址：測試市示範區永續路 88 巷 12 號 5 樓",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            240.429,
+            573.47,
+            260.633
+          ]
+        },
+        {
+          "field_path": "bank_account_display_name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試申請人卡拉本人帳戶",
+            "page_number": 2,
+            "evidence_text": "撥款帳戶名稱：測試申請人卡拉本人帳戶",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            276.059,
+            500.84,
+            296.263
+          ]
+        },
+        {
+          "field_path": "beneficiaries.0.role",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "受照顧家屬",
+            "page_number": 2,
+            "evidence_text": "受益人身分別：受照顧家屬",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            311.688,
+            369.748,
+            331.892
+          ]
+        },
+        {
+          "field_path": "beneficiaries.0.name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試受益人歐文",
+            "page_number": 2,
+            "evidence_text": "受益人姓名：測試受益人歐文",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            347.318,
+            391.597,
+            367.522
+          ]
+        },
+        {
+          "field_path": "beneficiaries.0.id_type",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "resident_id",
+            "page_number": 2,
+            "evidence_text": "受益人證件種類：居留證",
+            "is_id_type": true,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            382.947,
+            347.899,
+            403.151
+          ]
+        },
+        {
+          "field_path": "beneficiaries.0.id_number",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "FC12345678",
+            "page_number": 2,
+            "evidence_text": "受益人證件號碼：FC12345678",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            418.576,
+            402.521,
+            438.78
+          ]
+        },
+        {
+          "field_path": "beneficiaries.0.birth_date",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "1946-11-27",
+            "page_number": 2,
+            "evidence_text": "受益人出生日期：1946-11-27",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            454.206,
+            392.621,
+            474.41
+          ]
+        },
+        {
+          "field_path": "line_items.0.description",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "居家喘息服務費",
+            "page_number": 3,
+            "evidence_text": "明細一項目：居家喘息服務費",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            169.17,
+            391.597,
+            189.374
+          ]
+        },
+        {
+          "field_path": "line_items.0.amount",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "18400",
+            "page_number": 3,
+            "evidence_text": "明細一金額：18,400",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            204.8,
+            304.287,
+            225.004
+          ]
+        },
+        {
+          "field_path": "line_items.1.description",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "無障礙浴室扶手安裝",
+            "page_number": 3,
+            "evidence_text": "明細二項目：無障礙浴室扶手安裝",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            240.429,
+            435.294,
+            260.633
+          ]
+        },
+        {
+          "field_path": "line_items.1.amount",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "7250",
+            "page_number": 3,
+            "evidence_text": "明細二金額：7,250",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            276.059,
+            292.253,
+            296.263
+          ]
+        },
+        {
+          "field_path": "line_items.2.description",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "長期照顧交通接送",
+            "page_number": 3,
+            "evidence_text": "明細三項目：長期照顧交通接送",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            311.688,
+            413.445,
+            331.892
+          ]
+        },
+        {
+          "field_path": "line_items.2.amount",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "3600",
+            "page_number": 3,
+            "evidence_text": "明細三金額：3,600",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            107.563,
+            347.318,
+            292.253,
+            367.522
+          ]
+        },
+        {
+          "field_path": "requested_amount",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "29250",
+            "page_number": 4,
+            "evidence_text": "申請補助金額合計：29,250",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 4,
+          "bbox": [
+            107.563,
+            169.17,
+            369.833,
+            189.374
+          ]
+        },
+        {
+          "field_path": "declared_total",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "29250",
+            "page_number": 4,
+            "evidence_text": "申報總額欄位：29,250 元整",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 4,
+          "bbox": [
+            107.563,
+            204.8,
+            375.551,
+            225.004
+          ]
+        },
+        {
+          "field_path": "additional_fields.0.located_value",
+          "case_type": "separator_drift",
+          "expected_status": "approximate",
+          "localizable": true,
+          "claim": {
+            "value": "29250",
+            "page_number": 4,
+            "evidence_text": "申請補助金額合計：29250",
+            "is_id_type": false,
+            "additional_field_label": "金額（模型省略千分位）"
+          },
+          "truth_page": 4,
+          "bbox": [
+            107.563,
+            169.17,
+            328.269,
+            189.374
+          ]
+        },
+        {
+          "field_path": "additional_fields.1.located_value",
+          "case_type": "paraphrased_evidence",
+          "expected_status": "unresolved",
+          "localizable": false,
+          "claim": {
+            "value": "測試申請人卡拉",
+            "page_number": 1,
+            "evidence_text": "測試申請人卡拉（欄位：申請人姓名）",
+            "is_id_type": false,
+            "additional_field_label": "姓名（模型改寫語序）"
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "additional_fields.2.located_value",
+          "case_type": "cross_page_evidence",
+          "expected_status": "unresolved",
+          "localizable": false,
+          "claim": {
+            "value": "29250",
+            "page_number": 4,
+            "evidence_text": "申請補助金額合計：29,250　補助方案：安心生活居家支持試辦計畫",
+            "is_id_type": false,
+            "additional_field_label": "跨頁拼接的證據"
+          },
+          "truth_page": null,
+          "bbox": null
+        }
+      ]
+    },
+    {
+      "name": "doc_b_subsidy_rotated_and_oversized",
+      "file": "doc_b_subsidy_rotated_and_oversized.pdf",
+      "sha256": "87b17b4f99cf8bfc270c075cd88f8cef6ad1f216cda6728b9d1650e4368b9a65",
+      "byte_size": 22822,
+      "schema_name": "subsidy_application",
+      "page_count": 3,
+      "note": "第二頁旋轉 90 度、第三頁尺寸大到會觸發 render 後縮放；另含換行接合案例。",
+      "page_geometry": [
+        {
+          "page_number": 1,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        },
+        {
+          "page_number": 2,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 90,
+          "image_only": false
+        },
+        {
+          "page_number": 3,
+          "width_points": 1224.0,
+          "height_points": 1584.0,
+          "rotation": 0,
+          "image_only": false
+        }
+      ],
+      "fields": [
+        {
+          "field_path": "program_name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "無障礙住宅改善補助",
+            "page_number": 1,
+            "evidence_text": "補助方案：無障礙住宅改善補助",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            169.17,
+            413.445,
+            189.374
+          ]
+        },
+        {
+          "field_path": "application_date",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "2026-06-09",
+            "page_number": 1,
+            "evidence_text": "申請日期：2026-06-09",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            204.8,
+            327.075,
+            225.004
+          ]
+        },
+        {
+          "field_path": "applicants.0.name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試申請人黎明",
+            "page_number": 1,
+            "evidence_text": "申請人姓名：測試申請人黎明",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            240.429,
+            391.597,
+            260.633
+          ]
+        },
+        {
+          "field_path": "applicants.0.id_number",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "B234567891",
+            "page_number": 1,
+            "evidence_text": "證件號碼：B234567891",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            276.059,
+            338.682,
+            296.263
+          ]
+        },
+        {
+          "field_path": "contact_phone",
+          "case_type": "rotated_page",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "0928-111-222",
+            "page_number": 2,
+            "evidence_text": "聯絡電話：0928-111-222",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            810.626,
+            107.563,
+            830.83,
+            351.142
+          ]
+        },
+        {
+          "field_path": "address",
+          "case_type": "rotated_page",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試縣旋轉鎮驗證路 7 號",
+            "page_number": 2,
+            "evidence_text": "通訊地址：測試縣旋轉鎮驗證路 7 號",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            774.996,
+            107.563,
+            795.2,
+            458.764
+          ]
+        },
+        {
+          "field_path": "bank_account_display_name",
+          "case_type": "line_wrap_join",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "測試申請人黎明無障礙改善專戶",
+            "page_number": 2,
+            "evidence_text": "撥款帳戶名稱：測試申請人黎\n明無障礙改善專戶",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            703.737,
+            107.563,
+            759.571,
+            391.597
+          ]
+        },
+        {
+          "field_path": "line_items.0.description",
+          "case_type": "rotated_page",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "浴室防滑地磚",
+            "page_number": 2,
+            "evidence_text": "明細一項目：浴室防滑地磚",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            668.108,
+            107.563,
+            688.312,
+            369.748
+          ]
+        },
+        {
+          "field_path": "line_items.0.amount",
+          "case_type": "rotated_page",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "12900",
+            "page_number": 2,
+            "evidence_text": "明細一金額：12,900",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            632.478,
+            107.563,
+            652.682,
+            304.287
+          ]
+        },
+        {
+          "field_path": "requested_amount",
+          "case_type": "render_resize",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "12900",
+            "page_number": 3,
+            "evidence_text": "申請補助金額合計：12,900",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            88.889,
+            152.873,
+            305.626,
+            171.13
+          ]
+        },
+        {
+          "field_path": "declared_total",
+          "case_type": "render_resize",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "12900",
+            "page_number": 3,
+            "evidence_text": "申報總額欄位：12,900 元整",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            88.889,
+            185.07,
+            310.352,
+            203.327
+          ]
+        },
+        {
+          "field_path": "contact_email",
+          "case_type": "render_resize",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "liming.demo@example.invalid",
+            "page_number": 3,
+            "evidence_text": "電子郵件：liming.demo@example.invalid",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 3,
+          "bbox": [
+            88.889,
+            217.267,
+            424.327,
+            235.524
+          ]
+        }
+      ]
+    },
+    {
+      "name": "doc_c_receipt_failure_cases",
+      "file": "doc_c_receipt_failure_cases.pdf",
+      "sha256": "93cf34c72f456d1dca892b83b99db876bb6bc086777acf180fc7b9ec01ee6f08",
+      "byte_size": 21373,
+      "schema_name": "receipt",
+      "page_count": 2,
+      "note": "兩頁收據，集中放置重複值、錯誤頁碼、部分文字、空白雜訊與幻覺證據案例。",
+      "page_geometry": [
+        {
+          "page_number": 1,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        },
+        {
+          "page_number": 2,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": false
+        }
+      ],
+      "fields": [
+        {
+          "field_path": "merchant_name",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "示範生活用品行",
+            "page_number": 1,
+            "evidence_text": "店家名稱：示範生活用品行",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            169.17,
+            369.748,
+            189.374
+          ]
+        },
+        {
+          "field_path": "receipt_number",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "SYN-2026-000731",
+            "page_number": 1,
+            "evidence_text": "單據號碼：SYN-2026-000731",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            204.8,
+            389.975,
+            225.004
+          ]
+        },
+        {
+          "field_path": "receipt_date",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "2026-04-02",
+            "page_number": 1,
+            "evidence_text": "單據日期：2026-04-02",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            240.429,
+            327.075,
+            260.633
+          ]
+        },
+        {
+          "field_path": "currency",
+          "case_type": "partial_evidence",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "TWD",
+            "page_number": 1,
+            "evidence_text": "幣別：TWD",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            276.059,
+            218.684,
+            296.263
+          ]
+        },
+        {
+          "field_path": "line_items.0.description",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "室內防滑拖鞋",
+            "page_number": 1,
+            "evidence_text": "品項一：室內防滑拖鞋",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            311.688,
+            326.05,
+            331.892
+          ]
+        },
+        {
+          "field_path": "line_items.0.quantity",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "3",
+            "page_number": 1,
+            "evidence_text": "品項一數量：3",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            347.318,
+            250.689,
+            367.522
+          ]
+        },
+        {
+          "field_path": "line_items.0.unit_price",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "260",
+            "page_number": 1,
+            "evidence_text": "品項一單價：260",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            382.947,
+            274.757,
+            403.151
+          ]
+        },
+        {
+          "field_path": "line_items.0.line_total",
+          "case_type": "nested_list",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "780",
+            "page_number": 1,
+            "evidence_text": "品項一金額：780",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            418.576,
+            274.757,
+            438.78
+          ]
+        },
+        {
+          "field_path": "line_items.1.description",
+          "case_type": "duplicate_same_page",
+          "expected_status": "ambiguous",
+          "localizable": false,
+          "claim": {
+            "value": "重複列印標記",
+            "page_number": 1,
+            "evidence_text": "重複列印標記：REPEATED-ON-ONE-PAGE",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "line_items.1.line_total",
+          "case_type": "duplicate_across_pages",
+          "expected_status": "ambiguous",
+          "localizable": false,
+          "claim": {
+            "value": "跨頁標記",
+            "page_number": 1,
+            "evidence_text": "跨頁標記：REPEATED-ACROSS-PAGES",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "line_items.2.description",
+          "case_type": "null_value",
+          "expected_status": "unresolved",
+          "localizable": false,
+          "claim": {
+            "value": null,
+            "page_number": null,
+            "evidence_text": null,
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "subtotal",
+          "case_type": "whitespace_noise",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "780",
+            "page_number": 2,
+            "evidence_text": "品項小計 ：  780",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            169.17,
+            252.908,
+            189.374
+          ]
+        },
+        {
+          "field_path": "tax",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "39",
+            "page_number": 2,
+            "evidence_text": "營業稅額：39",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            204.8,
+            240.874,
+            225.004
+          ]
+        },
+        {
+          "field_path": "total",
+          "case_type": "normal",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "699",
+            "page_number": 2,
+            "evidence_text": "應付總額：699",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 2,
+          "bbox": [
+            107.563,
+            240.429,
+            252.908,
+            260.633
+          ]
+        },
+        {
+          "field_path": "discount",
+          "case_type": "wrong_claimed_page",
+          "expected_status": "approximate",
+          "localizable": true,
+          "claim": {
+            "value": "120",
+            "page_number": 2,
+            "evidence_text": "折扣金額：120",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            561.094,
+            252.908,
+            581.298
+          ]
+        },
+        {
+          "field_path": "fees",
+          "case_type": "hallucinated_evidence",
+          "expected_status": "unresolved",
+          "localizable": false,
+          "claim": {
+            "value": "45",
+            "page_number": 2,
+            "evidence_text": "服務費用：45（本行實際不存在於文件）",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "additional_fields.0.located_value",
+          "case_type": "partial_evidence",
+          "expected_status": "verified",
+          "localizable": true,
+          "claim": {
+            "value": "本單據為合成測試資料",
+            "page_number": 2,
+            "evidence_text": "本單據為合成測試資料",
+            "is_id_type": false,
+            "additional_field_label": "備註"
+          },
+          "truth_page": 2,
+          "bbox": [
+            216.807,
+            311.688,
+            435.294,
+            331.892
+          ]
+        },
+        {
+          "field_path": "additional_fields.1.located_value",
+          "case_type": "fuzzy_partial_match",
+          "expected_status": "approximate",
+          "localizable": true,
+          "claim": {
+            "value": "示範生活用品店",
+            "page_number": 1,
+            "evidence_text": "店家名稱：示範生活用品店",
+            "is_id_type": false,
+            "additional_field_label": "查核註記"
+          },
+          "truth_page": 1,
+          "bbox": [
+            107.563,
+            169.17,
+            347.899,
+            189.374
+          ]
+        }
+      ]
+    },
+    {
+      "name": "doc_d_receipt_scanned_image_only",
+      "file": "doc_d_receipt_scanned_image_only.pdf",
+      "sha256": "a76a6038fae1fb7112ae2f30d94ffc97a68ee865e7db8983b5fb04dfe3696588",
+      "byte_size": 20649,
+      "schema_name": "receipt",
+      "page_count": 1,
+      "note": "整份文件只有影像、沒有文字層，系統必須退化為 page_only 而不是猜位置。",
+      "page_geometry": [
+        {
+          "page_number": 1,
+          "width_points": 595.0,
+          "height_points": 842.0,
+          "rotation": 0,
+          "image_only": true
+        }
+      ],
+      "fields": [
+        {
+          "field_path": "merchant_name",
+          "case_type": "image_only_page",
+          "expected_status": "page_only",
+          "localizable": false,
+          "claim": {
+            "value": "掃描示範食材行",
+            "page_number": 1,
+            "evidence_text": "店家名稱：掃描示範食材行",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "receipt_date",
+          "case_type": "image_only_page",
+          "expected_status": "page_only",
+          "localizable": false,
+          "claim": {
+            "value": "2026-01-15",
+            "page_number": 1,
+            "evidence_text": "單據日期：2026-01-15",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "total",
+          "case_type": "image_only_page",
+          "expected_status": "page_only",
+          "localizable": false,
+          "claim": {
+            "value": "452",
+            "page_number": 1,
+            "evidence_text": "應付總額：452",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        },
+        {
+          "field_path": "subtotal",
+          "case_type": "claimed_page_out_of_range",
+          "expected_status": "unresolved",
+          "localizable": false,
+          "claim": {
+            "value": "452",
+            "page_number": 4,
+            "evidence_text": "小計金額：452",
+            "is_id_type": false,
+            "additional_field_label": null
+          },
+          "truth_page": null,
+          "bbox": null
+        }
+      ]
+    }
+  ],
+  "localizable_field_count": 51,
+  "field_count": 61
+}
