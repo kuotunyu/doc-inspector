@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-30
+
 ### Added
 
 - 來源核驗（verified evidence provenance）：抽取完成後以確定性後處理，在文件自己的
@@ -28,6 +30,8 @@
 - README 與遠端指南對齊已發布的 v1.0.0、最新本機測試與 UI 對比證據。
 - Windows／Ubuntu CI 新增 CPU 部署安全 verifier；公開維護文件統一乾淨 build、compileall、distribution 與 release gates。
 - 遠端指南加入 GitHub commit identity、共同作者／bot PR 防護、唯一 Contributor 人工確認與無認證唯讀 API 檢查。
+- 依既有的單一 Contributor 政策，在本機重現 Dependabot 提出的更新而非合併 bot PR：
+  `langchain-openai` 1.4.1（連帶 `langchain-core` 1.5.2）與容器基底 `uv` 映像 0.11.32。
 - 新增以完整 commit SHA 驗證指定 GitHub push CI 的無認證唯讀檢查，避免把舊 workflow 綠燈誤當成新版本已通過。
 - 新增 GitHub 指定 commit 與 Hugging Face Space 的 runtime 關鍵檔逐位元比對，讓部署來源漂移可被機器驗證。
 - PDF 文字層改用逐字 bbox。`get_text("words")` 不在全形空白斷詞，會讓整行中文變成單一
