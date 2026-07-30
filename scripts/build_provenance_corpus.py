@@ -978,6 +978,10 @@ def build_corpus(destination: Path = DEFAULT_OUTPUT) -> dict[str, object]:
             "library_version": pymupdf.VersionBind,
             "mupdf_version": pymupdf.VersionFitz,
             "font": FONT_NAME,
+            # MuPDF ships this face itself, so the corpus does not depend on any
+            # system font. Recorded so byte-for-byte regeneration checks can skip
+            # cleanly on a build that bundles a different face.
+            "font_face": pymupdf.Font(FONT_NAME).name,
         },
         "documents": documents,
     }

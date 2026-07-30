@@ -117,6 +117,7 @@ class CorpusGenerator(StrictSchemaModel):
     library_version: str
     mupdf_version: str
     font: str
+    font_face: str
 
 
 class ProvenanceCorpus(StrictSchemaModel):
