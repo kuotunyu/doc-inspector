@@ -130,6 +130,10 @@ def test_callback_returns_tables_and_downloads_without_absolute_source_path(tmp_
         payload,
         json_path,
         excel_path,
+        _view,
+        _selector,
+        _detail,
+        _preview,
     ) = run_inspection_callback(
         str(source),
         "receipt",
@@ -199,7 +203,7 @@ def test_inspection_stream_disables_button_then_reenables_it(
     )
 
     assert len(updates) == 2
-    assert all(len(update) == 8 for update in updates)
+    assert all(len(update) == 12 for update in updates)
     assert "正在預檢" in updates[0][0]
     assert updates[0][-1]["interactive"] is False
     assert updates[0][-1]["value"] == "預檢進行中…"

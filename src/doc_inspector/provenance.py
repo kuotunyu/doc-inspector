@@ -21,7 +21,7 @@ from doc_inspector.ingest import (
     DocumentTextLayer,
     NormalizedPage,
     PageTextLayer,
-    PageWord,
+    PageToken,
 )
 from doc_inspector.schemas import (
     DocumentExtraction,
@@ -64,7 +64,7 @@ _SKIPPED_MODEL_FIELDS = frozenset({"schema_name", "extraction_warnings"})
 class EvidenceOcrProvider(Protocol):
     """Optional local OCR used only for pages without a native text layer."""
 
-    def page_words(self, page: NormalizedPage) -> Sequence[PageWord]: ...
+    def page_tokens(self, page: NormalizedPage) -> Sequence[PageToken]: ...
 
 
 def normalize_match_text(text: str) -> str:
@@ -91,7 +91,7 @@ class EvidenceCandidate:
 
     page_number: int
     source: str
-    word_indices: tuple[int, ...]
+    token_indices: tuple[int, ...]
     bbox: NormalizedBBox
     min_confidence: float | None
 
@@ -159,8 +159,8 @@ def build_match_index(text_layer: DocumentTextLayer) -> MatchIndex:
     for layer in text_layer.pages:
         characters: list[str] = []
         owners: list[int] = []
-        for index, word in enumerate(layer.words):
-            for character in normalize_match_text(word.text):
+        for index, token in enumerate(layer.tokens):
+            for character in normalize_match_text(token.text):
                 characters.append(character)
                 owners.append(index)
         pages.append(
@@ -190,20 +190,20 @@ def _candidate_from_span(
     indices = sorted(set(page.owners[start : start + length]))
     if not indices:
         return None
-    words = [page.layer.words[index] for index in indices]
-    bbox = words[0].bbox
-    for word in words[1:]:
-        bbox = bbox.union(word.bbox)
-    confidences = [word.confidence for word in words]
+    tokens = [page.layer.tokens[index] for index in indices]
+    bbox = tokens[0].bbox
+    for token in tokens[1:]:
+        bbox = bbox.union(token.bbox)
+    confidences = [token.confidence for token in tokens]
     min_confidence = (
         min(value for value in confidences if value is not None)
-        if all(value is not None for value in confidences) and confidences
+        if all(value is not None for value in confidences)
         else None
     )
     return EvidenceCandidate(
         page_number=page.layer.page_number,
         source=page.layer.source,
-        word_indices=tuple(indices),
+        token_indices=tuple(indices),
         bbox=bbox,
         min_confidence=min_confidence,
     )
@@ -223,12 +223,12 @@ def _collect(index: MatchIndex, needle: str, length: int) -> list[EvidenceCandid
                 candidate = _candidate_from_span(page, start, length)
                 if candidate is None:
                     continue
-                identity = (candidate.page_number, candidate.word_indices)
+                identity = (candidate.page_number, candidate.token_indices)
                 if identity in seen:
                     continue
                 seen.add(identity)
                 candidates.append(candidate)
-    candidates.sort(key=lambda item: (item.page_number, item.word_indices))
+    candidates.sort(key=lambda item: (item.page_number, item.token_indices))
     return candidates
 
 
@@ -501,18 +501,18 @@ def _ocr_augmented_layer(
             augmented.append(layer)
             continue
         try:
-            words = tuple(provider.page_words(page))
+            tokens = tuple(provider.page_tokens(page))
         except Exception:  # noqa: BLE001 - optional dependency must never abort review
             augmented.append(layer)
             continue
-        if not words:
+        if not tokens:
             augmented.append(layer)
             continue
         augmented.append(
             PageTextLayer(
                 page_number=layer.page_number,
                 source="optional_local_ocr",
-                words=words,
+                tokens=tokens,
             )
         )
     return DocumentTextLayer(pages=tuple(augmented))

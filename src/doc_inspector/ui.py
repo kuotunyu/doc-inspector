@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterator
+from hashlib import sha256
 from html import escape
+from io import BytesIO
 import os
 from pathlib import Path
 import socket
@@ -11,18 +13,26 @@ from tempfile import gettempdir
 from uuid import uuid4
 
 import gradio as gr
+from PIL import Image, ImageDraw
 
 from doc_inspector.config import load_settings
-from doc_inspector.demo import generate_demo_artifacts
+from doc_inspector.demo import PROVENANCE_DEMO_NAME, generate_demo_artifacts
 from doc_inspector.errors import DocInspectorError
+from doc_inspector.ingest import NormalizedPage
 from doc_inspector.rate_limit import HourlyRequestLimiter
 from doc_inspector.exporters import (
     export_bundle_excel,
     export_bundle_json,
     extraction_table_rows,
 )
-from doc_inspector.schemas import InspectionBundle, RuleResult
-from doc_inspector.service import inspect_document
+from doc_inspector.provenance import iter_located_fields
+from doc_inspector.schemas import (
+    BBOX_SCALE,
+    FieldProvenance,
+    InspectionBundle,
+    RuleResult,
+)
+from doc_inspector.service import InspectionArtifacts, inspect_document_detailed
 from doc_inspector.types import ProviderName, SchemaName
 
 CIVIC_THEME = gr.themes.Base().set(
@@ -1244,6 +1254,152 @@ gradio-app {
   font-size: 18px;
 }
 
+.provenance-intro {
+  padding: 16px 18px 0;
+}
+
+.provenance-intro h3 {
+  margin: 0;
+  color: var(--ui-ink);
+  font-size: 24px;
+  font-weight: 760;
+  line-height: 1.35;
+}
+
+.provenance-intro p {
+  max-width: 76ch;
+  margin: 4px 0 0;
+  color: var(--ui-muted);
+  font-size: 19px !important;
+  line-height: 1.5;
+}
+
+#provenance-field {
+  padding: 0 18px 4px !important;
+}
+
+#provenance-field label span {
+  color: var(--ui-ink) !important;
+  font-size: 20px !important;
+  font-weight: 700 !important;
+}
+
+#provenance-field input,
+#provenance-field [role="combobox"] {
+  min-height: 56px !important;
+  font-size: 20px !important;
+  font-weight: 620 !important;
+}
+
+.provenance-card {
+  margin: 0 18px 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--ui-border);
+  border-left: 8px solid var(--ui-border-strong);
+  border-radius: var(--radius-md);
+  background: var(--ui-surface-soft);
+  color: var(--ui-ink);
+}
+
+.provenance-status {
+  margin: 0;
+  color: var(--ui-ink);
+  font-size: 22px !important;
+  font-weight: 780;
+  line-height: 1.3;
+}
+
+.provenance-hint {
+  max-width: 74ch;
+  margin: 4px 0 0;
+  color: var(--ui-muted);
+  font-size: 19px !important;
+  line-height: 1.5;
+}
+
+.provenance-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 28px;
+  margin: 12px 0 0;
+}
+
+.provenance-row {
+  display: grid;
+  grid-template-columns: 152px minmax(0, 1fr);
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--ui-border);
+}
+
+.provenance-facts dt {
+  color: var(--ui-muted);
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.provenance-facts dd {
+  margin: 0;
+  color: var(--ui-ink);
+  font-size: 19px;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.provenance-warning {
+  margin: 10px 0 0;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--ui-surface-muted);
+  color: var(--ui-ink);
+  font-size: 18px !important;
+  line-height: 1.5;
+}
+
+.provenance-verified {
+  border-left-color: var(--ui-success-border);
+  background: var(--ui-success-bg);
+}
+
+.provenance-approximate {
+  border-left-color: var(--ui-warning-border);
+  background: var(--ui-warning-bg);
+}
+
+.provenance-ambiguous {
+  border-left-color: oklch(62% 0.14 55);
+  background: oklch(97% 0.03 55);
+}
+
+.provenance-page_only {
+  border-left-color: var(--ui-border-strong);
+  background: var(--ui-surface-muted);
+}
+
+.provenance-unresolved {
+  border-left-color: var(--ui-danger-border);
+  background: var(--ui-danger-bg);
+}
+
+.provenance-empty {
+  border-left-color: var(--ui-border-strong);
+  background: var(--ui-surface-soft);
+}
+
+.provenance-preview {
+  margin: 0 18px 18px !important;
+  border: 1px solid var(--ui-border) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--ui-surface-muted) !important;
+}
+
+.provenance-preview img {
+  width: auto !important;
+  max-width: 100% !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
 .downloads-heading {
   display: block;
   margin-top: 18px;
@@ -1534,6 +1690,40 @@ footer {
     width: 1180px !important;
     min-width: 1180px !important;
   }
+
+  .provenance-intro {
+    padding: 14px 14px 0;
+  }
+
+  .provenance-intro h3 {
+    font-size: 21px;
+  }
+
+  #provenance-field {
+    padding: 0 14px 4px !important;
+  }
+
+  .provenance-card {
+    margin: 0 14px 12px;
+    padding: 12px 13px;
+  }
+
+  .provenance-status {
+    font-size: 20px !important;
+  }
+
+  .provenance-facts {
+    grid-template-columns: 1fr;
+  }
+
+  .provenance-row {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+
+  .provenance-preview {
+    margin: 0 14px 14px !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1633,9 +1823,41 @@ _DEMO_OPTIONS: dict[str, tuple[str, SchemaName]] = {
     "subsidy_yellow": ("補助｜黃燈範例", "subsidy_application"),
     "subsidy_red": ("補助｜紅燈範例", "subsidy_application"),
     "receipt_green": ("收據｜綠燈範例", "receipt"),
+    PROVENANCE_DEMO_NAME: ("補助｜來源核驗範例（PDF）", "subsidy_application"),
 }
 
-Inspector = Callable[[Path, SchemaName, ProviderName], InspectionBundle]
+_DEMO_DOCUMENT_SUFFIXES: dict[str, str] = {PROVENANCE_DEMO_NAME: ".pdf"}
+
+_PROVENANCE_STATUS_LABELS = {
+    "verified": "✅ 已核驗來源",
+    "approximate": "🟡 位置為近似結果",
+    "ambiguous": "🟠 找到多處相同證據",
+    "page_only": "⚪ 只有頁碼，位置未經本機驗證",
+    "unresolved": "🔴 本機找不到這段證據",
+}
+
+_PROVENANCE_STATUS_HINTS = {
+    "verified": "這段證據在文件的本機文字層中唯一命中，下方已標出位置。",
+    "approximate": "已找到位置，但與模型宣稱不完全一致，請對照原文件確認。",
+    "ambiguous": "文件裡有多處一模一樣的內容，系統不猜測是哪一處，因此不標位置。",
+    "page_only": "這一頁沒有可讀取的文字層；頁碼由模型提供，位置尚未經本機驗證。",
+    "unresolved": "系統在本機文字層找不到這段證據，請回原文件人工核對。",
+}
+
+_PROVENANCE_METHOD_LABELS = {
+    "native_pdf_text": "PDF 內建文字層",
+    "optional_local_ocr": "本機 OCR（可選功能）",
+    "model_claim_only": "模型宣稱，未經本機驗證",
+    "unavailable": "沒有可用的本機來源",
+}
+
+_PREVIEW_LONG_EDGE = 1200
+_HIGHLIGHT_FILL = (255, 199, 44, 62)
+_HIGHLIGHT_OUTLINE = (176, 48, 22, 255)
+_HIGHLIGHT_PADDING = 4
+_HIGHLIGHT_WIDTH = 4
+
+Inspector = Callable[[Path, SchemaName, ProviderName], InspectionBundle | InspectionArtifacts]
 RequestGuard = Callable[[], None]
 
 
@@ -1929,6 +2151,257 @@ def _status_html(bundle: InspectionBundle) -> str:
     )
 
 
+def _as_artifacts(result: InspectionBundle | InspectionArtifacts) -> InspectionArtifacts:
+    """Accept either the fixed public bundle or the richer page-carrying result."""
+
+    if isinstance(result, InspectionArtifacts):
+        return result
+    return InspectionArtifacts(bundle=result, pages=())
+
+
+def _write_page_previews(
+    pages: tuple[NormalizedPage, ...],
+    destination: Path,
+) -> dict[int, dict[str, object]]:
+    """Write downscaled page previews into the managed cache directory."""
+
+    if not pages:
+        return {}
+    destination.mkdir(parents=True, exist_ok=True)
+    previews: dict[int, dict[str, object]] = {}
+    for page in pages:
+        try:
+            with Image.open(BytesIO(page.data)) as image:
+                image.load()
+                preview = image.convert("RGB")
+                if max(preview.size) > _PREVIEW_LONG_EDGE:
+                    preview.thumbnail(
+                        (_PREVIEW_LONG_EDGE, _PREVIEW_LONG_EDGE),
+                        Image.Resampling.LANCZOS,
+                    )
+                path = destination / f"page-{page.page_number:02d}.png"
+                preview.save(path, format="PNG", optimize=True)
+                previews[page.page_number] = {
+                    "path": str(path),
+                    "width": preview.width,
+                    "height": preview.height,
+                }
+        except (OSError, ValueError):
+            continue
+    return previews
+
+
+def annotate_page_preview(
+    preview_path: Path,
+    bbox: tuple[float, float, float, float],
+    destination: Path,
+) -> Path:
+    """Draw one translucent evidence highlight that does not obscure the text."""
+
+    with Image.open(preview_path) as image:
+        image.load()
+        base = image.convert("RGBA")
+    width, height = base.size
+    x0 = max(0.0, bbox[0] / BBOX_SCALE * width - _HIGHLIGHT_PADDING)
+    y0 = max(0.0, bbox[1] / BBOX_SCALE * height - _HIGHLIGHT_PADDING)
+    x1 = min(float(width), bbox[2] / BBOX_SCALE * width + _HIGHLIGHT_PADDING)
+    y1 = min(float(height), bbox[3] / BBOX_SCALE * height + _HIGHLIGHT_PADDING)
+    overlay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    ImageDraw.Draw(overlay).rectangle(
+        (x0, y0, x1, y1),
+        fill=_HIGHLIGHT_FILL,
+        outline=_HIGHLIGHT_OUTLINE,
+        width=_HIGHLIGHT_WIDTH,
+    )
+    annotated = Image.alpha_composite(base, overlay).convert("RGB")
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    annotated.save(destination, format="PNG", optimize=True)
+    return destination
+
+
+def _provenance_field_labels(bundle: InspectionBundle) -> dict[str, str]:
+    """Prefer the document's own label for otherwise anonymous extra fields."""
+
+    labels: dict[str, str] = {}
+    for index, item in enumerate(bundle.extraction.additional_fields):
+        label = (item.label or "").strip()
+        if label:
+            labels[f"additional_fields.{index}.located_value"] = f"其他欄位：{label}"
+    return labels
+
+
+def provenance_field_choices(bundle: InspectionBundle) -> list[tuple[str, str]]:
+    """Return stable ``(label, field_path)`` selector choices in traversal order."""
+
+    collection = bundle.provenance
+    if collection is None:
+        return []
+    labels = _provenance_field_labels(bundle)
+    return [
+        (
+            f"{labels.get(field.field_path) or _humanize_field_path(field.field_path)}"
+            f"｜{_PROVENANCE_STATUS_LABELS[field.verification_status]}",
+            field.field_path,
+        )
+        for field in collection.fields
+    ]
+
+
+def _default_provenance_field(bundle: InspectionBundle) -> str | None:
+    collection = bundle.provenance
+    if collection is None or not collection.fields:
+        return None
+    for field in collection.fields:
+        if field.bbox is not None:
+            return field.field_path
+    return collection.fields[0].field_path
+
+
+def _provenance_detail_html(
+    field: FieldProvenance | None,
+    value: object,
+    *,
+    preview_available: bool,
+    field_label: str | None = None,
+) -> str:
+    if field is None:
+        return (
+            '<div class="provenance-card provenance-empty">'
+            "<p><strong>尚未選擇欄位</strong></p>"
+            "<p>完成預檢後，這裡會顯示每個欄位的來源頁碼與核驗結果。</p></div>"
+        )
+
+    status = field.verification_status
+    rows: list[tuple[str, str]] = [
+        ("欄位", field_label or _humanize_field_path(field.field_path)),
+        ("辨識內容", str(value) if value not in (None, "") else "未辨識到"),
+        (
+            "模型引用的原文",
+            field.evidence_text if field.evidence_text else "模型未提供",
+        ),
+        (
+            "模型宣稱頁碼",
+            f"第 {field.claimed_page_number} 頁"
+            if field.claimed_page_number is not None
+            else "未提供",
+        ),
+        (
+            "本機核驗頁碼",
+            f"第 {field.resolved_page_number} 頁"
+            if field.resolved_page_number is not None
+            else "無法確認",
+        ),
+        ("核驗方式", _PROVENANCE_METHOD_LABELS[field.resolution_method]),
+        (
+            "比對分數",
+            f"{field.match_score:.2f}" if field.match_score is not None else "不適用",
+        ),
+    ]
+    if field.candidate_count > 1:
+        rows.append(("相符位置數", f"{field.candidate_count} 處"))
+    detail_html = "".join(
+        f"<div class='provenance-row'><dt>{escape(label)}</dt>"
+        f"<dd>{escape(text)}</dd></div>"
+        for label, text in rows
+    )
+    warning_html = (
+        f'<p class="provenance-warning">{escape(field.warning)}</p>'
+        if field.warning
+        else ""
+    )
+    preview_note = (
+        ""
+        if preview_available
+        else '<p class="provenance-warning">這個環境沒有保留頁面影像，因此只顯示文字結果。</p>'
+    )
+    return (
+        f'<div class="provenance-card provenance-{escape(status)}" role="status">'
+        f'<p class="provenance-status">{escape(_PROVENANCE_STATUS_LABELS[status])}</p>'
+        f'<p class="provenance-hint">{escape(_PROVENANCE_STATUS_HINTS[status])}</p>'
+        f'<dl class="provenance-facts">{detail_html}</dl>'
+        f"{warning_html}{preview_note}</div>"
+    )
+
+
+def build_provenance_view(
+    artifacts: InspectionArtifacts,
+    run_dir: Path,
+) -> dict[str, object]:
+    """Package everything the source-verification panel needs for later callbacks.
+
+    Only page previews are written to disk, into the same managed cache as the
+    downloads; nothing here is added to the exported bundle.
+    """
+
+    collection = artifacts.bundle.provenance
+    fields = {} if collection is None else {
+        field.field_path: field.model_dump(mode="json") for field in collection.fields
+    }
+    values = {
+        path: located.value
+        for path, located in iter_located_fields(artifacts.bundle.extraction)
+    }
+    previews = _write_page_previews(artifacts.pages, run_dir / "pages")
+    return {
+        "run_dir": str(run_dir),
+        "fields": fields,
+        "values": values,
+        "labels": _provenance_field_labels(artifacts.bundle),
+        "previews": {str(number): payload for number, payload in previews.items()},
+    }
+
+
+def select_provenance_field_callback(
+    view: dict[str, object] | None,
+    field_path: str | None,
+) -> tuple[str, str | None]:
+    """Render the detail card and, when a location is trustworthy, the highlight."""
+
+    if not view or not field_path:
+        return _provenance_detail_html(None, None, preview_available=False), None
+    raw_fields = view.get("fields") or {}
+    payload = raw_fields.get(field_path) if isinstance(raw_fields, dict) else None
+    if payload is None:
+        return _provenance_detail_html(None, None, preview_available=False), None
+
+    field = FieldProvenance.model_validate(payload)
+    values = view.get("values") or {}
+    value = values.get(field_path) if isinstance(values, dict) else None
+    previews = view.get("previews") or {}
+    preview = (
+        previews.get(str(field.resolved_page_number))
+        if isinstance(previews, dict) and field.resolved_page_number is not None
+        else None
+    )
+    labels = view.get("labels") or {}
+    detail = _provenance_detail_html(
+        field,
+        value,
+        preview_available=bool(previews),
+        field_label=labels.get(field_path) if isinstance(labels, dict) else None,
+    )
+    if preview is None:
+        return detail, None
+
+    preview_path = Path(str(preview["path"]))
+    if not preview_path.is_file():
+        return detail, None
+    if field.bbox is None:
+        return detail, str(preview_path)
+
+    digest = sha256(field.field_path.encode("utf-8")).hexdigest()[:16]
+    annotated = Path(str(view["run_dir"])) / "pages" / f"evidence-{digest}.png"
+    try:
+        annotate_page_preview(
+            preview_path,
+            (field.bbox.x0, field.bbox.y0, field.bbox.x1, field.bbox.y1),
+            annotated,
+        )
+    except (OSError, ValueError):
+        return detail, str(preview_path)
+    return detail, str(annotated)
+
+
 def ensure_local_port_available(port: int, server_name: str = "127.0.0.1") -> None:
     """Fail without stopping an unrelated process when the configured port is occupied."""
 
@@ -1947,10 +2420,10 @@ def run_inspection_callback(
     provider: ProviderName,
     consent: bool,
     *,
-    inspector: Inspector = inspect_document,
+    inspector: Inspector = inspect_document_detailed,
     export_root: Path | None = None,
     request_guard: RequestGuard | None = None,
-) -> tuple[str, str, str, str, dict, str, str]:
+) -> tuple[str, str, str, str, dict, str, str, dict, object, str, object]:
     """Service-layer callback kept independently testable without starting Gradio."""
 
     if not consent:
@@ -1959,11 +2432,15 @@ def run_inspection_callback(
         raise ValueError("請先選擇圖片或 PDF。")
     if request_guard is not None:
         request_guard()
-    bundle = inspector(Path(file_path), schema, provider)
+    artifacts = _as_artifacts(inspector(Path(file_path), schema, provider))
+    bundle = artifacts.bundle
     root = export_root or gradio_temp_root()
     run_dir = root / uuid4().hex
     json_path = export_bundle_json(bundle, run_dir / "inspection.json")
     excel_path = export_bundle_excel(bundle, run_dir / "inspection.xlsx")
+    view = build_provenance_view(artifacts, run_dir)
+    selected = _default_provenance_field(bundle)
+    detail, preview = select_provenance_field_callback(view, selected)
     return (
         _status_html(bundle),
         _action_plan_html(bundle),
@@ -1982,6 +2459,10 @@ def run_inspection_callback(
         bundle.model_dump(mode="json"),
         str(json_path),
         str(excel_path),
+        view,
+        gr.update(choices=provenance_field_choices(bundle), value=selected),
+        detail,
+        preview,
     )
 
 
@@ -1991,7 +2472,7 @@ def inspection_update_stream(
     provider: ProviderName,
     consent: bool,
     *,
-    inspector: Inspector = inspect_document,
+    inspector: Inspector = inspect_document_detailed,
     export_root: Path | None = None,
     request_guard: RequestGuard | None = None,
 ) -> Iterator[tuple[object, ...]]:
@@ -2001,6 +2482,10 @@ def inspection_update_stream(
         '<div class="status-card status-processing" role="status" aria-live="polite">'
         "<strong>正在預檢，請稍候…</strong>"
         "<p>正在抽取欄位並執行規則檢核；完成前不需要重複點擊。</p></div>",
+        gr.skip(),
+        gr.skip(),
+        gr.skip(),
+        gr.skip(),
         gr.skip(),
         gr.skip(),
         gr.skip(),
@@ -2031,6 +2516,10 @@ def inspection_update_stream(
             gr.skip(),
             gr.skip(),
             gr.skip(),
+            gr.skip(),
+            gr.skip(),
+            gr.skip(),
+            gr.skip(),
             gr.update(value="開始預檢", interactive=True),
         )
         return
@@ -2052,13 +2541,12 @@ def load_demo_document_callback(
         raise ValueError("請先選擇一份合成範例。")
 
     root = demo_root or gradio_temp_root() / "demo"
-    image_path = root / f"{demo_name}.png"
-    if not image_path.is_file():
-        artifacts = {
-            artifact.name: artifact
-            for artifact in generate_demo_artifacts(root)
-        }
-        image_path = artifacts[demo_name].image_path
+    suffix = _DEMO_DOCUMENT_SUFFIXES.get(demo_name, ".png")
+    document_path = root / f"{demo_name}{suffix}"
+    if not document_path.is_file():
+        generate_demo_artifacts(root)
+    if not document_path.is_file():
+        raise RuntimeError(f"無法建立合成範例：{demo_name}。")
 
     label, schema = _DEMO_OPTIONS[demo_name]
     status = (
@@ -2066,7 +2554,7 @@ def load_demo_document_callback(
         f"{escape(label)}。這是本機產生的合成文件，不含真實個資；"
         "文件類型也已自動設定。</p>"
     )
-    return str(image_path), schema, status
+    return str(document_path), schema, status
 
 
 def _gradio_demo_callback(
@@ -2084,7 +2572,7 @@ def _gradio_demo_callback(
 
 def build_app(
     *,
-    inspector: Inspector = inspect_document,
+    inspector: Inspector = inspect_document_detailed,
     request_guard: RequestGuard | None = None,
 ) -> gr.Blocks:
     """Build the local-only civic service desk interface without launching it."""
@@ -2103,6 +2591,12 @@ def build_app(
             inspector=inspector,
             request_guard=request_guard,
         )
+
+    def select_field_from_interface(
+        view: dict[str, object] | None,
+        field_path: str | None,
+    ) -> tuple[str, str | None]:
+        return select_provenance_field_callback(view, field_path)
 
     with gr.Blocks(
         title="文件預檢所｜doc-inspector",
@@ -2318,6 +2812,38 @@ def build_app(
                     ),
                     elem_id="extraction-table",
                 )
+            with gr.Tab("來源核驗"):
+                gr.HTML(
+                    """<div class="provenance-intro">
+                    <h3>這個欄位是從文件哪裡讀到的？</h3>
+                    <p>選擇欄位後，系統會顯示模型宣稱的頁碼，以及本機在文件文字層
+                    實際核驗的結果。找不到可靠位置時會直接說明，不會標出猜測的範圍。</p>
+                    </div>"""
+                )
+                provenance_selector = gr.Dropdown(
+                    choices=[],
+                    value=None,
+                    label="選擇要核驗的欄位",
+                    interactive=True,
+                    elem_id="provenance-field",
+                    elem_classes=["field-control"],
+                )
+                provenance_detail = gr.HTML(
+                    _provenance_detail_html(None, None, preview_available=False),
+                    elem_id="provenance-detail",
+                )
+                provenance_preview = gr.Image(
+                    value=None,
+                    label="來源頁面與證據位置",
+                    type="filepath",
+                    sources=[],
+                    interactive=False,
+                    buttons=[],
+                    height=660,
+                    placeholder="選擇欄位後，這裡會顯示來源頁面；沒有可靠位置時不會標示範圍。",
+                    elem_id="provenance-preview",
+                    elem_classes=["provenance-preview"],
+                )
             with gr.Tab("全部檢核"):
                 checks = gr.HTML(
                     _result_table_html(
@@ -2353,10 +2879,18 @@ def build_app(
                 elem_classes=["download-control"],
                 )
 
+        provenance_state = gr.State(value=None)
+
         load_demo_button.click(
             fn=_gradio_demo_callback,
             inputs=[demo_selector],
             outputs=[document, schema, demo_status],
+            api_visibility="private",
+        )
+        provenance_selector.change(
+            fn=select_field_from_interface,
+            inputs=[provenance_state, provenance_selector],
+            outputs=[provenance_detail, provenance_preview],
             api_visibility="private",
         )
         inspect_button.click(
@@ -2370,6 +2904,10 @@ def build_app(
                 payload,
                 json_file,
                 excel_file,
+                provenance_state,
+                provenance_selector,
+                provenance_detail,
+                provenance_preview,
                 inspect_button,
             ],
             show_progress="hidden",

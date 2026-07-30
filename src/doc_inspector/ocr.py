@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from io import BytesIO
 
-from doc_inspector.ingest import NormalizedPage, PageWord
+from doc_inspector.ingest import NormalizedPage, PageToken
 from doc_inspector.schemas import BBOX_SCALE, NormalizedBBox
 
 DEFAULT_OCR_LANGUAGES = "chi_tra+chi_sim+eng"
@@ -24,7 +24,7 @@ class TesseractEvidenceOcr:
     languages: str = DEFAULT_OCR_LANGUAGES
     min_confidence: float = MIN_WORD_CONFIDENCE
 
-    def page_words(self, page: NormalizedPage) -> tuple[PageWord, ...]:
+    def page_tokens(self, page: NormalizedPage) -> tuple[PageToken, ...]:
         """Return positioned OCR words in the normalized bbox space."""
 
         import pytesseract  # noqa: PLC0415 - optional dependency, imported lazily
@@ -39,16 +39,16 @@ class TesseractEvidenceOcr:
                 lang=self.languages,
                 output_type=pytesseract.Output.DICT,
             )
-        return tuple(_words_from_tesseract(data, page.width, page.height, self.min_confidence))
+        return tuple(_tokens_from_tesseract(data, page.width, page.height, self.min_confidence))
 
 
-def _words_from_tesseract(
+def _tokens_from_tesseract(
     data: dict[str, list[object]],
     width: int,
     height: int,
     min_confidence: float,
-) -> list[PageWord]:
-    words: list[PageWord] = []
+) -> list[PageToken]:
+    tokens: list[PageToken] = []
     count = len(data.get("text", []))
     for index in range(count):
         text = str(data["text"][index]).strip()
@@ -70,14 +70,14 @@ def _words_from_tesseract(
         y1 = max(0.0, min(BBOX_SCALE, (top + box_height) / height * BBOX_SCALE))
         if x1 <= x0 or y1 <= y0:
             continue
-        words.append(
-            PageWord(
+        tokens.append(
+            PageToken(
                 text=text,
                 bbox=NormalizedBBox(x0=x0, y0=y0, x1=x1, y1=y1),
                 confidence=confidence,
             )
         )
-    return words
+    return tokens
 
 
 def load_evidence_ocr_provider(

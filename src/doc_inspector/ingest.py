@@ -31,8 +31,13 @@ _MIN_BBOX_EXTENT = 1e-6
 
 
 @dataclass(frozen=True, slots=True)
-class PageWord:
-    """One positioned token of a page's local text layer."""
+class PageToken:
+    """One positioned unit of a page's local text layer.
+
+    Native PDF extraction produces one token per glyph, which is what makes a
+    tight evidence highlight possible in scripts such as Chinese that have no
+    inter-word spacing. Optional OCR produces one token per recognized word.
+    """
 
     text: str
     bbox: NormalizedBBox
@@ -45,11 +50,11 @@ class PageTextLayer:
 
     page_number: int
     source: TextLayerSource = "unavailable"
-    words: tuple[PageWord, ...] = ()
+    tokens: tuple[PageToken, ...] = ()
 
     @property
     def has_text(self) -> bool:
-        return bool(self.words)
+        return bool(self.tokens)
 
 
 @dataclass(frozen=True, slots=True)
@@ -118,32 +123,46 @@ def normalized_bbox_from_rect(
 
 
 def extract_page_text_layer(page: pymupdf.Page, page_number: int) -> PageTextLayer:
-    """Read one PDF page's native words without rasterizing or storing the page."""
+    """Read one PDF page's native glyphs without rasterizing or storing the page.
+
+    Glyph-level extraction is used instead of ``get_text("words")`` because
+    PyMuPDF does not split on ideographic spaces, so a whole Chinese line can
+    come back as a single "word" and drag unrelated text into the highlight.
+    """
 
     page_rect = page.rect
     rotation_matrix = page.rotation_matrix
-    words: list[PageWord] = []
+    tokens: list[PageToken] = []
     try:
-        raw_words = page.get_text("words", sort=True)
+        raw = page.get_text("rawdict")
     except (RuntimeError, ValueError):
         return PageTextLayer(page_number=page_number)
 
-    for raw in raw_words:
-        text = str(raw[4])
-        if not text.strip():
-            continue
-        rotated = pymupdf.Rect(raw[0], raw[1], raw[2], raw[3]) * rotation_matrix
-        bbox = normalized_bbox_from_rect(rotated, page_rect)
-        if bbox is None:
-            continue
-        words.append(PageWord(text=text, bbox=bbox))
+    for block in raw.get("blocks", ()):
+        for line in block.get("lines", ()):
+            for span in line.get("spans", ()):
+                span_bbox = normalized_bbox_from_rect(
+                    pymupdf.Rect(span["bbox"]) * rotation_matrix, page_rect
+                )
+                for character in span.get("chars", ()):
+                    text = str(character.get("c", ""))
+                    if not text or text.isspace():
+                        continue
+                    bbox = normalized_bbox_from_rect(
+                        pymupdf.Rect(character["bbox"]) * rotation_matrix, page_rect
+                    )
+                    if bbox is None:
+                        bbox = span_bbox
+                    if bbox is None:
+                        continue
+                    tokens.append(PageToken(text=text, bbox=bbox))
 
-    if not words:
+    if not tokens:
         return PageTextLayer(page_number=page_number)
     return PageTextLayer(
         page_number=page_number,
         source="native_pdf_text",
-        words=tuple(words),
+        tokens=tuple(tokens),
     )
 
 

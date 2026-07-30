@@ -7,9 +7,17 @@ import os
 from pathlib import Path
 from tempfile import gettempdir
 
-from doc_inspector.demo import demo_extractions, generate_demo_artifacts
+from doc_inspector.demo import (
+    PROVENANCE_DEMO_NAME,
+    demo_extractions,
+    generate_demo_artifacts,
+    provenance_demo_extraction,
+)
+from doc_inspector.ingest import normalize_document
+from doc_inspector.provenance import resolve_provenance
 from doc_inspector.rules import inspect_extraction
 from doc_inspector.schemas import InspectionBundle
+from doc_inspector.service import InspectionArtifacts
 from doc_inspector.types import ProviderName, SchemaName
 from doc_inspector.ui import (
     CIVIC_CSS,
@@ -27,24 +35,41 @@ def fixture_inspector(
     path: Path,
     schema: SchemaName,
     provider: ProviderName,
-) -> InspectionBundle:
-    """Return the named synthetic fixture without network or credential access."""
+) -> InspectionArtifacts:
+    """Return the named synthetic fixture without network or credential access.
+
+    Extraction is replayed from a fixed synthetic answer, but ingestion and
+    provenance resolution run for real, so the browser gate exercises the same
+    local verification path the product uses.
+    """
 
     del schema
-    key = Path(path).stem
-    fixtures = demo_extractions()
-    if key not in fixtures:
-        raise ValueError(f"離線 UI fixture 不支援：{key}。")
-    extraction = fixtures[key]
-    return InspectionBundle(
+    source = Path(path)
+    key = source.stem
+    if key == PROVENANCE_DEMO_NAME:
+        extraction = provenance_demo_extraction()
+    else:
+        fixtures = demo_extractions()
+        if key not in fixtures:
+            raise ValueError(f"離線 UI fixture 不支援：{key}。")
+        extraction = fixtures[key]
+
+    document = normalize_document(source)
+    bundle = InspectionBundle(
         provider=provider,
         model="offline-ui-fixture",
-        source_file_name=Path(path).name,
-        page_count=1,
+        source_file_name=source.name,
+        page_count=len(document.pages),
         elapsed_ms=0,
         extraction=extraction,
         review_report=inspect_extraction(extraction),
+        provenance=resolve_provenance(
+            extraction,
+            document.text_layer,
+            pages=document.pages,
+        ),
     )
+    return InspectionArtifacts(bundle=bundle, pages=document.pages)
 
 
 def build_parser() -> argparse.ArgumentParser:

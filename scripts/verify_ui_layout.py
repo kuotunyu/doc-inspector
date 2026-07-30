@@ -1,4 +1,4 @@
-"""Capture responsive UI evidence and fail on basic layout regressions."""
+﻿"""Capture responsive UI evidence and fail on basic layout regressions."""
 
 from __future__ import annotations
 
@@ -39,6 +39,18 @@ def validate_test_target(url: str, *, allow_non_fixture: bool = False) -> None:
             "UI 稽核預設只允許 127.0.0.1:7862 離線 fixture；"
             "若確定要測其他目標，請顯式設定 UI_TEST_ALLOW_NON_FIXTURE=1。"
         )
+
+
+def open_app(page: Page, url: str = URL) -> None:
+    """Load the interface and wait for the rendered shell rather than network idle.
+
+    The source-verification panel keeps its data in Gradio session state, and
+    Gradio holds a heartbeat stream open for the life of such a page, so
+    ``networkidle`` never fires.
+    """
+
+    page.goto(url, wait_until="domcontentloaded")
+    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
 
 
 def _metrics(locator: Locator) -> dict[str, float | str]:
@@ -201,8 +213,7 @@ def _theme_contrast(browser, color_scheme: str) -> dict:
         color_scheme=color_scheme,
     )
     page = context.new_page()
-    page.goto(URL, wait_until="networkidle")
-    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
+    open_app(page)
     selectors = (
         ".source-brief p",
         ".upload-guidance span",
@@ -337,8 +348,7 @@ def _capture(
         else None,
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
-    page.goto(URL, wait_until="networkidle")
-    page.get_by_text("結果燈號", exact=True).wait_for(state="visible")
+    open_app(page)
     page.get_by_text(
         "完成後照顏色處理", exact=True
     ).wait_for(state="visible")
@@ -385,7 +395,7 @@ def _verify_consent_gate(
         else None,
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
-    page.goto(URL, wait_until="networkidle")
+    open_app(page)
     page.locator(".primary-btn").click()
     error = page.get_by_text("請先勾選雲端傳送告知", exact=False)
     error.wait_for(state="visible")
@@ -415,7 +425,7 @@ def _verify_demo_loader(
         else None,
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
-    page.goto(URL, wait_until="networkidle")
+    open_app(page)
     page.locator("#load-demo").click()
     loaded = page.get_by_text("已載入安全範例：", exact=False)
     loaded.wait_for(state="visible", timeout=30_000)
@@ -448,7 +458,7 @@ def _verify_actionable_result(
         else None,
     )
     page.on("pageerror", lambda error: page_errors.append(str(error)))
-    page.goto(URL, wait_until="networkidle")
+    open_app(page)
     red_demo_path = DEMO_DIR / "subsidy_red.png"
     page.locator('#document-upload input[type="file"]').set_input_files(
         red_demo_path
@@ -481,6 +491,122 @@ def _verify_actionable_result(
         plain_language_visible,
         machine_paths_hidden,
     )
+
+
+def _provenance_snapshot(page: Page) -> dict:
+    card = page.locator("#provenance-detail .provenance-card").first
+    card.wait_for(state="visible")
+    return {
+        "cardClass": card.get_attribute("class") or "",
+        "text": card.inner_text(),
+        "pagePreviewVisible": page.locator("#provenance-preview img").count() > 0,
+    }
+
+
+def _select_provenance_field(page: Page, option_text: str) -> dict:
+    page.locator("#provenance-field [role='combobox']").first.click()
+    page.locator(
+        "#provenance-field [role='listbox'] [role='option']"
+    ).filter(has_text=option_text).first.click()
+    page.wait_for_function(
+        """text => {
+          const card = document.querySelector("#provenance-detail .provenance-card");
+          const row = card && [...card.querySelectorAll(".provenance-row dd")][0];
+          return Boolean(row && row.textContent.includes(text));
+        }""",
+        arg=option_text,
+        timeout=30_000,
+    )
+    return _provenance_snapshot(page)
+
+
+def _verify_evidence_provenance(
+    browser,
+    console_errors: list[str],
+    page_errors: list[str],
+    output_dir: Path,
+) -> dict:
+    """Drive the source-verification panel across every verification status."""
+
+    context = browser.new_context(
+        viewport={"width": 1440, "height": 1000},
+        color_scheme="light",
+    )
+    page = context.new_page()
+    page.on(
+        "console",
+        lambda message: console_errors.append(message.text)
+        if message.type == "error"
+        else None,
+    )
+    page.on("pageerror", lambda error: page_errors.append(str(error)))
+    open_app(page)
+    page.locator('#document-upload input[type="file"]').set_input_files(
+        DEMO_DIR / "subsidy_provenance.pdf"
+    )
+    page.get_by_text("subsidy_provenance.pdf", exact=True).wait_for(state="visible")
+    page.locator("#cloud-consent input").check()
+    page.locator(".primary-btn").click()
+    page.locator(".status-card.status-green").wait_for(state="visible", timeout=60_000)
+    page.get_by_role("tab", name="來源核驗").click()
+
+    selector = page.locator("#provenance-field [role='combobox']").first
+    selector_box = selector.bounding_box() or {"width": 0, "height": 0}
+    selector.focus()
+    focus_outline = selector.evaluate(
+        """element => {
+          const style = getComputedStyle(element);
+          return {
+            outlineWidth: parseFloat(style.outlineWidth || "0"),
+            outlineStyle: style.outlineStyle
+          };
+        }"""
+    )
+
+    verified = _provenance_snapshot(page)
+    page.screenshot(
+        path=PUBLIC_ASSET_DIR / "evidence-provenance.png",
+        full_page=True,
+    )
+    ambiguous = _select_provenance_field(page, "申報總額")
+    page_only = _select_provenance_field(page, "附件金額")
+    unresolved = _select_provenance_field(page, "承辦註記")
+    page.screenshot(path=output_dir / "provenance-unresolved.png", full_page=True)
+    context.close()
+
+    mobile_context = browser.new_context(
+        viewport={"width": 390, "height": 844},
+        color_scheme="light",
+    )
+    mobile_page = mobile_context.new_page()
+    mobile_page.on(
+        "console",
+        lambda message: console_errors.append(message.text)
+        if message.type == "error"
+        else None,
+    )
+    mobile_page.on("pageerror", lambda error: page_errors.append(str(error)))
+    open_app(mobile_page)
+    mobile_page.get_by_role("tab", name="來源核驗").click()
+    mobile_page.locator("#provenance-detail .provenance-card").first.wait_for(
+        state="visible"
+    )
+    mobile_overflow = mobile_page.evaluate(
+        "document.documentElement.scrollWidth > window.innerWidth"
+    )
+    mobile_context.close()
+
+    return {
+        "selectorWidth": round(selector_box["width"]),
+        "selectorHeight": round(selector_box["height"]),
+        "selectorFocusOutlineWidth": focus_outline["outlineWidth"],
+        "selectorFocusOutlineStyle": focus_outline["outlineStyle"],
+        "verified": verified,
+        "ambiguous": ambiguous,
+        "pageOnly": page_only,
+        "unresolved": unresolved,
+        "mobileHorizontalOverflow": mobile_overflow,
+    }
 
 
 def main() -> None:
@@ -557,6 +683,12 @@ def main() -> None:
             next_step_visible = None
             plain_language_visible = None
             machine_paths_hidden = None
+        provenance = _verify_evidence_provenance(
+            browser,
+            console_errors,
+            page_errors,
+            AUDIT_OUTPUT_DIR,
+        )
         browser.close()
 
     report = {
@@ -566,6 +698,8 @@ def main() -> None:
             "desktop.png",
             "mobile.png",
             *(["result-red.png"] if VERIFY_ACTION_PLAN else []),
+            "evidence-provenance.png",
+            "provenance-unresolved.png",
         ],
         "wide_metrics": wide,
         "desktop_metrics": desktop,
@@ -588,6 +722,7 @@ def main() -> None:
         "action_plan_next_step_visible": next_step_visible,
         "action_plan_plain_language_visible": plain_language_visible,
         "action_plan_machine_paths_hidden": machine_paths_hidden,
+        "evidence_provenance": provenance,
         "console_errors": console_errors,
         "page_errors": page_errors,
     }
@@ -754,6 +889,34 @@ def main() -> None:
         assert report["action_plan_next_step_visible"]
         assert report["action_plan_plain_language_visible"]
         assert report["action_plan_machine_paths_hidden"]
+
+    assert provenance["selectorHeight"] >= 44
+    assert provenance["selectorFocusOutlineWidth"] >= 2
+    assert provenance["selectorFocusOutlineStyle"] != "none"
+    assert not provenance["mobileHorizontalOverflow"]
+
+    verified = provenance["verified"]
+    assert "provenance-verified" in verified["cardClass"]
+    assert "已核驗來源" in verified["text"]
+    assert "PDF 內建文字層" in verified["text"]
+    assert verified["pagePreviewVisible"]
+
+    ambiguous = provenance["ambiguous"]
+    assert "provenance-ambiguous" in ambiguous["cardClass"]
+    assert "provenance-verified" not in ambiguous["cardClass"]
+    assert "找到多處相同證據" in ambiguous["text"]
+
+    page_only = provenance["pageOnly"]
+    assert "provenance-page_only" in page_only["cardClass"]
+    assert "provenance-verified" not in page_only["cardClass"]
+    assert "未經本機驗證" in page_only["text"]
+
+    unresolved = provenance["unresolved"]
+    assert "provenance-unresolved" in unresolved["cardClass"]
+    assert "provenance-verified" not in unresolved["cardClass"]
+    assert "找不到這段證據" in unresolved["text"]
+    assert not unresolved["pagePreviewVisible"]
+
     assert not console_errors
     assert not page_errors
     print(json.dumps(report, ensure_ascii=False))
