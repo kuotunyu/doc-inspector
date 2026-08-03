@@ -1,0 +1,43 @@
+{
+  "artifact_schema_version": "1.0",
+  "artifact_type": "real_document_page_retrieval_evaluation",
+  "source_sha256": "38b3a275f5ed2e6e61cecfa9caf8076c755bafdd750efd68b84ced3f27184b98",
+  "model": {
+    "name": "vidore/colqwen2-v1.0-hf",
+    "revision": "0d3e414967fde994dd99a0ccc29bcb34b5355712"
+  },
+  "split": {
+    "description": "XFUND val pages with queries from the first 20 documents",
+    "manifest_sha256": "08758d3733e348ee0d3441e0aa2bcd32b790def0280356bcaf0667d8da085b97"
+  },
+  "corpus_page_count": 50,
+  "query_count": 20,
+  "metrics": {
+    "recall_at_1": 0.95,
+    "recall_at_3": 1.0
+  },
+  "latency_seconds": {
+    "model_load": 5.838778899999852,
+    "corpus_total": 13.832907800000612,
+    "corpus_per_page": 0.27665815600001226,
+    "queries_total": 0.0417581000001519,
+    "query_per_item": 0.0020879050000075948,
+    "scoring_total": 0.1512652999999773,
+    "scoring_per_query": 0.007563264999998864
+  },
+  "peak_vram_gib": 4.275261402130127,
+  "environment": {
+    "device": "NVIDIA GeForce RTX 4090",
+    "torch_version": "2.11.0+cu128",
+    "cuda_version": "12.8",
+    "transformers_version": "5.14.1",
+    "dtype": "bfloat16",
+    "attention_implementation": "sdpa"
+  },
+  "methodology": {
+    "scoring": "per-document MaxSim",
+    "reproduction_scripts": [
+      "scripts/run_retrieval_demo.py"
+    ]
+  }
+}

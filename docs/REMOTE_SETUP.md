@@ -465,18 +465,31 @@ CI 不需要 secrets，也不會呼叫模型 API。
 
 單一維護者的專案可先不要求 approval 人數，但仍保留 Pull Request 與 CI gate。
 
-### v1.0.0 Release 與後續版本
+### 版本化 Release
 
-`v1.0.0` 已於 2026-07-25 發布。若要重建 Release 或發布後續版本，先確認
-作者驗收、CI 與安全掃描都通過，再依序執行：
+既有 tag 不可移動、刪除或重建。每個新版本都必須先完成作者驗收、指定 commit 的 CI、
+安全掃描與本指南中的本機 release gates，再由作者人工執行公開發布。以下命令中的
+`<VERSION>` 不含前綴 `v`，`<VERIFIED_RELEASE_COMMIT_SHA>` 必須是已完成全部驗證的完整 commit SHA：
 
-1. 確認 `main` 是要發布的 commit。
-2. 建立 annotated tag `v1.0.0`。
-3. 推送 tag。
-4. 在 GitHub **Releases → Draft a new release** 選擇 `v1.0.0`。
-5. Release title 使用 `v1.0.0｜文件預檢所`。
-6. 內容依 `CHANGELOG.md` 與該版本實際驗收結果撰寫；一次性 release notes 留在
-   GitHub Release，不在 `main` 重複保存。
-7. 發布後重新確認 Live Demo 與 README 連結。
+```powershell
+$Version = '<VERSION>'
+$VerifiedReleaseCommit = '<VERIFIED_RELEASE_COMMIT_SHA>'
+$Tag = "v$Version"
+
+if ((git rev-parse HEAD).Trim() -ne $VerifiedReleaseCommit) {
+    throw 'HEAD 不是已驗證的 release commit，停止建立 tag。'
+}
+
+git tag -a $Tag $VerifiedReleaseCommit -m "release: $Tag"
+if ((git rev-parse "$Tag^{commit}").Trim() -ne $VerifiedReleaseCommit) {
+    throw 'Tag 沒有指向已驗證的 release commit，停止發布。'
+}
+git push origin $Tag
+```
+
+推送後在 GitHub **Releases → Draft a new release** 選擇 `$Tag`，Release title 使用
+`$Tag｜文件預檢所`。內容依 `CHANGELOG.md` 與該版本實際驗收結果撰寫；一次性 release
+notes 留在 GitHub Release，不在 `main` 重複保存。發布後重新確認 Live Demo 與 README
+連結。
 
 Tag 與 Release 都是公開且有外部影響的操作，必須由作者人工執行。

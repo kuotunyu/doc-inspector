@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import re
 import sys
 import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_RELEASE_VERSION = "1.1.0"
+EXPECTED_RELEASE_VERSION = "1.1.1"
 EXPECTED_PROJECT_AUTHOR = "kuotunyu"
 EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 
@@ -38,6 +39,8 @@ REQUIRED_FILES = (
     "docs/assets/evidence-provenance.png",
     "docs/assets/decision-evaluation.json",
     "docs/assets/provenance-evaluation.json",
+    "docs/assets/xfund-extraction-benchmark.json",
+    "docs/assets/colqwen-retrieval-benchmark.json",
     "scripts/audit_ui_quality.py",
     "scripts/build_provenance_corpus.py",
     "scripts/run_provenance_evaluation.py",
@@ -85,6 +88,9 @@ REMOTE_SETUP_MARKERS = (
     "scripts/check_space_snapshot.py",
     "line_ending_only_mismatches",
     "https://github.com/kuotunyu/doc-inspector/graphs/contributors",
+    "<VERSION>",
+    "既有 tag 不可移動、刪除或重建",
+    "$VerifiedReleaseCommit",
 )
 
 REMOTE_SETUP_FORBIDDEN_MARKERS = (
@@ -108,9 +114,9 @@ README_MARKERS = (
     "## Demo 資料與授權",
     "## CPU 容器與部署",
     "## 目前限制",
-    "v1.1.0",
+    "v1.1.1",
     "Hugging Face Docker Space",
-    "254 passed，總 coverage 91%",
+    "260 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",
@@ -122,6 +128,11 @@ README_MARKERS = (
     "docs/EVIDENCE_PROVENANCE.md",
     "24 / 24",
     "false verified rate",
+)
+
+HARDCODED_RELEASE_VERSION_PATTERNS = (
+    re.compile(r"\bgit tag(?:\s+-a)?\s+v\d+\.\d+\.\d+\b"),
+    re.compile(r"\bgit push origin v\d+\.\d+\.\d+\b"),
 )
 
 CI_WORKFLOW_MARKERS = (
@@ -175,6 +186,16 @@ def _parse_env_example(text: str) -> dict[str, str]:
         key, value = line.split("=", 1)
         values[key.strip()] = value.strip()
     return values
+
+
+def _hardcoded_release_version_markers(text: str) -> list[str]:
+    return sorted(
+        {
+            match.group(0)
+            for pattern in HARDCODED_RELEASE_VERSION_PATTERNS
+            for match in pattern.finditer(text)
+        }
+    )
 
 
 def build_release_report(root: Path = ROOT) -> dict[str, object]:
@@ -326,6 +347,9 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     forbidden_remote_setup_markers = [
         marker for marker in REMOTE_SETUP_FORBIDDEN_MARKERS if marker in remote_setup
     ]
+    forbidden_remote_setup_markers.extend(
+        _hardcoded_release_version_markers(remote_setup)
+    )
     dockerfile = (root / "Dockerfile").read_text(encoding="utf-8")
     missing_public_safety_markers = [
         marker
