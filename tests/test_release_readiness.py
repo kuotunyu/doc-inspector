@@ -3,6 +3,11 @@ from pathlib import Path
 import subprocess
 import sys
 
+from scripts_support import load_script_module
+
+
+verify_release = load_script_module("verify_release")
+
 
 def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     root = Path(__file__).resolve().parents[1]
@@ -21,9 +26,9 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["required_file_count"] == 37
     assert report["missing_files"] == []
     assert report["unexpected_public_files"] == []
-    assert report["expected_release_version"] == "1.1.0"
-    assert report["project_version"] == "1.1.0"
-    assert report["locked_project_versions"] == ["1.1.0"]
+    assert report["expected_release_version"] == "1.1.1"
+    assert report["project_version"] == "1.1.1"
+    assert report["locked_project_versions"] == ["1.1.1"]
     assert report["release_version_issues"] == []
     assert report["project_author"] == "kuotunyu"
     assert report["project_author_issues"] == []
@@ -46,3 +51,14 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["missing_dockerignore_rules"] == []
     assert report["reads_env_truth"] is False
     assert report["performs_network_calls"] is False
+
+
+def test_release_guide_rejects_a_hardcoded_version_tag_command() -> None:
+    guide = "git tag -a v1.2.3 -m 'release'\ngit push origin v1.2.3\n"
+
+    issues = verify_release._hardcoded_release_version_markers(guide)
+
+    assert issues == [
+        "git push origin v1.2.3",
+        "git tag -a v1.2.3",
+    ]
