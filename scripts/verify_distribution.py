@@ -33,7 +33,9 @@ FORBIDDEN_PARTS = {
     ".agents",
     ".git",
     ".venv",
+    "AGENTS.md",
     "CLAUDE.md",
+    "interview.md",
     "PLAN.md",
     "PROGRESS.md",
 }
@@ -43,6 +45,17 @@ FORBIDDEN_SUBPATHS = {
     ("data", "raw"),
     ("logs",),
     ("outputs",),
+    ("reports", "private"),
+}
+SDIST_GENERATED_METADATA = {"PKG-INFO"}
+SOURCE_SNAPSHOT_EXCLUDED_PARTS = {
+    ".git",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
 }
 
 
@@ -72,6 +85,40 @@ def _forbidden_archive_entries(names: list[str], *, strip_root: bool) -> list[st
         if any(relative[: len(prefix)] == prefix for prefix in FORBIDDEN_SUBPATHS):
             forbidden.append(name)
     return forbidden
+
+
+def _release_source_files() -> tuple[set[str], str]:
+    try:
+        tracked = subprocess.run(
+            ["git", "ls-files", "--cached", "-z"],
+            cwd=ROOT,
+            check=False,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except OSError:
+        tracked = None
+
+    if tracked is not None and tracked.returncode == 0:
+        paths = {
+            PurePosixPath(path).as_posix()
+            for path in tracked.stdout.split("\0")
+            if path
+        }
+        if paths:
+            return paths, "git_tracked_files"
+
+    paths = {
+        path.relative_to(ROOT).as_posix()
+        for path in ROOT.rglob("*")
+        if path.is_file()
+        and not any(
+            part in SOURCE_SNAPSHOT_EXCLUDED_PARTS
+            for part in path.relative_to(ROOT).parts
+        )
+    }
+    return paths, "source_snapshot_without_vcs"
 
 
 def _verify_wheel(wheel: Path, version: str) -> dict[str, object]:
@@ -127,10 +174,34 @@ def _verify_wheel(wheel: Path, version: str) -> dict[str, object]:
     }
 
 
-def _verify_sdist(sdist: Path, version: str) -> dict[str, object]:
+def _verify_sdist(
+    sdist: Path,
+    version: str,
+    *,
+    tracked_source_files: set[str] | None = None,
+) -> dict[str, object]:
     expected_root = f"{PACKAGE_NAME}-{version}"
     with tarfile.open(sdist, mode="r:gz") as archive:
-        names = archive.getnames()
+        members = archive.getmembers()
+        names = [member.name for member in members]
+
+    if tracked_source_files is None:
+        tracked_source_files, _ = _release_source_files()
+    normalized_source_files = {
+        PurePosixPath(path).as_posix() for path in tracked_source_files
+    }
+    untracked_entries: list[str] = []
+    for member in members:
+        if not member.isfile():
+            continue
+        parts = _archive_parts(member.name)
+        relative = PurePosixPath(*parts[1:]).as_posix() if len(parts) > 1 else ""
+        if (
+            relative
+            and relative not in normalized_source_files
+            and relative not in SDIST_GENERATED_METADATA
+        ):
+            untracked_entries.append(member.name)
 
     roots = sorted({parts[0] for name in names if (parts := _archive_parts(name))})
     forbidden = _forbidden_archive_entries(names, strip_root=True)
@@ -149,6 +220,7 @@ def _verify_sdist(sdist: Path, version: str) -> dict[str, object]:
         "root_matches": roots == [expected_root],
         "missing_entries": missing_entries,
         "forbidden_entries": forbidden,
+        "untracked_entries": sorted(untracked_entries),
     }
 
 
@@ -313,6 +385,7 @@ def _wheel_import_smoke(wheel: Path, version: str) -> dict[str, object]:
 
 def build_distribution_report() -> dict[str, object]:
     version = _project_version()
+    tracked_source_files, source_file_baseline = _release_source_files()
     expected_wheel = DIST / f"{PACKAGE_NAME}-{version}-py3-none-any.whl"
     expected_sdist = DIST / f"{PACKAGE_NAME}-{version}.tar.gz"
     artifacts = sorted(path.name for path in DIST.glob("*") if path.name != ".gitignore")
@@ -325,7 +398,11 @@ def build_distribution_report() -> dict[str, object]:
         else {"file": expected_wheel.name, "missing": True}
     )
     sdist_report = (
-        _verify_sdist(expected_sdist, version)
+        _verify_sdist(
+            expected_sdist,
+            version,
+            tracked_source_files=tracked_source_files,
+        )
         if expected_sdist.is_file()
         else {"file": expected_sdist.name, "missing": True}
     )
@@ -337,7 +414,12 @@ def build_distribution_report() -> dict[str, object]:
     archive_issues = [
         issue
         for report in (wheel_report, sdist_report)
-        for key in ("missing_entries", "forbidden_entries", "metadata_issues")
+        for key in (
+            "missing_entries",
+            "forbidden_entries",
+            "untracked_entries",
+            "metadata_issues",
+        )
         for issue in report.get(key, [])
     ]
     if sdist_report.get("root_matches") is False:
@@ -352,6 +434,7 @@ def build_distribution_report() -> dict[str, object]:
         "artifact_set_matches": artifact_set_matches,
         "wheel": wheel_report,
         "sdist": sdist_report,
+        "sdist_source_file_baseline": source_file_baseline,
         "wheel_import_smoke": import_smoke,
         "uses_network": False,
         "reads_env_truth": False,

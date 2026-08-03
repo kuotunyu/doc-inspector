@@ -61,6 +61,22 @@ dev = [
 [tool.hatch.build.targets.wheel]
 packages = ["src/doc_inspector"]
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+  "/.agents",
+  "/.env",
+  "/AGENTS.md",
+  "/CLAUDE.md",
+  "/interview.md",
+  "/PLAN.md",
+  "/PROGRESS.md",
+  "/data/benchmark",
+  "/data/raw",
+  "/logs",
+  "/outputs",
+  "/reports/private",
+]
+
 [tool.uv.sources]
 torch = { index = "pytorch-cu128" }
 
