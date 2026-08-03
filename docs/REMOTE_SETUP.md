@@ -271,6 +271,23 @@ if ($byteMismatches) {
 
 "Archive verified: $($archiveFiles.Count) byte-exact files"
 
+# GitHub README 保持純 Markdown；只有 Space staging 需要 Docker metadata。
+$utf8NoBom = [System.Text.UTF8Encoding]::new($false)
+$spaceReadmePath = Join-Path $repoRoot 'README.md'
+$githubReadmeBody = [System.IO.File]::ReadAllText($spaceReadmePath, $utf8NoBom)
+$spaceMetadata = "---`nsdk: docker`napp_port: 7861`n---`n`n"
+$expectedSpaceReadme = $utf8NoBom.GetBytes($spaceMetadata + $githubReadmeBody)
+[System.IO.File]::WriteAllBytes($spaceReadmePath, $expectedSpaceReadme)
+$actualSpaceReadme = [System.IO.File]::ReadAllBytes($spaceReadmePath)
+if (
+  [Convert]::ToBase64String($actualSpaceReadme) -ne
+  [Convert]::ToBase64String($expectedSpaceReadme)
+) {
+  throw 'Space README metadata 產生失敗。'
+}
+
+'Space README verified: minimal Docker metadata + exact GitHub README body'
+
 $emptyCwd = Join-Path $hfStage "emptycwd"
 New-Item -ItemType Directory -Path $emptyCwd | Out-Null
 
@@ -303,9 +320,11 @@ wildcard）。在專案根目錄執行時，`--delete '*'` 會被展開成一長
 第一行 `git status --short` 必須沒有輸出；若有未提交變更，先停止並處理 GitHub
 主倉。`git -c core.autocrlf=false ...` 只對這一次 archive 覆寫 Git 設定，避免
 Windows 的 CRLF 工作目錄設定改寫 archive 內的文字檔；否則部署雖可執行，
-仍無法通過與 GitHub blob 的 byte-exact source gate。上傳前的兩段 preflight
+仍無法通過與 GitHub blob 的 source gate。上傳前的兩段 preflight
 會先確認檔案清單相同，再以 `git hash-object --no-filters` 驗證每個 archive
-檔案的原始 bytes 對應 HEAD blob；任一差異都會停止。`git archive HEAD` 天然
+檔案的原始 bytes 對應 HEAD blob；任一差異都會停止。驗證完成後，只替 staging
+中的 `README.md` 加上 Space 必要的 `sdk: docker` 與 `app_port: 7861`；GitHub
+README 本身保持純 Markdown。`git archive HEAD` 天然
 排除 `.git`、未追蹤檔與被忽略的本機資料。成功時 CLI 會顯示 `Uploaded` 與
 Hugging Face commit URL。`--delete '*'` 會在同一次 commit 刪除 Space 上已不在
 本次 archive 的舊檔；沒有這個參數時 folder upload 只會新增或更新，這次公開
@@ -325,8 +344,10 @@ uv run python scripts/check_live_space.py `
 ```
 
 第一個報告只比對固定的 runtime／build／dependency 關鍵檔，不宣稱全
-repository snapshot 等同；必須為 `critical_source_match=true` 且
-`mismatched_files=[]`。若失敗時 `line_ending_only_mismatches` 有值但
+repository snapshot 等同；19 個程式／建置檔維持 byte-exact，Space README
+則必須為 `readme_metadata_valid=true`、`readme_body_match=true`。完整報告仍須
+為 `critical_source_match=true` 且 `mismatched_files=[]`。若失敗時
+`line_ending_only_mismatches` 有值但
 `content_mismatches=[]`，代表檔案內容只差 CRLF／LF，應回到上方確認 archive
 使用 `-c core.autocrlf=false`，不可降低 byte-exact gate。第二個報告必須為
 `healthy=true`。兩者都只讀取公開 HTTPS 檔案，不使用 token、不上傳文件，也

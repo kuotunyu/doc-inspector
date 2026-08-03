@@ -87,6 +87,9 @@ REMOTE_SETUP_MARKERS = (
     "scripts/check_github_contributors.py",
     "scripts/check_space_snapshot.py",
     "line_ending_only_mismatches",
+    "$spaceMetadata",
+    "readme_metadata_valid",
+    "readme_body_match",
     "https://github.com/kuotunyu/doc-inspector/graphs/contributors",
     "<VERSION>",
     "既有 tag 不可移動、刪除或重建",
@@ -101,9 +104,6 @@ REMOTE_SETUP_FORBIDDEN_MARKERS = (
 )
 
 README_MARKERS = (
-    "sdk: docker",
-    "app_port: 7861",
-    "license: mit",
     "我常看到補助申請真正困難的地方",
     "## 架構",
     "```mermaid",
@@ -117,10 +117,9 @@ README_MARKERS = (
     "## 目前限制",
     "v1.1.2",
     "Hugging Face Docker Space",
-    "262 passed，總 coverage 91%",
+    "265 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
-    "## 專案導覽",
     "## 可驗證成果",
     "## 決策層產品評估",
     "## 來源核驗",
@@ -213,6 +212,19 @@ def _version_specific_test_evidence_markers(text: str) -> list[str]:
     return sorted(issues)
 
 
+def _public_readme_space_metadata_issues(text: str) -> list[str]:
+    candidate = text.removeprefix("\ufeff")
+    if not candidate.startswith("---\n"):
+        return []
+    closing_index = candidate.find("\n---\n", 4)
+    if closing_index == -1:
+        return []
+    frontmatter = candidate[4:closing_index]
+    if "sdk: docker" in frontmatter or "app_port:" in frontmatter:
+        return ["README.md:space-frontmatter"]
+    return []
+
+
 def build_release_report(root: Path = ROOT) -> dict[str, object]:
     missing_files = [path for path in REQUIRED_FILES if not (root / path).is_file()]
     unexpected_public_files = [
@@ -246,6 +258,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     missing_readme_markers = [
         marker for marker in README_MARKERS if marker not in readme
     ]
+    public_readme_issues = _public_readme_space_metadata_issues(readme)
     ci_workflow = (root / ".github" / "workflows" / "ci.yml").read_text(
         encoding="utf-8"
     )
@@ -439,6 +452,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         + release_version_issues
         + project_author_issues
         + missing_readme_markers
+        + public_readme_issues
         + missing_ci_workflow_markers
         + forbidden_ci_workflow_markers
         + missing_dependabot_markers
@@ -467,6 +481,7 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
         "project_author": project_author,
         "project_author_issues": project_author_issues,
         "missing_readme_markers": missing_readme_markers,
+        "public_readme_issues": public_readme_issues,
         "missing_ci_workflow_markers": missing_ci_workflow_markers,
         "forbidden_ci_workflow_markers": forbidden_ci_workflow_markers,
         "missing_dependabot_markers": missing_dependabot_markers,
