@@ -4,6 +4,13 @@
 
 ## [Unreleased]
 
+## [1.1.2] - 2026-08-03
+
+### Fixed
+
+- Space source snapshot 核驗納入 `__init__.py`、OCR 與 evidence provenance 模組，避免執行期來源漂移被誤判為一致。
+- 遠端發布指南不再複製版本限定的測試數與 coverage；release verifier 會拒絕這類易過期證據。
+
 ## [1.1.1] - 2026-08-03
 
 ### Fixed

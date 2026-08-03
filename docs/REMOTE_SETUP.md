@@ -7,7 +7,7 @@
 - Hugging Face Space：`https://huggingface.co/spaces/steven0226/doc-inspector`
 - Public live demo：`https://steven0226-doc-inspector.hf.space`
 
-截至 2026-07-25，GitHub 主倉與 Hugging Face Docker Space 均已發布；Space
+截至 2026-08-03，GitHub 主倉與 Hugging Face Docker Space 均已發布；Space
 已完成 Private 合成範例／Gemini／JSON／Excel 全流程驗收並切換 Public。
 
 發布順序固定為 **GitHub 主倉 → Hugging Face 部署鏡像**。GitHub 保存主要
@@ -37,8 +37,8 @@ uv run python scripts/verify_release.py
 
 預期結果：
 
-- dependency lock 無漂移；全 extras 為 150 項測試通過、coverage 89%，
-  GitHub Actions 的 base dependency 路徑為 147 passed、1 skipped、coverage 87%。
+- dependency lock 無漂移；實際測試數與 coverage 以目前版本 README 及指定 SHA 的 CI log 為準，
+  不在這份長期維護的操作指南重複版本限定數字。
 - CPU 容器排除 GPU extra、`.env`、原始資料與模型權重，並以非 root 使用者執行。
 - 上傳／匯出共用受管理 cache；analytics、monitoring、事件 API 與無界佇列未開放。
 - 公開容器的共用請求上限測試通過；本機預設不限，容器預設每小時 60 次。

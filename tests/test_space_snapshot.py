@@ -10,6 +10,18 @@ check_space_snapshot = load_script_module("check_space_snapshot")
 EXPECTED_SHA = "a" * 40
 
 
+def test_live_runtime_modules_are_included_in_space_source_comparison() -> None:
+    required_runtime_files = {
+        "src/doc_inspector/__init__.py",
+        "src/doc_inspector/ocr.py",
+        "src/doc_inspector/provenance.py",
+    }
+
+    missing = required_runtime_files.difference(check_space_snapshot.CRITICAL_FILES)
+
+    assert missing == set()
+
+
 class FakeResponse:
     def __init__(self, payload: bytes, *, status: int = 200) -> None:
         self._body = BytesIO(payload)
