@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Changed
+
+- README 收斂為 Proof-first 作品集首頁，保留可驗證成果、評估邊界與 production limitations，移除重複導覽敘事。
+
+### Fixed
+
+- GitHub README 與 Hugging Face Space metadata 分離；部署來源改以 19 個非 README 關鍵檔 byte-exact，加上 README metadata／本文 exact match 驗證。
+
 ## [1.1.2] - 2026-08-03
 
 ### Fixed

@@ -117,7 +117,7 @@ README_MARKERS = (
     "## 目前限制",
     "v1.1.2",
     "Hugging Face Docker Space",
-    "265 passed，總 coverage 91%",
+    "266 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 可驗證成果",
@@ -128,6 +128,8 @@ README_MARKERS = (
     "docs/EVIDENCE_PROVENANCE.md",
     "24 / 24",
     "false verified rate",
+    "19 個非 README 關鍵檔 byte-exact",
+    "README metadata／本文 exact match",
 )
 
 HARDCODED_RELEASE_VERSION_PATTERNS = (
@@ -214,15 +216,19 @@ def _version_specific_test_evidence_markers(text: str) -> list[str]:
 
 def _public_readme_space_metadata_issues(text: str) -> list[str]:
     candidate = text.removeprefix("\ufeff")
-    if not candidate.startswith("---\n"):
-        return []
-    closing_index = candidate.find("\n---\n", 4)
-    if closing_index == -1:
-        return []
-    frontmatter = candidate[4:closing_index]
-    if "sdk: docker" in frontmatter or "app_port:" in frontmatter:
-        return ["README.md:space-frontmatter"]
-    return []
+    issues: list[str] = []
+    if candidate.startswith("---\n"):
+        closing_index = candidate.find("\n---\n", 4)
+        if closing_index != -1:
+            frontmatter = candidate[4:closing_index]
+            if "sdk: docker" in frontmatter or "app_port:" in frontmatter:
+                issues.append("README.md:space-frontmatter")
+    if re.search(
+        r"20\s*[／/]\s*20\s+Space\s+關鍵來源檔\s+byte-exact",
+        candidate,
+    ):
+        issues.append("README.md:outdated-space-byte-exact-claim")
+    return issues
 
 
 def build_release_report(root: Path = ROOT) -> dict[str, object]:

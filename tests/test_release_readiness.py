@@ -95,3 +95,18 @@ app_port: 7861
     assert verify_release._public_readme_space_metadata_issues(
         "# Doc Inspector\n"
     ) == []
+
+
+def test_public_readme_rejects_outdated_twenty_file_byte_exact_claim() -> None:
+    public_readme = """\
+# Doc Inspector
+
+| 發布與部署 | 20／20 Space 關鍵來源檔 byte-exact |
+"""
+
+    issues = verify_release._public_readme_space_metadata_issues(public_readme)
+
+    assert issues == ["README.md:outdated-space-byte-exact-claim"]
+    assert verify_release._public_readme_space_metadata_issues(
+        public_readme.replace("20／20", "20/20")
+    ) == ["README.md:outdated-space-byte-exact-claim"]

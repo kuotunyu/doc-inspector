@@ -19,13 +19,13 @@
 
 | 面向 | 實測結果 | Evidence |
 |---|---|---|
-| 本機 release gate | **265 passed，總 coverage 91%**（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
-| 跨平台 CI | Windows／Ubuntu、Python 3.11；259 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
+| 本機 release gate | **266 passed，總 coverage 91%**（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
+| 跨平台 CI | Windows／Ubuntu、Python 3.11；263 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
 | Deterministic decision | **24／24** fixed synthetic regression cases exact match | [方法](docs/DECISION_EVALUATION.md)／[JSON](docs/assets/decision-evaluation.json) |
 | Synthetic provenance | 61 fields；false verified rate **0%** | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
 | 真實文件 extraction | XFUND micro F1：**0.4471／0.4819** | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
 | 視覺頁面 retrieval | Recall@1 **0.95**、Recall@3 **1.00** | [去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json) |
-| 發布與部署 | v1.1.2 release baseline：wheel／sdist、20／20 Space 關鍵來源檔 byte-exact | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
+| 發布與部署 | v1.1.2 release baseline：wheel／sdist；19 個非 README 關鍵檔 byte-exact，README metadata／本文 exact match | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
 
 ## 產品能力與介面
 
