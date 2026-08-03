@@ -10,7 +10,7 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_RELEASE_VERSION = "1.1.1"
+EXPECTED_RELEASE_VERSION = "1.1.2"
 EXPECTED_PROJECT_AUTHOR = "kuotunyu"
 EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 
@@ -91,6 +91,7 @@ REMOTE_SETUP_MARKERS = (
     "<VERSION>",
     "既有 tag 不可移動、刪除或重建",
     "$VerifiedReleaseCommit",
+    "實際測試數與 coverage 以目前版本 README 及指定 SHA 的 CI log 為準",
 )
 
 REMOTE_SETUP_FORBIDDEN_MARKERS = (
@@ -114,9 +115,9 @@ README_MARKERS = (
     "## Demo 資料與授權",
     "## CPU 容器與部署",
     "## 目前限制",
-    "v1.1.1",
+    "v1.1.2",
     "Hugging Face Docker Space",
-    "260 passed，總 coverage 91%",
+    "262 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 專案導覽",
@@ -133,6 +134,11 @@ README_MARKERS = (
 HARDCODED_RELEASE_VERSION_PATTERNS = (
     re.compile(r"\bgit tag(?:\s+-a)?\s+v\d+\.\d+\.\d+\b"),
     re.compile(r"\bgit push origin v\d+\.\d+\.\d+\b"),
+)
+
+VERSION_SPECIFIC_TEST_EVIDENCE_PATTERNS = (
+    re.compile(r"\b\d+\s*項測試\b.*?\bcoverage\s+\d+(?:\.\d+)?%", re.IGNORECASE),
+    re.compile(r"\b\d+\s+passed\b.*?\bcoverage\s+\d+(?:\.\d+)?%", re.IGNORECASE),
 )
 
 CI_WORKFLOW_MARKERS = (
@@ -196,6 +202,15 @@ def _hardcoded_release_version_markers(text: str) -> list[str]:
             for match in pattern.finditer(text)
         }
     )
+
+
+def _version_specific_test_evidence_markers(text: str) -> list[str]:
+    issues: set[str] = set()
+    for raw_line in text.splitlines():
+        line = raw_line.strip().removeprefix("- ").strip()
+        if any(pattern.search(line) for pattern in VERSION_SPECIFIC_TEST_EVIDENCE_PATTERNS):
+            issues.add(line)
+    return sorted(issues)
 
 
 def build_release_report(root: Path = ROOT) -> dict[str, object]:
@@ -349,6 +364,9 @@ def build_release_report(root: Path = ROOT) -> dict[str, object]:
     ]
     forbidden_remote_setup_markers.extend(
         _hardcoded_release_version_markers(remote_setup)
+    )
+    forbidden_remote_setup_markers.extend(
+        _version_specific_test_evidence_markers(remote_setup)
     )
     dockerfile = (root / "Dockerfile").read_text(encoding="utf-8")
     missing_public_safety_markers = [

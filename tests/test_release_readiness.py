@@ -26,9 +26,9 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["required_file_count"] == 37
     assert report["missing_files"] == []
     assert report["unexpected_public_files"] == []
-    assert report["expected_release_version"] == "1.1.1"
-    assert report["project_version"] == "1.1.1"
-    assert report["locked_project_versions"] == ["1.1.1"]
+    assert report["expected_release_version"] == "1.1.2"
+    assert report["project_version"] == "1.1.2"
+    assert report["locked_project_versions"] == ["1.1.2"]
     assert report["release_version_issues"] == []
     assert report["project_author"] == "kuotunyu"
     assert report["project_author_issues"] == []
@@ -61,4 +61,18 @@ def test_release_guide_rejects_a_hardcoded_version_tag_command() -> None:
     assert issues == [
         "git push origin v1.2.3",
         "git tag -a v1.2.3",
+    ]
+
+
+def test_release_guide_rejects_version_specific_test_evidence() -> None:
+    guide = """\
+- 完整 extras：150 項測試，總 coverage 89%。
+- GitHub 基礎路徑：147 passed、1 skipped，coverage 87%。
+"""
+
+    issues = verify_release._version_specific_test_evidence_markers(guide)
+
+    assert issues == [
+        "GitHub 基礎路徑：147 passed、1 skipped，coverage 87%。",
+        "完整 extras：150 項測試，總 coverage 89%。",
     ]
