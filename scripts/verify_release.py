@@ -38,6 +38,8 @@ REQUIRED_FILES = (
     "docs/assets/evidence-provenance.png",
     "docs/assets/decision-evaluation.json",
     "docs/assets/provenance-evaluation.json",
+    "docs/assets/xfund-extraction-benchmark.json",
+    "docs/assets/colqwen-retrieval-benchmark.json",
     "scripts/audit_ui_quality.py",
     "scripts/build_provenance_corpus.py",
     "scripts/run_provenance_evaluation.py",

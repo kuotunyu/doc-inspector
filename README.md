@@ -227,17 +227,16 @@ uv sync --extra local-ocr
 
 ## XFUND 評估
 
-資料：XFUND v1.0 中文，固定 seed `20260723`；50 份官方 val 加 50 份未調 prompt 的 train holdout，共 100 份、3,343 組 question-answer ground truth。split manifest SHA-256：`08758d3733e348ee0d3441e0aa2bcd32b790def0280356bcaf0667d8da085b97`。
+資料：XFUND v1.0 中文，固定 seed `20260723`；50 份官方 val 加 50 份未調 prompt 的 train holdout，共 100 份。split manifest SHA-256：`08758d3733e348ee0d3441e0aa2bcd32b790def0280356bcaf0667d8da085b97`。
 
-正規化只做 NFKC、ASCII Latin lowercase、trim 與空白壓縮。以下是重複感知的嚴格 key-value exact match：
+正規化只做 NFKC、ASCII Latin lowercase、trim 與空白壓縮。以下是重複感知的嚴格 key-value exact match；機器可讀、去識別的既有實跑摘要見 [XFUND extraction artifact](docs/assets/xfund-extraction-benchmark.json)。
 
-| 方法 | 文件 | 預測 pairs | 命中 | Micro precision | Exact-match recall | Micro F1 | Macro document F1 |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Tesseract `chi_sim+eng` + 簡單 regex | 100 | 347 | 0 | 0.0000 | 0.0000 | 0.0000 | 0.0000 |
-| `GEMINI_MODEL` | 100 | 2,150 | 1,228 | 0.5712 | 0.3673 | 0.4471 | 0.4584 |
-| `OPENAI_MODEL` | 100 | 2,027 | 1,294 | 0.6384 | 0.3871 | 0.4819 | 0.4959 |
+| 模型 | 文件 | 成功文件 | Micro precision | Exact-match recall | Micro F1 | Macro document F1 |
+|---|---:|---:|---:|---:|---:|---:|
+| `gemini-3.5-flash-lite` | 100 | 100 | 0.5712 | 0.3673 | 0.4471 | 0.4584 |
+| `gpt-5-mini` | 100 | 100 | 0.6384 | 0.3871 | 0.4819 | 0.4959 |
 
-Tesseract 的 0 分代表「簡單 OCR 行切割 + 嚴格 key-value exact match」沒有命中，不等同於 OCR 完全讀不到字；這個低基準刻意保持透明，沒有用評估答案調 regex。
+另有可重建的 Tesseract `chi_sim+eng` + 簡單 regex 低基準；它不使用評估答案調整 regex，也不把 OCR 可讀性與 key-value exact match 混為一談。
 
 重現流程：
 
@@ -256,7 +255,7 @@ uv run python scripts/run_xfund_cloud_benchmark.py `
 
 ## ColQwen2 視覺檢索結果
 
-固定使用 XFUND val 的 50 頁與前 20 個文件產生的中文欄位查詢；模型 revision `0d3e414967fde994dd99a0ccc29bcb34b5355712`。
+固定使用 XFUND val 的 50 頁與前 20 個文件產生的中文欄位查詢；模型 revision `0d3e414967fde994dd99a0ccc29bcb34b5355712`。機器可讀摘要見 [ColQwen retrieval artifact](docs/assets/colqwen-retrieval-benchmark.json)；其中不含查詢文字、目標頁索引或逐筆預測。
 
 | 指標 | 結果 |
 |---|---:|
@@ -279,7 +278,7 @@ uv run python scripts/run_xfund_cloud_benchmark.py `
 | Gemini 二頁補助申請 | 2,341／798 | US$0.002697 |
 | OpenAI 單頁收據 | 1,543／1,982 | US$0.004350 |
 
-100 文件 × 2 provider benchmark 的計量成本約 US$0.7521。加上 smoke、校準、
+100 文件 × 2 provider benchmark 的 charged-or-reserved 成本為 US$0.7935165。加上 smoke、校準、
 保守失敗預留及發布前合成 UI smoke 的 US$0.02 保守預留後，專案記錄的總
 charged-or-reserved 為 **US$0.87104350**，低於核准硬上限 US$15。實際費用仍以供應商帳單為準。
 

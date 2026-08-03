@@ -160,7 +160,7 @@ GitHub 是主倉，Hugging Face Space 是部署鏡像。為避免誤傳 `.env`�
 
 ### 端到端抽取基準
 
-專案另以固定 split 的 XFUND 中文資料比較兩個雲端 provider 與 OCR + regex baseline。嚴格 key-value exact match 下，兩個雲端模型 Micro F1 分別為 0.4471、0.4819；結果顯示模型抽取仍是主要誤差來源，也說明為什麼規則層與人工核對不能省略。
+專案另以固定 split 的 XFUND 中文資料比較兩個雲端 provider 與 OCR + regex baseline。嚴格 key-value exact match 下，兩個雲端模型 Micro F1 分別為 **0.4471**、**0.4819**（[去識別抽取 artifact](assets/xfund-extraction-benchmark.json)）；ColQwen2 的 Recall@1 為 **0.95**（[去識別檢索 artifact](assets/colqwen-retrieval-benchmark.json)）。結果顯示模型抽取仍是主要誤差來源，也說明為什麼規則層與人工核對不能省略；兩份公開 artifact 都只保留聚合結果與重現條件，不含原始文件、查詢內容或逐筆預測。
 
 ### UI 品質稽核
 
