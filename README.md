@@ -1,13 +1,3 @@
----
-title: 文件預檢所
-colorFrom: blue
-colorTo: gray
-sdk: docker
-app_port: 7861
-pinned: false
-license: mit
----
-
 # Doc Inspector｜文件預檢所
 
 [![CI](https://github.com/kuotunyu/doc-inspector/actions/workflows/ci.yml/badge.svg)](https://github.com/kuotunyu/doc-inspector/actions/workflows/ci.yml)
@@ -29,29 +19,21 @@ license: mit
 
 | 面向 | 實測結果 | Evidence |
 |---|---|---|
-| 本機 release gate | **262 passed，總 coverage 91%**（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
+| 本機 release gate | **265 passed，總 coverage 91%**（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
 | 跨平台 CI | Windows／Ubuntu、Python 3.11；259 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
 | Deterministic decision | **24／24** fixed synthetic regression cases exact match | [方法](docs/DECISION_EVALUATION.md)／[JSON](docs/assets/decision-evaluation.json) |
 | Synthetic provenance | 61 fields；false verified rate **0%** | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
 | 真實文件 extraction | XFUND micro F1：**0.4471／0.4819** | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
 | 視覺頁面 retrieval | Recall@1 **0.95**、Recall@3 **1.00** | [去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json) |
-| 發布與部署 | `1.1.2` wheel／sdist、20／20 Space 關鍵來源檔 byte-exact | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
+| 發布與部署 | v1.1.2 release baseline：wheel／sdist、20／20 Space 關鍵來源檔 byte-exact | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
 
-## 產品能力
+## 產品能力與介面
 
-- 接受 PNG、JPEG、WebP，或最多 10 頁的 PDF。
-- 以 `subsidy_application`、`receipt` 固定 schema 抽取欄位、頁碼與短證據。
-- 在原始文件上核驗 evidence，區分 `verified`、`approximate`、`ambiguous`、`page_only`、`unresolved`。
-- 以紅／黃／綠呈現規則結果與可操作的修正清單。
-- 匯出不含絕對路徑與 raw provider response 的 JSON、五工作表 Excel。
-- 提供固定 seed、明顯浮水印且不含真實個資的 synthetic demo。
-- 可選本機 OCR 與 ColQwen2 視覺頁面 retrieval；核心 CPU 部署不安裝 GPU dependencies。
-
-## 介面
+- PNG／JPEG／WebP／最多 10 頁 PDF → structured extraction → deterministic rules → 紅黃綠修正清單。
+- 每個欄位保留 evidence，區分 `verified`、`approximate`、`ambiguous`、`page_only`、`unresolved`；找不到可靠位置時不猜測。
+- JSON／五工作表 Excel 不含絕對路徑或 raw provider response；另提供 synthetic demo、可選 OCR 與 ColQwen2 retrieval。
 
 ![文件預檢所 desktop 介面](docs/assets/desktop.png)
-
-選擇欄位後，可直接查看核驗狀態、頁碼與文件上的 evidence bbox；無法可靠定位時不顯示猜測位置。
 
 ![來源核驗介面](docs/assets/evidence-provenance.png)
 
@@ -64,16 +46,15 @@ license: mit
 ```mermaid
 flowchart TB
     A["圖片／PDF"] --> B["安全驗證與頁面正規化"]
-    B --> C["逐頁影像"]
-    C --> D["LangChain Provider Adapter"]
-    D --> E["Pydantic Structured Output"]
-    E --> F["Deterministic Rule Engine"]
-    E --> G["Evidence Provenance<br/>下圖放大"]
-    F --> H["InspectionBundle"]
-    G --> H
-    H --> I["Gradio UI"]
-    H --> J["JSON／Excel"]
-    C -. "可選" .-> K["ColQwen2 SDPA Retrieval"]
+    B --> C["LangChain Provider Adapter"]
+    C --> D["Pydantic Structured Output"]
+    D --> E["Deterministic Rule Engine"]
+    D --> F["Evidence Provenance<br/>下圖放大"]
+    E --> G["InspectionBundle"]
+    F --> G
+    G --> H["Gradio UI／JSON／Excel"]
+    B -. "可選視覺檢索" .-> I["ColQwen2 Page Retrieval"]
+    I -. "選頁結果" .-> C
 ```
 
 ### Evidence Provenance 放大圖
@@ -160,28 +141,14 @@ uv run python scripts/verify_distribution.py
 uv run python scripts/verify_release.py
 ```
 
-預設 CI 不使用網路、API key、Tesseract 或 GPU，也不啟動對外 UI。付費 API、GPU benchmark、browser audit 與遠端檢查皆由明確腳本隔離。
-
-### 可選本機能力
-
-```powershell
-# 掃描頁 evidence OCR
-uv sync --extra local-ocr
-
-# ColQwen2 視覺頁面 retrieval
-uv sync --extra local-retrieval
-uv run --extra local-retrieval python scripts/run_retrieval_demo.py
-```
+預設 CI 不使用網路、API key、Tesseract、GPU 或對外 UI。可選能力分別以 `uv sync --extra local-ocr`、`uv sync --extra local-retrieval` 安裝。
 
 ## 隱私與安全邊界
 
 - UI 必須先取得 cloud consent 才能把文件送往選定 provider。
-- `.env`、原始文件、benchmark、模型權重、輸出與 logs 均由 ignore 規則排除。
-- 不保存 raw provider response；錯誤只保留安全摘要，不回顯文件內容或 secrets。
-- 上傳與匯出檔進入 Gradio 受管 cache，每 10 分鐘與 shutdown 時清理。
-- JSON／Excel 不含本機絕對路徑；Excel 停用公式與 URL 自動解析，避免 formula injection。
-- 容器以 UID `10001` non-root 執行並提供 healthcheck；正式部署只透過 platform Secrets 注入金鑰。
-- 公開服務的程序內 rate limit 是濫用安全網，不取代 provider 端硬性支出上限。
+- `.env`、原始文件、benchmark、模型權重、輸出與 logs 均被排除；不保存 raw provider response。
+- 上傳與匯出檔由 Gradio cache 定期清理；Excel 停用公式與 URL 自動解析。
+- 容器以 UID `10001` non-root 執行並提供 healthcheck；程序內 rate limit 不取代 provider 硬性支出上限。
 
 ## 成本
 
@@ -189,22 +156,19 @@ uv run --extra local-retrieval python scripts/run_retrieval_demo.py
 
 ## CPU 容器與部署
 
-CPU image 約 357 MB，不含 Torch／Transformers／Accelerate；本機驗證為 `health=healthy`。GitHub 是 source of truth，Hugging Face Docker Space 只接收乾淨 Git archive；發布、provenance check 與復原流程見 [Remote Setup](docs/REMOTE_SETUP.md)。
+CPU image 約 357 MB，不含 Torch／Transformers／Accelerate；本機驗證為 `health=healthy`。GitHub 是 source of truth；Hugging Face Docker Space 由乾淨 archive 產生專用 metadata，發布與 provenance 流程見 [Remote Setup](docs/REMOTE_SETUP.md)。
 
 ## 目前限制
 
-- 只有補助申請與收據兩個固定 schema，不包含各機關完整資格法規。
-- Cloud VLM 可能誤讀手寫、低解析、旋轉或極密集表格，仍需人工核對 evidence。
-- 沒有原生文字層的掃描頁預設為 `page_only`；啟用本機 OCR 才能嘗試定位。
-- Synthetic provenance 的高 bbox 指標反映受控語料，不代表真實文件定位精度。
-- XFUND 指標是嚴格 exact match，不能直接等同實際案件可用率。
-- ColQwen2 結果來自單一固定中文資料集，且模型主要以英文資料訓練。
+- 只有補助申請與收據兩個固定 schema；不包含完整資格法規。
+- Cloud VLM 仍可能誤讀手寫、低解析或密集表格；掃描頁預設為 `page_only`。
+- Synthetic provenance、XFUND exact match 與固定 ColQwen2 benchmark 都不能直接代表 production 效果。
 - 綠燈只代表目前規則未發現問題，不代表主管機關核准或法律判斷。
 
 ## Demo 資料與授權
 
-- XFUND v1.0：CC BY-NC-SA 4.0；原始資料、圖片與逐筆輸出不提交，改由下載腳本重建。
-- 政府公開表單只供本機測試；因再散布條款不一，不納入 repository 或 public demo。
-- Public demo 只使用固定 seed、明顯浮水印的 synthetic documents；程式碼採 [MIT License](LICENSE)。
+- XFUND v1.0 採 CC BY-NC-SA 4.0；原始資料與逐筆輸出不提交。
+- 政府表單只供本機測試；Public demo 只使用固定 seed、明顯浮水印的 synthetic documents。
+- 程式碼採 [MIT License](LICENSE)。
 
 延伸閱讀：[Case Study](docs/CASE_STUDY.md) · [Evidence Provenance](docs/EVIDENCE_PROVENANCE.md) · [Decision Evaluation](docs/DECISION_EVALUATION.md) · [Changelog](CHANGELOG.md) · [Contributing](.github/CONTRIBUTING.md) · [Security Policy](.github/SECURITY.md)

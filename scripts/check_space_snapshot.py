@@ -18,6 +18,7 @@ SPACE_REPOSITORY = "steven0226/doc-inspector"
 SPACE_REVISION = "main"
 SHA_PATTERN = re.compile(r"^[0-9a-fA-F]{40}$")
 MAX_FILE_BYTES = 5 * 1024 * 1024
+SPACE_README_METADATA = b"---\nsdk: docker\napp_port: 7861\n---\n\n"
 CRITICAL_FILES = (
     "README.md",
     "Dockerfile",
@@ -87,9 +88,12 @@ def compare_critical_source(
         raise ValueError("timeout_seconds 必須大於 0。")
 
     matched_files: list[str] = []
+    byte_exact_files: list[str] = []
     mismatched_files: list[str] = []
     line_ending_only_mismatches: list[str] = []
     content_mismatches: list[str] = []
+    readme_metadata_valid = False
+    readme_body_match = False
     for path in CRITICAL_FILES:
         encoded_path = quote(path, safe="/")
         github_url = (
@@ -110,14 +114,34 @@ def compare_critical_source(
             opener=opener,
             timeout_seconds=timeout_seconds,
         )
-        if sha256(github_payload).digest() == sha256(space_payload).digest():
+        byte_exact = sha256(github_payload).digest() == sha256(
+            space_payload
+        ).digest()
+        if byte_exact:
+            byte_exact_files.append(path)
+
+        comparable_space_payload = space_payload
+        if path == "README.md":
+            readme_metadata_valid = space_payload.startswith(SPACE_README_METADATA)
+            if readme_metadata_valid:
+                comparable_space_payload = space_payload[len(SPACE_README_METADATA) :]
+                readme_body_match = sha256(github_payload).digest() == sha256(
+                    comparable_space_payload
+                ).digest()
+            source_matches = readme_metadata_valid and readme_body_match
+        else:
+            source_matches = byte_exact
+
+        if source_matches:
             matched_files.append(path)
         else:
             mismatched_files.append(path)
-            if github_payload.replace(b"\r\n", b"\n") == space_payload.replace(
+            if (
+                readme_metadata_valid or path != "README.md"
+            ) and github_payload.replace(
                 b"\r\n",
                 b"\n",
-            ):
+            ) == comparable_space_payload.replace(b"\r\n", b"\n"):
                 line_ending_only_mismatches.append(path)
             else:
                 content_mismatches.append(path)
@@ -131,6 +155,9 @@ def compare_critical_source(
         "comparison_scope": "runtime-critical files only",
         "critical_file_count": len(CRITICAL_FILES),
         "matched_file_count": len(matched_files),
+        "byte_exact_file_count": len(byte_exact_files),
+        "readme_metadata_valid": readme_metadata_valid,
+        "readme_body_match": readme_body_match,
         "mismatched_files": mismatched_files,
         "line_ending_only_mismatches": line_ending_only_mismatches,
         "content_mismatches": content_mismatches,

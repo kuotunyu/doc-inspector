@@ -33,6 +33,7 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["project_author"] == "kuotunyu"
     assert report["project_author_issues"] == []
     assert report["missing_readme_markers"] == []
+    assert report["public_readme_issues"] == []
     assert report["missing_ci_workflow_markers"] == []
     assert report["forbidden_ci_workflow_markers"] == []
     assert report["missing_dependabot_markers"] == []
@@ -76,3 +77,21 @@ def test_release_guide_rejects_version_specific_test_evidence() -> None:
         "GitHub 基礎路徑：147 passed、1 skipped，coverage 87%。",
         "完整 extras：150 項測試，總 coverage 89%。",
     ]
+
+
+def test_public_readme_rejects_space_frontmatter() -> None:
+    public_readme = """\
+---
+sdk: docker
+app_port: 7861
+---
+
+# Doc Inspector
+"""
+
+    issues = verify_release._public_readme_space_metadata_issues(public_readme)
+
+    assert issues == ["README.md:space-frontmatter"]
+    assert verify_release._public_readme_space_metadata_issues(
+        "# Doc Inspector\n"
+    ) == []
