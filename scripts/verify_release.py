@@ -120,7 +120,6 @@ README_MARKERS = (
     "262 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
-    "## 專案導覽",
     "## 可驗證成果",
     "## 決策層產品評估",
     "## 來源核驗",
