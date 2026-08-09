@@ -13,19 +13,23 @@
 
 > **v1.1.2 · Feature Freeze** — Phase 0–7 已驗收並正式發布。這是送件前技術預檢工具，不取代主管機關的資格審查。
 
+---
+
 ## 可驗證成果
 
 以下證據分開回答四件事：規則是否穩定、來源能否核驗、真實文件 extraction 效果，以及固定資料集的頁面 retrieval 效果。
 
 | 面向 | 實測結果 | Evidence |
 |---|---|---|
-| 本機 release gate | **266 passed，總 coverage 91%**（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
+| 本機 release gate | 266 passed，總 coverage 91%（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
 | 跨平台 CI | Windows／Ubuntu、Python 3.11；263 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
-| Deterministic decision | **24／24** fixed synthetic regression cases exact match | [方法](docs/DECISION_EVALUATION.md)／[JSON](docs/assets/decision-evaluation.json) |
-| Synthetic provenance | 61 fields；false verified rate **0%** | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
-| 真實文件 extraction | XFUND micro F1：**0.4471／0.4819** | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
-| 視覺頁面 retrieval | Recall@1 **0.95**、Recall@3 **1.00** | [去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json) |
+| Deterministic decision | 24／24 fixed synthetic regression cases exact match | [方法](docs/DECISION_EVALUATION.md)／[JSON](docs/assets/decision-evaluation.json) |
+| Synthetic provenance | 61 fields；false verified rate 0% | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
+| 真實文件 extraction | XFUND micro F1：0.4471／0.4819 | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
+| 視覺頁面 retrieval | Recall@1 0.95、Recall@3 1.00 | [去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json) |
 | 發布與部署 | v1.1.2 release baseline：wheel／sdist；19 個非 README 關鍵檔 byte-exact，README metadata／本文 exact match | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
+
+---
 
 ## 產品能力與介面
 
@@ -37,6 +41,8 @@
 
 ![來源核驗介面](docs/assets/evidence-provenance.png)
 
+---
+
 ## 架構
 
 ### 整體預檢流程
@@ -44,17 +50,46 @@
 這張圖呈現文件從進入系統到產生報告的完整流程。
 
 ```mermaid
-flowchart TB
-    A["圖片／PDF"] --> B["安全驗證與頁面正規化"]
-    B --> C["LangChain Provider Adapter"]
-    C --> D["Pydantic Structured Output"]
-    D --> E["Deterministic Rule Engine"]
-    D --> F["Evidence Provenance<br/>下圖放大"]
-    E --> G["InspectionBundle"]
-    F --> G
-    G --> H["Gradio UI／JSON／Excel"]
-    B -. "可選視覺檢索" .-> I["ColQwen2 Page Retrieval"]
-    I -. "選頁結果" .-> C
+%%{init: {'themeVariables': {'fontSize': '18px'}}}%%
+flowchart TD
+    subgraph InStage ["階段一：輸入驗證與頁面正規化 (Input & Retrieval)"]
+        direction LR
+        Doc[("輸入文件檔案<br/>(PNG / JPEG / WebP / PDF)")] --> Safe["安全防護與頁面正規化<br/>(檔案大小與頁數限制)"]
+        Safe -. "可選視覺檢索" .-> ColQwen[("ColQwen2 視覺檢索<br/>(精準頁面定位)")]
+    end
+
+    subgraph ExtractStage ["階段二：多模態結構化抽取 (VLM Structured Extraction)"]
+        direction LR
+        Safe & ColQwen --> Adapter["LangChain Provider Adapter<br/>(Gemini / OpenAI / 本地模型)"] --> Schema[("Pydantic 結構化資料<br/>(Structured Extraction)")]
+    end
+
+    subgraph DecisionStage ["階段三：確定性規則引擎與來源核驗 (Rules & Provenance)"]
+        direction LR
+        Schema --> Rules["確定性規則引擎<br/>(Deterministic Rule Engine)"] & Prov[("來源核驗與 BBox 解析<br/>(Evidence Provenance)")]
+        Rules & Prov --> Bundle[("InspectionBundle<br/>(紅 / 黃 / 綠 修正清單)")]
+    end
+
+    subgraph OutStage ["階段四：多管道輸出 (Multi-Channel Export)"]
+        direction LR
+        Bundle --> Export(["Gradio Web UI · JSON · 五工作表 Excel"])
+    end
+
+    InStage --> ExtractStage --> DecisionStage --> OutStage
+
+    classDef srcStyle fill:#e7f5ff,stroke:#1971c2,stroke-width:2px,color:#212529
+    classDef procStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#212529
+    classDef ruleStyle fill:#fff9db,stroke:#f59f00,stroke-width:2px,color:#212529
+    classDef outStyle fill:#e6fcf5,stroke:#0ca678,stroke-width:2px,color:#212529
+
+    class Doc,ColQwen srcStyle
+    class Safe,Adapter,Schema,Prov procStyle
+    class Rules,Bundle ruleStyle
+    class Export outStyle
+
+    style InStage fill:#f8f9fa,stroke:#1971c2,stroke-width:2px,color:#1971c2,stroke-dasharray: 4 4
+    style ExtractStage fill:#faf5ff,stroke:#7b1fa2,stroke-width:2px,color:#7b1fa2,stroke-dasharray: 4 4
+    style DecisionStage fill:#fffcf0,stroke:#f59f00,stroke-width:2px,color:#f59f00,stroke-dasharray: 4 4
+    style OutStage fill:#f4fbf7,stroke:#0ca678,stroke-width:2px,color:#0ca678,stroke-dasharray: 4 4
 ```
 
 ### Evidence Provenance 放大圖
@@ -62,27 +97,60 @@ flowchart TB
 > 下圖只展開上圖的 `Evidence Provenance` 節點：它接收上圖抽出的欄位與文件文字層／OCR，回傳來源核驗狀態；不是另一套預檢流程。
 
 ```mermaid
-flowchart TB
-    A["上圖抽出的欄位<br/>page_number＋evidence_text"] --> D["Evidence Provenance Resolver"]
-    B["文件原生文字層<br/>逐字文字與 bbox"] --> D
-    C["掃描頁<br/>預設 page_only"] -. "可選本機 OCR" .-> B
-    C --> D
-    D --> E{"是否能給唯一位置？"}
-    E -->|"唯一位置"| F["verified／approximate<br/>附 page＋bbox"]
-    E -->|"多處或無法確認"| G["ambiguous／page_only／unresolved<br/>不猜測位置"]
-    F --> H["回到上圖的 InspectionBundle"]
-    G --> H
+%%{init: {'themeVariables': {'fontSize': '18px'}}}%%
+flowchart TD
+    subgraph FeatStage ["階段一：抽取欄位與文字層輸入 (Input Layers)"]
+        direction LR
+        Fields[("抽取欄位清單<br/>page_number + evidence_text")] & Native[("文件原生文字層<br/>逐字文字與 BBox")] & Scan[("掃描頁影像<br/>(預設 page_only)")]
+        Scan -. "可選本機 OCR" .-> Native
+    end
+
+    subgraph ResolveStage ["階段二：唯一位置解析與決策 (Resolver Engine)"]
+        direction LR
+        Fields & Native --> Resolver["Evidence Provenance Resolver<br/>(文字對齊與座標反推)"] --> Check{"是否能給定唯一位置？"}
+    end
+
+    subgraph ResultStage ["階段三：狀態標註與 Bundle 彙整 (Provenance Output)"]
+        direction LR
+        Check -->|"唯一明確"| Verified[("verified / approximate<br/>附精確 Page + BBox")]
+        Check -->|"多處或不確定"| Ambiguous(["ambiguous / page_only / unresolved<br/>絕不隨意猜測位置"])
+        Verified & Ambiguous --> Handoff[("回傳至 InspectionBundle")]
+    end
+
+    FeatStage --> ResolveStage --> ResultStage
+
+    classDef srcStyle fill:#e7f5ff,stroke:#1971c2,stroke-width:2px,color:#212529
+    classDef procStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#212529
+    classDef condStyle fill:#fff9db,stroke:#f59f00,stroke-width:2px,color:#212529
+    classDef safeStyle fill:#e6fcf5,stroke:#0ca678,stroke-width:2px,color:#212529
+    classDef rejStyle fill:#ffe3e3,stroke:#e03131,stroke-width:2px,color:#212529
+
+    class Fields,Native,Scan srcStyle
+    class Resolver procStyle
+    class Check condStyle
+    class Verified,Handoff safeStyle
+    class Ambiguous rejStyle
+
+    style FeatStage fill:#f8f9fa,stroke:#1971c2,stroke-width:2px,color:#1971c2,stroke-dasharray: 4 4
+    style ResolveStage fill:#faf5ff,stroke:#7b1fa2,stroke-width:2px,color:#7b1fa2,stroke-dasharray: 4 4
+    style ResultStage fill:#f4fbf7,stroke:#0ca678,stroke-width:2px,color:#0ca678,stroke-dasharray: 4 4
 ```
 
 抽取使用 LangChain 1.x `init_chat_model(...).with_structured_output(..., include_raw=True)`，不建立 Agent loop。模型不輸出座標；bbox 由抽取後的 deterministic matching 產生，避免把模型生成的 evidence 當成已驗證來源。
+
+---
 
 ## 決策層產品評估
 
 24 個人工定義的 synthetic extraction cases 覆蓋兩個 schema、三種燈號與 13 個非綠燈 `rule_id`，結果為 **24 / 24 exact match**。案例由人工 oracle 定義，不從目前規則輸出反推；這只證明固定輸入下的 rule contract，不是 OCR／VLM accuracy。[方法與 error analysis](docs/DECISION_EVALUATION.md) · [machine-readable result](docs/assets/decision-evaluation.json)
 
+---
+
 ## 來源核驗
 
 4 份 synthetic PDF 共 61 fields，其中 51 個有 page／bbox ground truth。實測 **false verified rate 0%**、可解析欄位 page accuracy 100%、verified bbox hit rate 100%；其餘 15% 選擇不給位置，而不是猜測。這是受控語料的 resolver 評估，不代表真實版面一般化效果。[設計、威脅模型與限制](docs/EVIDENCE_PROVENANCE.md) · [machine-readable result](docs/assets/provenance-evaluation.json)
+
+---
 
 ## XFUND 評估
 
@@ -95,6 +163,8 @@ XFUND 中文固定 100 份（50 val＋50 未調 prompt 的 train holdout），�
 
 這是真實文件 extraction 證據，也顯示目前仍低於 production-grade extraction；不能直接等同實際案件可用率。[去識別 artifact](docs/assets/xfund-extraction-benchmark.json)
 
+---
+
 ## ColQwen2 視覺檢索結果
 
 XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
@@ -106,6 +176,8 @@ XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
 
 模型主要以英文資料訓練，結果只代表這個小型固定資料集。[去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json)
 
+---
+
 ## 模型選型與台灣生態系對照
 
 | 任務 | 台灣模型／生態系候選 | v1.1.2 實際基準 | 決策 |
@@ -115,7 +187,9 @@ XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
 | 文字 embedding | `taide/embeddinggemma-GTAIDE-300m-2605` | `BAAI/bge-m3` 可作 baseline | v1 未建立文字 RAG，因此未納入產品路徑 |
 | Reranker | 尚無已驗證的本土 reranker | `BAAI/bge-reranker-v2-m3` | v1 未啟用，只保留未來同評估集比較能力 |
 
-## 快速開始（Windows 11／PowerShell）
+---
+
+## 快速開始
 
 需求：Python 3.11、[uv](https://docs.astral.sh/uv/)；可選 OCR 另需 Tesseract 5。
 
@@ -143,6 +217,8 @@ uv run python scripts/verify_release.py
 
 預設 CI 不使用網路、API key、Tesseract、GPU 或對外 UI。可選能力分別以 `uv sync --extra local-ocr`、`uv sync --extra local-retrieval` 安裝。
 
+---
+
 ## 隱私與安全邊界
 
 - UI 必須先取得 cloud consent 才能把文件送往選定 provider。
@@ -150,13 +226,19 @@ uv run python scripts/verify_release.py
 - 上傳與匯出檔由 Gradio cache 定期清理；Excel 停用公式與 URL 自動解析。
 - 容器以 UID `10001` non-root 執行並提供 healthcheck；程序內 rate limit 不取代 provider 硬性支出上限。
 
+---
+
 ## 成本
 
 2026-07-23 實跑 smoke 估算為 US$0.002697 與 US$0.004350。100 文件 × 2 providers benchmark 的 charged-or-reserved 成本為 US$0.7935165；含 smoke、校準與保守預留後，專案總記錄為 **US$0.87104350**，低於核准硬上限 US$15。實際費用仍以 provider 帳單為準。
 
+---
+
 ## CPU 容器與部署
 
 CPU image 約 357 MB，不含 Torch／Transformers／Accelerate；本機驗證為 `health=healthy`。GitHub 是 source of truth；Hugging Face Docker Space 由乾淨 archive 產生專用 metadata，發布與 provenance 流程見 [Remote Setup](docs/REMOTE_SETUP.md)。
+
+---
 
 ## 目前限制
 
@@ -164,6 +246,8 @@ CPU image 約 357 MB，不含 Torch／Transformers／Accelerate；本機驗證�
 - Cloud VLM 仍可能誤讀手寫、低解析或密集表格；掃描頁預設為 `page_only`。
 - Synthetic provenance、XFUND exact match 與固定 ColQwen2 benchmark 都不能直接代表 production 效果。
 - 綠燈只代表目前規則未發現問題，不代表主管機關核准或法律判斷。
+
+---
 
 ## Demo 資料與授權
 

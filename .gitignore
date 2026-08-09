@@ -24,10 +24,15 @@ Thumbs.db
 
 # Local agent workflow and project memory
 .agents/
+.claude/
 AGENTS.md
 CLAUDE.md
 PLAN.md
 PROGRESS.md
+PROJECT_PLAN.md
+interview*.md
+INTERVIEW_PREP.md
+*.private.md
 
 # Local documents, model output, and caches
 data/raw/
