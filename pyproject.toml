@@ -27,7 +27,7 @@ dependencies = [
   "pillow>=11.0,<13.0",
   "pydantic>=2.10,<3.0",
   "pydantic-settings>=2.7,<3.0",
-  "pymupdf>=1.25,<2.0",
+  "pymupdf>=1.28.2,<2.0",
   "xlsxwriter>=3.2,<4.0",
 ]
 
