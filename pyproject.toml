@@ -53,7 +53,7 @@ local-ocr = [
 [dependency-groups]
 dev = [
   "hatchling>=1.27,<2.0",
-  "playwright>=1.55,<2.0",
+  "playwright>=1.62.0,<2.0",
   "pytest>=8.3,<10.0",
   "pytest-cov>=6.0,<8.0",
 ]
