@@ -26,7 +26,7 @@ dependencies = [
   "langchain-openai>=1.0,<2.0",
   "pillow>=11.0,<13.0",
   "pydantic>=2.10,<3.0",
-  "pydantic-settings>=2.7,<3.0",
+  "pydantic-settings>=2.15.0,<3.0",
   # The committed synthetic provenance PDFs are byte-locked to this build.
   # Upgrading requires regenerating and independently reviewing the corpus.
   "pymupdf==1.28.0",
