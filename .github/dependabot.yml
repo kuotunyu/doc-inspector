@@ -17,6 +17,10 @@ updates:
       # 2.11.0 就無法單獨升級。理由與重新評估條件見 .github/SECURITY.md。
       - dependency-name: "torch"
       - dependency-name: "setuptools"
+      # Synthetic provenance PDFs and their SHA-256 manifest were generated
+      # with 1.28.0. Upgrade only together with an independently reviewed
+      # corpus migration; otherwise the byte-reproducibility test must skip.
+      - dependency-name: "pymupdf"
 
   - package-ecosystem: "github-actions"
     directory: "/"
