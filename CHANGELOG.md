@@ -9,7 +9,8 @@
 ### Changed
 
 - README 收斂為 Proof-first 作品集首頁，保留可驗證成果、評估邊界與 production limitations，移除重複導覽敘事。
-- 更新 Gradio 6.22.0、Playwright 1.62.0、Cryptography 50.0.0 與 uv 0.12.2 容器基底；PyMuPDF 維持 1.28.0，以保留 synthetic provenance corpus 的 byte-exact 重現契約。
+- 更新 Gradio 6.22.0、LangChain OpenAI 1.4.3、Playwright 1.62.0、Cryptography 50.0.0 與 uv 0.12.3 容器基底；PyMuPDF 維持 1.28.0，以保留 synthetic provenance corpus 的 byte-exact 重現契約。
+- Dependabot 將每個 ecosystem 的 minor／patch 版本更新合併為每週單一群組 PR，降低維護噪音；安全更新不受影響。
 
 ### Fixed
 
