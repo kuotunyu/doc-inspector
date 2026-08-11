@@ -216,15 +216,15 @@ class TestReproducibility:
 
     def test_regeneration_reproduces_the_committed_bytes(self, corpus, tmp_path: Path) -> None:
         runtime_face = pymupdf.Font(corpus.generator.font).name
-        if (
-            pymupdf.VersionBind != corpus.generator.library_version
-            or runtime_face != corpus.generator.font_face
-        ):
-            pytest.skip(
-                "PDF bytes are only guaranteed for the recorded PyMuPDF build and font; "
-                f"manifest={corpus.generator.library_version}/{corpus.generator.font_face} "
-                f"runtime={pymupdf.VersionBind}/{runtime_face}"
-            )
+        assert (
+            pymupdf.VersionBind == corpus.generator.library_version
+            and runtime_face == corpus.generator.font_face
+        ), (
+            "PDF byte reproducibility requires the recorded PyMuPDF build and font; "
+            f"manifest={corpus.generator.library_version}/{corpus.generator.font_face} "
+            f"runtime={pymupdf.VersionBind}/{runtime_face}. Migrate and independently "
+            "review the corpus before changing this toolchain."
+        )
         builder = load_script_module("build_provenance_corpus")
 
         regenerated = builder.build_corpus(tmp_path)

@@ -26,9 +26,9 @@ def test_public_release_bundle_is_ready_for_manual_handoff() -> None:
     assert report["required_file_count"] == 37
     assert report["missing_files"] == []
     assert report["unexpected_public_files"] == []
-    assert report["expected_release_version"] == "1.1.2"
-    assert report["project_version"] == "1.1.2"
-    assert report["locked_project_versions"] == ["1.1.2"]
+    assert report["expected_release_version"] == "1.1.3"
+    assert report["project_version"] == "1.1.3"
+    assert report["locked_project_versions"] == ["1.1.3"]
     assert report["release_version_issues"] == []
     assert report["project_author"] == "kuotunyu"
     assert report["project_author_issues"] == []

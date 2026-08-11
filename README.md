@@ -9,9 +9,9 @@
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是欄位、日期、身分資料或金額稍有疏漏，就必須往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉此實作一套面向台灣公共服務情境、透明且可重現的 Document AI 產品。
 
-[**線上試用**](https://steven0226-doc-inspector.hf.space) · [**Case Study**](docs/CASE_STUDY.md) · [**來源核驗設計**](docs/EVIDENCE_PROVENANCE.md) · [**v1.1.2 Release**](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)
+[**線上試用**](https://steven0226-doc-inspector.hf.space) · [**Case Study**](docs/CASE_STUDY.md) · [**來源核驗設計**](docs/EVIDENCE_PROVENANCE.md) · [**v1.1.3 Release**](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.3)
 
-> **v1.1.2 · Feature Freeze** — Phase 0–7 已驗收並正式發布。這是送件前技術預檢工具，不取代主管機關的資格審查。
+> **v1.1.3 · Feature Freeze** — Phase 0–7 已驗收並正式發布。這是送件前技術預檢工具，不取代主管機關的資格審查。
 
 ---
 
@@ -27,7 +27,7 @@
 | Synthetic provenance | 61 fields；false verified rate 0% | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
 | 真實文件 extraction | XFUND micro F1：0.4471／0.4819 | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
 | 視覺頁面 retrieval | Recall@1 0.95、Recall@3 1.00 | [去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json) |
-| 發布與部署 | v1.1.2 release baseline：wheel／sdist；19 個非 README 關鍵檔 byte-exact，README metadata／本文 exact match | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.2)／[部署指南](docs/REMOTE_SETUP.md) |
+| 發布與部署 | v1.1.3 release baseline：wheel／sdist；19 個非 README 關鍵檔 byte-exact，README metadata／本文 exact match | [Release](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.3)／[部署指南](docs/REMOTE_SETUP.md) |
 
 ---
 
@@ -180,7 +180,7 @@ XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
 
 ## 模型選型與台灣生態系對照
 
-| 任務 | 台灣模型／生態系候選 | v1.1.2 實際基準 | 決策 |
+| 任務 | 台灣模型／生態系候選 | v1.1.3 實際基準 | 決策 |
 |---|---|---|---|
 | 文件 structured extraction | `taide-gemma3-12b`（Ollama） | `GEMINI_MODEL`、`OPENAI_MODEL` | 先驗證跨 provider schema；model ID 只由 `.env` 設定 |
 | 視覺頁面 retrieval | 尚無已驗證的台灣 ColVision 等價模型 | `vidore/colqwen2-v1.0-hf` | Transformers、BF16、SDPA；不使用 `flash-attn` 或 faiss |

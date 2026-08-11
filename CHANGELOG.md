@@ -4,13 +4,17 @@
 
 ## [Unreleased]
 
+## [1.1.3] - 2026-08-12
+
 ### Changed
 
 - README 收斂為 Proof-first 作品集首頁，保留可驗證成果、評估邊界與 production limitations，移除重複導覽敘事。
+- 更新 Gradio 6.22.0、Playwright 1.62.0、Cryptography 50.0.0 與 uv 0.12.2 容器基底；PyMuPDF 維持 1.28.0，以保留 synthetic provenance corpus 的 byte-exact 重現契約。
 
 ### Fixed
 
 - GitHub README 與 Hugging Face Space metadata 分離；部署來源改以 19 個非 README 關鍵檔 byte-exact，加上 README metadata／本文 exact match 驗證。
+- PyMuPDF 或字型版本若偏離 provenance manifest，byte-exact 重現測試現在會失敗，不再以 skip 讓 release gate 靜默退化。
 
 ## [1.1.2] - 2026-08-03
 

@@ -10,7 +10,7 @@ import tomllib
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_RELEASE_VERSION = "1.1.2"
+EXPECTED_RELEASE_VERSION = "1.1.3"
 EXPECTED_PROJECT_AUTHOR = "kuotunyu"
 EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 
@@ -115,7 +115,7 @@ README_MARKERS = (
     "## Demo 資料與授權",
     "## CPU 容器與部署",
     "## 目前限制",
-    "v1.1.2",
+    "v1.1.3",
     "Hugging Face Docker Space",
     "266 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
