@@ -10,6 +10,14 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps"
+    groups:
+      routine-dependencies:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
     ignore:
       # torch 只存在於可選的 local-retrieval GPU extra，且必須來自 cu128 index，
       # 該 index 對 cp311 目前最新只到 2.11.0，沒有已修補版本可用。Dependabot 會
@@ -32,6 +40,14 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "ci"
+    groups:
+      routine-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/"
@@ -43,4 +59,12 @@ updates:
     open-pull-requests-limit: 3
     commit-message:
       prefix: "build"
+    groups:
+      routine-container:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
