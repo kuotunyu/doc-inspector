@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.12.3-python3.11-trixie-slim
+FROM ghcr.io/astral-sh/uv:0.12.4-python3.11-trixie-slim
 
 ENV UV_NO_DEV=1 \
     UV_COMPILE_BYTECODE=1 \
