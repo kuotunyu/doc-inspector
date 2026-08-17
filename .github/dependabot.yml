@@ -1,4 +1,7 @@
 version: 2
+
+# Feature Freeze：停止排程型 version-update PR；Dependabot security updates
+# 使用獨立限額，仍會在偵測到漏洞時建立修補 PR。
 updates:
   - package-ecosystem: "uv"
     directory: "/"
@@ -7,28 +10,9 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Taipei"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "deps"
-    groups:
-      routine-dependencies:
-        applies-to: version-updates
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
-    ignore:
-      # torch 只存在於可選的 local-retrieval GPU extra，且必須來自 cu128 index，
-      # 該 index 對 cp311 目前最新只到 2.11.0，沒有已修補版本可用。Dependabot 會
-      # 反覆嘗試並失敗。setuptools 由 torch 的 metadata 連帶約束，只要 torch 停在
-      # 2.11.0 就無法單獨升級。理由與重新評估條件見 .github/SECURITY.md。
-      - dependency-name: "torch"
-      - dependency-name: "setuptools"
-      # Synthetic provenance PDFs and their SHA-256 manifest were generated
-      # with 1.28.0. Upgrade only together with an independently reviewed
-      # corpus migration; otherwise the byte-reproducibility test must skip.
-      - dependency-name: "pymupdf"
 
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -37,17 +21,9 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Taipei"
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "ci"
-    groups:
-      routine-actions:
-        applies-to: version-updates
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
 
   - package-ecosystem: "docker"
     directory: "/"
@@ -56,15 +32,7 @@ updates:
       day: "monday"
       time: "09:00"
       timezone: "Asia/Taipei"
-    open-pull-requests-limit: 3
+    open-pull-requests-limit: 0
     commit-message:
       prefix: "build"
-    groups:
-      routine-container:
-        applies-to: version-updates
-        patterns:
-          - "*"
-        update-types:
-          - "minor"
-          - "patch"
 

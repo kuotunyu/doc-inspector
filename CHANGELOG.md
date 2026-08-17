@@ -4,6 +4,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Feature Freeze 下停止 uv、GitHub Actions 與 Docker 的例行 version-update PR；Dependabot security updates 維持啟用且不受 version-update 限額影響。
+
 ## [1.1.3] - 2026-08-12
 
 ### Changed
