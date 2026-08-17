@@ -41,7 +41,9 @@ base 安裝、GitHub Actions CI 與公開 CPU 容器都不包含它們。
 並重跑 GPU 視覺檢索評估、更新 README 記錄的實測環境與數字。在那之前，README 上的
 ColQwen2 結果對應的是已驗證的 Torch 2.11.0+cu128 環境。
 
-這兩項在 `.github/dependabot.yml` 以 `ignore` 標註，避免 Dependabot 重複產生無法完成的更新任務。
+Feature Freeze 期間，`.github/dependabot.yml` 以 `open-pull-requests-limit: 0` 停止例行 version-update PR，
+不再用 `ignore` 隱藏特定套件。Dependabot security updates 維持啟用；若上述套件出現新的安全警示，
+仍須依風險與重新評估條件個別處理。
 
 ## 維護者檢查
 
