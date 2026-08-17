@@ -227,7 +227,7 @@ name = "cuda-bindings"
 version = "12.9.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cuda-pathfinder", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "cuda-pathfinder" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/40/f3/f9d1095f90d2a4df24cfcafe7487fd9444c6dacb94e3722be6fedd8ac26c/cuda_bindings-12.9.7-cp311-cp311-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:16043ef5b15ab88fe9954c5c2061b1d8007591b27f2c916331056de0ebc6187e", size = 7114834, upload-time = "2026-05-27T18:44:07.746Z" },
@@ -252,37 +252,37 @@ wheels = [
 
 [package.optional-dependencies]
 cublas = [
-    { name = "nvidia-cublas-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cublas-cu12" },
 ]
 cudart = [
-    { name = "nvidia-cuda-runtime-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cuda-runtime-cu12" },
 ]
 cufft = [
-    { name = "nvidia-cufft-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cufft-cu12" },
 ]
 cufile = [
-    { name = "nvidia-cufile-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cufile-cu12" },
 ]
 cupti = [
-    { name = "nvidia-cuda-cupti-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cuda-cupti-cu12" },
 ]
 curand = [
-    { name = "nvidia-curand-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-curand-cu12" },
 ]
 cusolver = [
-    { name = "nvidia-cusolver-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cusolver-cu12" },
 ]
 cusparse = [
-    { name = "nvidia-cusparse-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cusparse-cu12" },
 ]
 nvjitlink = [
-    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-nvjitlink-cu12" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cuda-nvrtc-cu12" },
 ]
 nvtx = [
-    { name = "nvidia-nvtx-cu12", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-nvtx-cu12" },
 ]
 
 [[package]]
@@ -331,24 +331,24 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "accelerate", marker = "extra == 'local-retrieval'", specifier = ">=1.12,<2.0" },
-    { name = "gradio", specifier = ">=6.22.0,<7.0" },
-    { name = "langchain", specifier = ">=1.0,<2.0" },
-    { name = "langchain-google-genai", specifier = ">=3.0,<5.0" },
-    { name = "langchain-openai", specifier = ">=1.4.3,<2.0" },
+    { name = "gradio", specifier = ">=6.24.0,<7.0" },
+    { name = "langchain", specifier = ">=1.3.15,<2.0" },
+    { name = "langchain-google-genai", specifier = ">=4.3.3,<5.0" },
+    { name = "langchain-openai", specifier = ">=1.5.0,<2.0" },
     { name = "pillow", specifier = ">=11.0,<13.0" },
     { name = "pydantic", specifier = ">=2.10,<3.0" },
-    { name = "pydantic-settings", specifier = ">=2.7,<3.0" },
+    { name = "pydantic-settings", specifier = ">=2.15.0,<3.0" },
     { name = "pymupdf", specifier = "==1.28.0" },
     { name = "pytesseract", marker = "extra == 'local-ocr'", specifier = ">=0.3.13,<0.4" },
     { name = "torch", marker = "extra == 'local-retrieval'", specifier = ">=2.11,<2.12", index = "https://download.pytorch.org/whl/cu128" },
-    { name = "transformers", marker = "extra == 'local-retrieval'", specifier = ">=5.1,<6.0" },
+    { name = "transformers", marker = "extra == 'local-retrieval'", specifier = ">=5.15.0,<6.0" },
     { name = "xlsxwriter", specifier = ">=3.2,<4.0" },
 ]
 provides-extras = ["local-retrieval", "local-ocr"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "hatchling", specifier = ">=1.27,<2.0" },
+    { name = "hatchling", specifier = ">=1.32.0,<2.0" },
     { name = "playwright", specifier = ">=1.62.0,<2.0" },
     { name = "pytest", specifier = ">=8.3,<10.0" },
     { name = "pytest-cov", specifier = ">=6.0,<8.0" },
@@ -438,7 +438,7 @@ wheels = [
 
 [[package]]
 name = "gradio"
-version = "6.22.0"
+version = "6.24.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anyio" },
@@ -469,9 +469,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/f6/ca/ef9c8ace3917963f0cd503a959b44e2d7f84e032c67f65846c4eee9a637c/gradio-6.22.0.tar.gz", hash = "sha256:81c58b4ff3e6bd2c01c51767a9f5288126bcadbeda9512c8158fb7f7dcac0f63", size = 44543579, upload-time = "2026-07-31T03:03:31.396Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/65/1c/f97a1dc890348b6cffb2714a45203eef3a65815d910d89b094b0a4a5b112/gradio-6.24.0.tar.gz", hash = "sha256:2072be0c0803da1859f918a45dc568fafc7b0eebd581943bee8acc78f752e166", size = 44575933, upload-time = "2026-08-12T22:51:40.625Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c9/f0/ea1aba81d6a853aa90225934583efce03d8fc14b12cf9d9726ba1ad6ecbf/gradio-6.22.0-py3-none-any.whl", hash = "sha256:9bed11d8f410d5e47529060c3c09da0bc83caa960eb7458cc8fbac7d45e5c2a6", size = 30709716, upload-time = "2026-07-31T03:03:27.273Z" },
+    { url = "https://files.pythonhosted.org/packages/52/6b/cc8f41dd9bd4fe6efae80e87b4cb91df681e2d7b71cb83765f129fcdf54f/gradio-6.24.0-py3-none-any.whl", hash = "sha256:0a7c97c07ef0facecb86d776c73c0124b3f9803a828e09ea1737ad12219cabb5", size = 30725600, upload-time = "2026-08-12T22:51:36.594Z" },
 ]
 
 [[package]]
@@ -528,17 +528,18 @@ wheels = [
 
 [[package]]
 name = "hatchling"
-version = "1.31.0"
+version = "1.32.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
     { name = "pathspec" },
     { name = "pluggy" },
+    { name = "tomlkit" },
     { name = "trove-classifiers" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/25/e2/dfa73fe78f773018dcaebc6d09b819bc10d328ff5a6b4a66efa1e3d71f52/hatchling-1.31.0.tar.gz", hash = "sha256:6b48ad4068a482ed7239b3a8215bc55b47aad3345d58dfc94e553c5d2d46211b", size = 57208, upload-time = "2026-07-08T01:48:32.237Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/69/08/33331757185504aae48b8d9bd78cec03a76e3aecfb52e549d05a2347c0dd/hatchling-1.32.0.tar.gz", hash = "sha256:0bdbde4a52b06c37e3eca395f85a762bf0ef06fe374fd8ae429dc6be10230f5f", size = 57783, upload-time = "2026-08-11T05:03:44.114Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/64/e2/2c0af0a52d16be74a4f194564fcdc417521ed863e9b65e4bc9052dacba6f/hatchling-1.31.0-py3-none-any.whl", hash = "sha256:aac80bec8b6fe35e8480f1c335be8910fa210a0e6f735a139be205dadcacb544", size = 77747, upload-time = "2026-07-08T01:48:31.024Z" },
+    { url = "https://files.pythonhosted.org/packages/a9/84/1798b6d85ecde0e31546004efd25c5de1b1f49250644a60cce460e12593a/hatchling-1.32.0-py3-none-any.whl", hash = "sha256:0e17c9c3b9aa7c625acc8d0f5b622f107d5049af9ecf5ada4de1aada5be7cdbc", size = 78435, upload-time = "2026-08-11T05:03:42.644Z" },
 ]
 
 [[package]]
@@ -697,23 +698,24 @@ wheels = [
 
 [[package]]
 name = "langchain"
-version = "1.3.14"
+version = "1.3.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
     { name = "langgraph" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/29/68/a6dbad9c22df4087a0f9e79ddd46226c442b30128bfeee538d5889492a73/langchain-1.3.14.tar.gz", hash = "sha256:1b6696c72ba3bbbce54d745e0180742c9f6ece8bbc59ed5a46c3e20b9a435929", size = 645181, upload-time = "2026-07-16T13:28:18.29Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/6a/1c/b84579174a8e82ed79f4c3e0cd5a7f2323facc5ccd4d1b8390e7d175b663/langchain-1.3.15.tar.gz", hash = "sha256:ab4b775b9703f7e37babe0b325dbbaef25573bda60ecf79f7850bc875f252795", size = 665047, upload-time = "2026-08-11T19:10:52.455Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/ec/0f942e78a621f8e3162ff1ed24284f469aaf51fb4607ee5831c626f2b2bc/langchain-1.3.14-py3-none-any.whl", hash = "sha256:4d10dbe91005952cddd56d0dc77aa108964da6bae90ab20063653957e901f782", size = 139560, upload-time = "2026-07-16T13:28:16.498Z" },
+    { url = "https://files.pythonhosted.org/packages/09/8d/ae721f4d68ff79a17110cabc9cb39b4568b0e3f1fe0a379b926c3f81d175/langchain-1.3.15-py3-none-any.whl", hash = "sha256:c0d2d0d51ed7da249e8ab7487173872059a9dd46fb071d905957485b7334f987", size = 147001, upload-time = "2026-08-11T19:10:50.846Z" },
 ]
 
 [[package]]
 name = "langchain-core"
-version = "1.5.3"
+version = "1.5.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "httpx" },
     { name = "jsonpatch" },
     { name = "langchain-protocol" },
     { name = "langsmith" },
@@ -724,14 +726,14 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uuid-utils" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/65/3e/63af6b9d76d9be907c7c524d6ec18a2efed7e0e2d123fea0230d78dbd73f/langchain_core-1.5.3.tar.gz", hash = "sha256:a56457ac444fef41e9404443c187f0ecea708d36e816ea4ba9573c027f7d1a2d", size = 972461, upload-time = "2026-07-30T14:55:55.833Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/e5/c1/c226367fdf92a173c8b520d0b3583a0aaf4c3fe4952010f680e49d88589d/langchain_core-1.5.5.tar.gz", hash = "sha256:c08d78176113867e9a76acc1007d641cd68fa5682e9e0018980d062b4ae0777e", size = 983166, upload-time = "2026-08-14T18:56:24.364Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/36/e6/c7c39efe0bc7e1b7c3d8f54f85846e04c901913c3d3e99068b218558c6f1/langchain_core-1.5.3-py3-none-any.whl", hash = "sha256:48b56fa580277209594dd7baf837f5b9a2a3651613f34ff9fb1728b429df015f", size = 561687, upload-time = "2026-07-30T14:55:54.419Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/09/9f29e62e99118865d092acda6143a1ba6ce1893e3dcb72388a75b798e37d/langchain_core-1.5.5-py3-none-any.whl", hash = "sha256:537037fd44ead7c1ffb9621011029ad2e347e051519d17f112d7bf7be12f4365", size = 565884, upload-time = "2026-08-14T18:56:23.051Z" },
 ]
 
 [[package]]
 name = "langchain-google-genai"
-version = "4.3.1"
+version = "4.3.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filetype" },
@@ -739,23 +741,24 @@ dependencies = [
     { name = "langchain-core" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e2/b7/793ef6c8894f6c6e6946fcf95c59644341e0307f21490b33645fec0ac56d/langchain_google_genai-4.3.1.tar.gz", hash = "sha256:623cd4329f6a3e4e0397ccacc6fa355728362572688ff9a8e522bf21519e9964", size = 285426, upload-time = "2026-07-21T22:14:43.165Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/11/98/39b62fb50236fc582449beb96e0392d108bd7baac7ac6158d656bfac1561/langchain_google_genai-4.3.3.tar.gz", hash = "sha256:f051b98aaf223cf9092fc27c280dfec63070fc0022dc513640b2da138c9fa2f0", size = 286010, upload-time = "2026-08-10T18:34:26.499Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/30/cf/d6c81ba35c27c24af754f36943100b78ddc922594d23d82a9bd8d1334bad/langchain_google_genai-4.3.1-py3-none-any.whl", hash = "sha256:0ebec25bfa62e75a65561b92fde5bdf8d87618bdda9371afe57d6b86bbb9cda8", size = 72170, upload-time = "2026-07-21T22:14:42.032Z" },
+    { url = "https://files.pythonhosted.org/packages/b0/70/b6e29470356cbb2c87db2344df44182dac90d69c0cc4b929a805184a54c3/langchain_google_genai-4.3.3-py3-none-any.whl", hash = "sha256:cb189f6eebe801fda4416525a357d82f033efc36713a7c15a45c25eb1e2ddbff", size = 72859, upload-time = "2026-08-10T18:34:25.283Z" },
 ]
 
 [[package]]
 name = "langchain-openai"
-version = "1.4.3"
+version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "certifi" },
     { name = "langchain-core" },
     { name = "openai" },
     { name = "tiktoken" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/62/2a/daaafa7a398dfc5b3824c087ccfac475875c9018d7ec0f21cd015e6fd7fc/langchain_openai-1.4.3.tar.gz", hash = "sha256:416fbb39ccb62f0dac8180387a56b70f255b8c14c2ec3f774c4074dbcd9aae04", size = 3263452, upload-time = "2026-08-10T13:23:12.732Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3a/e7/86e71c1e40f70f81cf802ebaf060636cce7483308afab758aaa3bfc34144/langchain_openai-1.5.0.tar.gz", hash = "sha256:bf86fefc842122412a5bbf1a34fb4c993c3c9f873c43a3c57cf8fef0f0506a9e", size = 3266672, upload-time = "2026-08-13T13:14:34.379Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b8/fb/a72bb3e8ff427bdd79acd6d04131d77281c57bf979c5c3c8650019a30afc/langchain_openai-1.4.3-py3-none-any.whl", hash = "sha256:351c9dd409ea3ba6562916a9f4655bbf1530e7d84e325b0681e984d63118850b", size = 122433, upload-time = "2026-08-10T13:23:11.326Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/a2/af432496f791eb55f38f41b80491bd8c3759ab07ccc3cbc64c917824934d/langchain_openai-1.5.0-py3-none-any.whl", hash = "sha256:8b9b5f25a640883879a1cd2728a5a09a62a976d80ddf88611420025817beaf6d", size = 123579, upload-time = "2026-08-13T13:14:33.176Z" },
 ]
 
 [[package]]
@@ -772,7 +775,7 @@ wheels = [
 
 [[package]]
 name = "langgraph"
-version = "1.2.9"
+version = "1.2.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "langchain-core" },
@@ -782,9 +785,9 @@ dependencies = [
     { name = "pydantic" },
     { name = "xxhash" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/41/4b/0d1130e26b41a99dcc88353bbe7162a1f255c4db746bd94024268e6af27b/langgraph-1.2.9.tar.gz", hash = "sha256:385f87bc1802c35af7e0aa479278ecba8582d103515eb48256cb2ddcd42d0bd4", size = 722869, upload-time = "2026-07-10T01:30:14.985Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/56/0d/c8e7ee98896659e1b6555db0ab115a9ca899844744645d5d894032bab1d7/langgraph-1.2.11.tar.gz", hash = "sha256:9ecfe11e50d338b34b15cf4d8a442642de103e8ae6971320efba84e4542eb363", size = 725753, upload-time = "2026-08-11T14:00:36.945Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/16/0b8dc48823f1326f3e0c8012a3c07a40da6f194299e2ec080df236287baf/langgraph-1.2.9-py3-none-any.whl", hash = "sha256:c2d98ad94333937922ba04148641c1da2bfe45b5b8e55d7b6dcb0bb2df809e76", size = 247473, upload-time = "2026-07-10T01:30:13.733Z" },
+    { url = "https://files.pythonhosted.org/packages/0a/7f/c5c30e4be99ff821029c7ac872a480676bb179c9f3df85ea3f38d13f86d4/langgraph-1.2.11-py3-none-any.whl", hash = "sha256:8bab70de7b2d00b5300fb289bcf38d8b241400f3184c1e95e8ce706fb0e8686b", size = 248854, upload-time = "2026-08-11T14:00:35.494Z" },
 ]
 
 [[package]]
@@ -979,7 +982,7 @@ name = "nvidia-cudnn-cu12"
 version = "9.19.0.56"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "nvidia-cublas-cu12" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/09/b8/277c51962ee46fa3e5b203ac5f76107c650f781d6891e681e28e6f3e9fe6/nvidia_cudnn_cu12-9.19.0.56-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:08caaf27fe556aca82a3ee3b5aa49a77e7de0cfcb7ff4e5c29da426387a8267e", size = 656910700, upload-time = "2026-02-03T20:40:25.508Z" },
@@ -991,7 +994,7 @@ name = "nvidia-cufft-cu12"
 version = "11.3.3.83"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "nvidia-nvjitlink-cu12" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/60/bc/7771846d3a0272026c416fbb7e5f4c1f146d6d80704534d0b187dd6f4800/nvidia_cufft_cu12-11.3.3.83-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:848ef7224d6305cdb2a4df928759dca7b1201874787083b6e7550dd6765ce69a", size = 193109211, upload-time = "2025-03-07T01:44:56.873Z" },
@@ -1021,9 +1024,9 @@ name = "nvidia-cusolver-cu12"
 version = "11.7.3.90"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-cublas-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "nvidia-cusparse-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
-    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "nvidia-cublas-cu12" },
+    { name = "nvidia-cusparse-cu12" },
+    { name = "nvidia-nvjitlink-cu12" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c8/32/f7cd6ce8a7690544d084ea21c26e910a97e077c9b7f07bf5de623ee19981/nvidia_cusolver_cu12-11.7.3.90-py3-none-manylinux_2_27_aarch64.whl", hash = "sha256:db9ed69dbef9715071232caa9b69c52ac7de3a95773c2db65bdba85916e4e5c0", size = 267229841, upload-time = "2025-03-07T01:46:54.356Z" },
@@ -1035,7 +1038,7 @@ name = "nvidia-cusparse-cu12"
 version = "12.5.8.93"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "nvidia-nvjitlink-cu12", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "nvidia-nvjitlink-cu12" },
 ]
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bc/f7/cd777c4109681367721b00a106f491e0d0d15cfa1fd59672ce580ce42a97/nvidia_cusparse_cu12-12.5.8.93-py3-none-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:9b6c161cb130be1a07a27ea6923df8141f3c295852f4b260c65f18f3e0a091dc", size = 288117129, upload-time = "2025-03-07T01:47:40.407Z" },
@@ -1336,16 +1339,16 @@ wheels = [
 
 [[package]]
 name = "pydantic-settings"
-version = "2.14.2"
+version = "2.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pydantic" },
     { name = "python-dotenv" },
     { name = "typing-inspection" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5c/b5/8f48e906c3e0205276e8bd8cb7512217a87b2685304d64be27cad5b3019f/pydantic_settings-2.14.2.tar.gz", hash = "sha256:c19dd64b19097f1de80184f0cc7b0272a13ae6e170cbf240a3e27e381ed14a5f", size = 237700, upload-time = "2026-06-19T13:44:56.324Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/ca/31c57507b13119d7d3cfa1576dad2911a4861e3be07b579395f4e9d393f9/pydantic_settings-2.15.0.tar.gz", hash = "sha256:694b793e84f766ba76a90ebdefc01d0a9a045dab0382bee70393da93712ad117", size = 261253, upload-time = "2026-08-07T09:24:57.419Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/77/c1/6e422f34e569cf8e18df68d1939c81c099d2b61e4f7d9621c8a77560799c/pydantic_settings-2.14.2-py3-none-any.whl", hash = "sha256:a20c97b37910b6550d5ea50fbcc2d4187defe58cd57070b73863d069419c9440", size = 61715, upload-time = "2026-06-19T13:44:55.02Z" },
+    { url = "https://files.pythonhosted.org/packages/30/a4/2bffa9f8e804325a09867f0e9d30795c80ea9f8d62560bd1b6ad6220eb2f/pydantic_settings-2.15.0-py3-none-any.whl", hash = "sha256:0ba092c291c94baceb5eff768aa0d56400a457585bc0175925a5a5510303da42", size = 69413, upload-time = "2026-08-07T09:24:55.839Z" },
 ]
 
 [[package]]
@@ -1784,7 +1787,7 @@ wheels = [
 
 [[package]]
 name = "transformers"
-version = "5.14.1"
+version = "5.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "huggingface-hub" },
@@ -1797,9 +1800,9 @@ dependencies = [
     { name = "tqdm" },
     { name = "typer" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5a/fb/2a2ba88f325e68a921d8b69ff63b477830b2e73ade9a3c8c8cab2f06d741/transformers-5.14.1.tar.gz", hash = "sha256:60d196c27781eacf8637e2b533f517582907ad6f9ae142046d6b69431a5b2173", size = 9295927, upload-time = "2026-07-16T09:41:57.773Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/3f/d89353267d511e18f137dfd7769d07837350c11b88408ce1dfe2e93e56c7/transformers-5.15.0.tar.gz", hash = "sha256:bbf98f57b2ddd7c4ecbccfa2c0069017aa6fd01cc204bd50cbc0eeadcf2a13b8", size = 9377983, upload-time = "2026-08-10T10:27:23.261Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/6f/67/8d85ca2323233ae3c0365a659c4e52ee1f587b440e4bc577e7d8e4416d0f/transformers-5.14.1-py3-none-any.whl", hash = "sha256:9db974c4079ede2d1a3ea7ca5a240df33f2cc26fc2b36ba64c5f2a4f43b6e725", size = 11625234, upload-time = "2026-07-16T09:41:54.143Z" },
+    { url = "https://files.pythonhosted.org/packages/d8/43/81355710a4c84e9420e11a86d41a5364deb561f2ef36dfdf254a07371bbb/transformers-5.15.0-py3-none-any.whl", hash = "sha256:d7f007736f67749ae9490c4f8cb5d30b452ae2d68c8675e50ba8d63ea7feb107", size = 11749280, upload-time = "2026-08-10T10:27:20.416Z" },
 ]
 
 [[package]]
