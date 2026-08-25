@@ -21,8 +21,8 @@
 
 | 面向 | 實測結果 | Evidence |
 |---|---|---|
-| 本機 release gate | 266 passed，總 coverage 91%（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
-| 跨平台 CI | Windows／Ubuntu、Python 3.11；263 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
+| 本機 release gate | 267 passed，總 coverage 91%（實測 91.01%） | [`tests/`](tests/)／[`pyproject.toml`](pyproject.toml) |
+| 跨平台 CI | Windows／Ubuntu、Python 3.11；264 passed、1 skipped、coverage 89.33% | [GitHub Actions](https://github.com/kuotunyu/doc-inspector/actions) |
 | Deterministic decision | 24／24 fixed synthetic regression cases exact match | [方法](docs/DECISION_EVALUATION.md)／[JSON](docs/assets/decision-evaluation.json) |
 | Synthetic provenance | 61 fields；false verified rate 0% | [方法](docs/EVIDENCE_PROVENANCE.md)／[JSON](docs/assets/provenance-evaluation.json) |
 | 真實文件 extraction | XFUND micro F1：0.4471／0.4819 | [去識別 artifact](docs/assets/xfund-extraction-benchmark.json) |
