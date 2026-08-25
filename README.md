@@ -9,7 +9,7 @@
 
 我常看到補助申請真正困難的地方，不一定是不符合資格，而是欄位、日期、身分資料或金額稍有疏漏，就必須往返補件。我想先把重複而可檢查的步驟交給工具，讓申請人在送件前看懂問題、提早修正，也藉此實作一套面向台灣公共服務情境、透明且可重現的 Document AI 產品。
 
-[**線上試用**](https://steven0226-doc-inspector.hf.space) · [**Case Study**](docs/CASE_STUDY.md) · [**來源核驗設計**](docs/EVIDENCE_PROVENANCE.md) · [**v1.1.3 Release**](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.3)
+[**線上試用**](https://steven0226-doc-inspector.hf.space) · [**Portfolio Brief（recruiter path）**](docs/PORTFOLIO_BRIEF.md) · [**Case Study**](docs/CASE_STUDY.md) · [**來源核驗設計**](docs/EVIDENCE_PROVENANCE.md) · [**v1.1.3 Release**](https://github.com/kuotunyu/doc-inspector/releases/tag/v1.1.3)
 
 > **v1.1.3 · Feature Freeze** — Phase 0–7 已驗收並正式發布。這是送件前技術預檢工具，不取代主管機關的資格審查。
 
