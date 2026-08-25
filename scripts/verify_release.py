@@ -117,7 +117,7 @@ README_MARKERS = (
     "## 目前限制",
     "v1.1.3",
     "Hugging Face Docker Space",
-    "266 passed，總 coverage 91%",
+    "267 passed，總 coverage 91%",
     "https://steven0226-doc-inspector.hf.space",
     "[![CI]",
     "## 可驗證成果",
