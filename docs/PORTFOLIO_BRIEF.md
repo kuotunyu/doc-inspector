@@ -38,10 +38,7 @@ exports available for inspection.
 public [Hugging Face Docker
 Space](https://huggingface.co/spaces/steven0226/doc-inspector) is produced from a
 clean archive of a reviewed Git commit with Space-specific metadata. Release
-and deployment verification compare the allowed public files and README body;
-local caches, secrets, raw documents, benchmark rows, model weights, and logs
-are excluded. This brief documents the verified `v1.1.3` baseline and does not
-publish or rebuild the Space.
+and deployment verification compare a fixed runtime-critical allowlist: 19 non-README files byte-for-byte plus README metadata/body. Git archive hygiene separately excludes private/planning paths; local caches, secrets, raw documents, benchmark rows, model weights, and logs are excluded. This brief documents the verified `v1.1.3` baseline and does not publish or rebuild the Space.
 
 ## Boundaries
 
