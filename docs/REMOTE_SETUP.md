@@ -509,7 +509,7 @@ git push origin $Tag
 ```
 
 推送後在 GitHub **Releases → Draft a new release** 選擇 `$Tag`，Release title 使用
-`$Tag｜文件預檢所`。內容依 `CHANGELOG.md` 與該版本實際驗收結果撰寫；一次性 release
+`$Tag｜文件預檢所`。內容依該版本的實際變更與驗收結果撰寫；一次性 release
 notes 留在 GitHub Release，不在 `main` 重複保存。發布後重新確認 Live Demo 與 README
 連結。
 
