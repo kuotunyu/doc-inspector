@@ -255,4 +255,4 @@ CPU image 約 357 MB，不含 Torch／Transformers／Accelerate；本機驗證�
 - 政府表單只供本機測試；Public demo 只使用固定 seed、明顯浮水印的 synthetic documents。
 - 程式碼採 [MIT License](LICENSE)。
 
-延伸閱讀：[Case Study](docs/CASE_STUDY.md) · [Evidence Provenance](docs/EVIDENCE_PROVENANCE.md) · [Decision Evaluation](docs/DECISION_EVALUATION.md) · [Changelog](CHANGELOG.md) · [Contributing](.github/CONTRIBUTING.md) · [Security Policy](.github/SECURITY.md)
+延伸閱讀：[Case Study](docs/CASE_STUDY.md) · [Evidence Provenance](docs/EVIDENCE_PROVENANCE.md) · [Decision Evaluation](docs/DECISION_EVALUATION.md) · [Contributing](.github/CONTRIBUTING.md) · [Security Policy](.github/SECURITY.md)

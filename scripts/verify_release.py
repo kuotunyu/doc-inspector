@@ -17,7 +17,6 @@ EXPECTED_CODEOWNERS_RULES = ("* @kuotunyu",)
 REQUIRED_FILES = (
     "README.md",
     "LICENSE",
-    "CHANGELOG.md",
     ".github/CONTRIBUTING.md",
     ".github/SECURITY.md",
     "Dockerfile",

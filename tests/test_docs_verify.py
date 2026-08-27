@@ -16,7 +16,6 @@ def test_public_documentation_links_are_valid() -> None:
     assert report["file_count"] == len(public_paths)
     assert {
         "README.md",
-        "CHANGELOG.md",
         ".github/CONTRIBUTING.md",
         ".github/SECURITY.md",
         "docs/CASE_STUDY.md",
