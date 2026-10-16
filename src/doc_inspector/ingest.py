@@ -280,7 +280,17 @@ def _normalize_pdf(
                 text_layers.append(extract_page_text_layer(page, page_number))
     except (EncryptedPdfError, PageLimitError, DocumentDecodeError):
         raise
-    except (pymupdf.EmptyFileError, pymupdf.FileDataError, RuntimeError, ValueError, OSError) as exc:
+    except (
+        pymupdf.EmptyFileError,
+        pymupdf.FileDataError,
+        pymupdf.mupdf.FzErrorBase,
+        RuntimeError,
+        ValueError,
+        OSError,
+    ) as exc:
+        # FzErrorBase subclasses derive straight from Exception, not RuntimeError,
+        # so MuPDF's own refusals (e.g. FzErrorLimit on a page it will not
+        # rasterize) would otherwise escape this boundary untranslated.
         raise DocumentDecodeError("PDF 損毀或無法解碼。") from exc
 
     return NormalizedDocument(
