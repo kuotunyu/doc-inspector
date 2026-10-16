@@ -112,6 +112,57 @@ def test_unsupported_extension_is_rejected(tmp_path: Path) -> None:
         normalize_document(path)
 
 
+@pytest.mark.parametrize(
+    "mupdf_error",
+    [
+        pymupdf.mupdf.FzErrorLimit,
+        pymupdf.mupdf.FzErrorSystem,
+    ],
+)
+def test_mupdf_render_refusal_is_translated_to_decode_error(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    mupdf_error: type[Exception],
+) -> None:
+    """MuPDF raises its own ``FzErrorBase`` subclasses, which are not ``RuntimeError``.
+
+    A page whose geometry MuPDF refuses to rasterize (``FzErrorLimit``) must not
+    leak a raw third-party exception past the decode boundary. The refusal is
+    injected at ``get_pixmap`` so no large raster is ever requested.
+    """
+
+    path = tmp_path / "refused-render.pdf"
+    save_pdf(path, 1)
+
+    def refuse(self: pymupdf.Page, *args: object, **kwargs: object) -> None:
+        raise mupdf_error("code=5: Overly large image")
+
+    monkeypatch.setattr(pymupdf.Page, "get_pixmap", refuse)
+
+    with pytest.raises(DocumentDecodeError) as excinfo:
+        normalize_document(path, render_dpi=72, max_long_edge=500)
+
+    assert isinstance(excinfo.value.__cause__, mupdf_error)
+
+
+def test_mupdf_refusal_does_not_mask_domain_errors(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Page-limit rejection still precedes rendering and keeps its own error type."""
+
+    path = tmp_path / "over-limit.pdf"
+    save_pdf(path, 3)
+
+    def refuse(self: pymupdf.Page, *args: object, **kwargs: object) -> None:
+        raise pymupdf.mupdf.FzErrorLimit("code=5: Overly large image")
+
+    monkeypatch.setattr(pymupdf.Page, "get_pixmap", refuse)
+
+    with pytest.raises(PageLimitError):
+        normalize_document(path, max_pdf_pages=2)
+
+
 def test_decoded_image_format_must_be_supported(tmp_path: Path) -> None:
     path = tmp_path / "renamed.png"
     image = Image.new("RGB", (10, 10), "white")
