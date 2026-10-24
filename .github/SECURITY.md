@@ -38,9 +38,10 @@ MANIFEST 排除繞過紀錄。setuptools 的新 Windows legacy wheel 安裝路�
 
 Accelerate 的 checkpoint index 路徑問題
 [GHSA-4j2p-28q2-5m79](https://github.com/advisories/GHSA-4j2p-28q2-5m79)
-仍須處理。專案沒有直接呼叫公告中的 `load_checkpoint_in_model` 或
-`load_checkpoint_and_dispatch`；現有單 GPU `device_map` 仍依賴 Accelerate。
-不可把單純升版視為已修補，也不可載入使用者提供的不可信 checkpoint。
+透過移除不必要的 Accelerate 依賴處理：單 GPU 載入改用 `.to(device)`，不再指定
+`device_map`，完整 resolved dependency closure 也不包含 Accelerate。
+這不表示上游漏洞已修補；此 adapter 不提供跨 GPU 分片或 CPU offload。
+載入明確指定 safetensors 並禁止 remote code，仍不可使用不可信 checkpoint。
 
 GPU extra 不在 base 安裝、預設 CI 或公開 CPU 容器中。模型驗證應固定可信來源的完整
 revision、使用 safetensors 並禁止 remote code；這些措施不代表任意 checkpoint 都安全。

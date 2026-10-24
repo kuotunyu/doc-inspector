@@ -181,6 +181,7 @@ XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
 上述數字保留原始 Torch 2.11.0+cu128 的歷史量測，不是目前依賴版本的重測結果。
 安全維護後的 `local-retrieval` 使用 Torch 2.13／CUDA 13.0 與 setuptools 84.2.1；
 相容性 smoke 與這份固定 benchmark 分開記錄，不覆寫原始結果。
+單 GPU 載入使用明確的 `.to(device)`，不再依賴 Accelerate；不提供跨 GPU 分片或 CPU offload。
 4090 的固定 revision 真模型驗證使用兩張合成英文文件與兩個查詢，僅檢查載入、
 推論、排序及顯存；詳見[安全升級相容性紀錄](docs/assets/retrieval-security-smoke.json)。
 
