@@ -43,7 +43,8 @@ Documentation = "https://github.com/kuotunyu/doc-inspector#readme"
 [project.optional-dependencies]
 local-retrieval = [
   "accelerate>=1.12,<2.0",
-  "torch>=2.11,<2.12",
+  "torch>=2.13,<2.14",
+  "setuptools>=84.1,<85",
   "transformers>=5.1,<6.0",
 ]
 # Evidence localization on scanned pages. Also needs a Tesseract 5 binary; the
@@ -80,11 +81,11 @@ exclude = [
 ]
 
 [tool.uv.sources]
-torch = { index = "pytorch-cu128" }
+torch = { index = "pytorch-cu130" }
 
 [[tool.uv.index]]
-name = "pytorch-cu128"
-url = "https://download.pytorch.org/whl/cu128"
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
 explicit = true
 
 [tool.pytest.ini_options]
