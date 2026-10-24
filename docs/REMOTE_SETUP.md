@@ -121,7 +121,7 @@ outputs 或 logs。若目前變更尚未提交，依功能拆分正體中文 Con
 Commits。首版已由維護者建立為公開 commit `77b2e80`；後續精簡應另作小型
 commit，不改寫首版歷史。
 
-### 保持唯一 Contributor 身分
+### Contributor 身分與允許名單
 
 建立任何 commit 前先確認：
 
@@ -131,8 +131,8 @@ git config user.email
 ```
 
 電子郵件必須已綁定 GitHub 帳號 `kuotunyu`，或使用該帳號在 GitHub 設定頁提供
-的 noreply 地址；不要使用 bot、協作工具或第二個未綁定身分建立 commit，也
-不要在 commit message 保留其他身分的 `Co-authored-by` trailer。
+的 noreply 地址；個人提交不要使用協作工具或第二個未綁定身分，也不要加入
+不實的 `Co-authored-by` trailer。官方 Dependabot 的提交另依下列允許名單處理。
 
 推送前檢查本次所有 commit 的作者與共同作者：
 
@@ -142,10 +142,11 @@ git log origin/main..HEAD --format='%B' |
   Select-String -Pattern '^\s*Co-authored-by:' -CaseSensitive:$false
 ```
 
-第一個命令的每一筆都必須是 `kuotunyu` 且 email 已綁定該帳號；第二個命令
-預期沒有輸出。若 GitHub 上出現 Dependabot 或其他 bot 建立的 PR，為維持唯一
-Contributor，**不要直接 merge、squash 或 rebase 該 PR**；先在本機重現必要
-更新、完整驗證，再由 `kuotunyu` 自己建立 commit。
+個人建立的 commit 必須是 `kuotunyu` 且 email 已綁定該帳號。安全依賴更新
+**允許 `kuotunyu` 與 `dependabot[bot]`**；Dependabot PR 仍須先審查更新內容、
+確認相容性並通過指定 SHA 的 CI，才可正常合併。既有提交及 bot 的真實作者資訊
+應保留歷史與真實歸屬，不為了 Contributors 名單改寫歷史。其他 bot、未核准
+帳號或匿名 Contributor 仍不通過發布檢查。
 
 確認所有待發布變更都已提交後，先確認既有遠端再推送：
 
@@ -172,8 +173,11 @@ uv run python scripts/check_github_contributors.py
 
 第一個報告必須同時為 `sha_matches=true`、`status=completed`、
 `conclusion=success`、`ci_passed=true`；若仍在 `queued`／`in_progress`，等待
-後重跑。第二個報告必須為 `sole_contributor=true`、`logins` 只有 `kuotunyu`
-且 `anonymous_contributor_count=0`。GitHub 官方說明 Contributors endpoint
+後重跑。第二個報告必須為 `contributor_policy_passed=true`：`logins` 必須含有
+`kuotunyu`，且只可含有 `kuotunyu` 與 `dependabot[bot]`，
+`anonymous_contributor_count=0`、`unexpected_logins=[]`。`sole_contributor`
+保留事實含義；有 Dependabot 時應為 `false`，不作為發布通過條件。
+GitHub 官方說明 Contributors endpoint
 可能快取數小時
 （[List repository contributors](https://docs.github.com/en/rest/repos/repos#list-repository-contributors)）；
 若剛 push 後結果未更新，先等候再重跑，不要用刪除或改寫歷史來試誤。也可開啟
