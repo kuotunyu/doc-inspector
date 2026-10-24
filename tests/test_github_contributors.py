@@ -39,6 +39,7 @@ def test_expected_account_is_the_only_public_contributor() -> None:
 
     assert report["verified"] is True
     assert report["sole_contributor"] is True
+    assert report["contributor_policy_passed"] is True
     assert report["logins"] == ["kuotunyu"]
     assert report["anonymous_contributor_count"] == 0
     assert report["pages_checked"] == 1
@@ -63,6 +64,8 @@ def test_second_github_account_fails_the_sole_contributor_gate() -> None:
 
     assert report["sole_contributor"] is False
     assert report["logins"] == ["automation-bot", "kuotunyu"]
+    assert report["contributor_policy_passed"] is False
+    assert report["unexpected_logins"] == ["automation-bot"]
 
 
 def test_anonymous_identity_fails_without_exposing_personal_fields() -> None:
@@ -80,8 +83,60 @@ def test_anonymous_identity_fails_without_exposing_personal_fields() -> None:
 
     assert report["sole_contributor"] is False
     assert report["anonymous_contributor_count"] == 1
+    assert report["contributor_policy_passed"] is False
     assert private_email not in json.dumps(report)
     assert "Anonymous Author" not in json.dumps(report)
+
+
+@pytest.mark.parametrize(
+    ("logins", "allowed", "unexpected"),
+    [
+        (["kuotunyu", "dependabot[bot]"], True, []),
+        (["dependabot[bot]"], False, []),
+        ([], False, []),
+        (["kuotunyu", "renovate[bot]"], False, ["renovate[bot]"]),
+        (["kuotunyu", "dependabot[bot]", "other-user"], False, ["other-user"]),
+    ],
+)
+def test_contributor_allowlist_requires_owner_and_rejects_unknown_accounts(
+    logins: list[str], allowed: bool, unexpected: list[str]
+) -> None:
+    def opener(*_: object, **__: object) -> FakeResponse:
+        return FakeResponse([{"login": login} for login in logins])
+
+    report = check_github_contributors.fetch_contributor_report(opener=opener)
+
+    assert report["contributor_policy_passed"] is allowed
+    assert report["unexpected_logins"] == unexpected
+    assert report["allowed_logins"] == ["dependabot[bot]", "kuotunyu"]
+    assert report["sole_contributor"] is (logins == ["kuotunyu"])
+
+
+def test_approved_bot_does_not_allow_an_anonymous_contributor() -> None:
+    def opener(*_: object, **__: object) -> FakeResponse:
+        return FakeResponse(
+            [{"login": "kuotunyu"}, {"login": "dependabot[bot]"}, {"name": "Anonymous"}]
+        )
+
+    report = check_github_contributors.fetch_contributor_report(opener=opener)
+
+    assert report["contributor_policy_passed"] is False
+    assert report["anonymous_contributor_count"] == 1
+
+
+def test_cli_accepts_owner_and_approved_bot_without_claiming_sole_contributor(
+    monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    def opener(*_: object, **__: object) -> FakeResponse:
+        return FakeResponse([{"login": "kuotunyu"}, {"login": "dependabot[bot]"}])
+
+    report = check_github_contributors.fetch_contributor_report(opener=opener)
+    monkeypatch.setattr(check_github_contributors, "fetch_contributor_report", lambda: report)
+
+    assert check_github_contributors.main() == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["sole_contributor"] is False
+    assert output["contributor_policy_passed"] is True
 
 
 @pytest.mark.parametrize("payload", [{"message": "not a list"}, ["invalid item"]])

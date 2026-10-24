@@ -1,4 +1,4 @@
-"""Read-only verification of the public GitHub contributor identity.
+"""Read-only verification of the public GitHub contributor allowlist.
 
 The check uses GitHub's public REST endpoint without authentication. It does
 not inspect local Git history, read dotenv secrets, or write to the repository.
@@ -16,6 +16,7 @@ from urllib.request import Request, urlopen
 
 REPOSITORY = "kuotunyu/doc-inspector"
 EXPECTED_LOGIN = "kuotunyu"
+ALLOWED_LOGINS = frozenset({EXPECTED_LOGIN, "dependabot[bot]"})
 API_ROOT = f"https://api.github.com/repos/{REPOSITORY}/contributors"
 API_VERSION = "2026-03-10"
 PER_PAGE = 100
@@ -84,6 +85,10 @@ def fetch_contributor_report(
         if not isinstance(item.get("login"), str) or not item["login"].strip()
     )
     sole_contributor = logins == [EXPECTED_LOGIN] and anonymous_count == 0
+    unexpected_logins = sorted(set(logins) - ALLOWED_LOGINS, key=str.casefold)
+    contributor_policy_passed = (
+        EXPECTED_LOGIN in logins and not unexpected_logins and anonymous_count == 0
+    )
 
     return {
         "verified": True,
@@ -94,6 +99,9 @@ def fetch_contributor_report(
         "contributor_entry_count": len(entries),
         "pages_checked": pages_checked,
         "sole_contributor": sole_contributor,
+        "allowed_logins": sorted(ALLOWED_LOGINS, key=str.casefold),
+        "unexpected_logins": unexpected_logins,
+        "contributor_policy_passed": contributor_policy_passed,
         "data_may_be_cached_for_hours": True,
         "uses_authentication": False,
         "reads_env_truth": False,
@@ -112,6 +120,7 @@ def main() -> int:
             "repository": REPOSITORY,
             "expected_login": EXPECTED_LOGIN,
             "sole_contributor": False,
+            "contributor_policy_passed": False,
             "error_type": type(exc).__name__,
             "error": str(exc),
             "data_may_be_cached_for_hours": True,
@@ -123,7 +132,7 @@ def main() -> int:
         return 2
 
     print(json.dumps(report, ensure_ascii=False))
-    return 0 if report["sole_contributor"] else 1
+    return 0 if report["contributor_policy_passed"] else 1
 
 
 if __name__ == "__main__":
