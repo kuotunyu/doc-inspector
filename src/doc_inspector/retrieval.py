@@ -94,10 +94,13 @@ class ColQwenRetriever:
         self.model = ColQwen2ForRetrieval.from_pretrained(
             self.model_name,
             torch_dtype=torch.bfloat16,
-            device_map={"": str(self.device)},
+            use_safetensors=True,
+            trust_remote_code=False,
             attn_implementation="sdpa",
-        ).eval()
-        self.processor = ColQwen2Processor.from_pretrained(self.model_name)
+        ).to(self.device).eval()
+        self.processor = ColQwen2Processor.from_pretrained(
+            self.model_name, trust_remote_code=False
+        )
         self.load_seconds = perf_counter() - started
 
     def _require_loaded(self) -> tuple[Any, Any]:

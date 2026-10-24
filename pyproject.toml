@@ -42,7 +42,6 @@ Documentation = "https://github.com/kuotunyu/doc-inspector#readme"
 
 [project.optional-dependencies]
 local-retrieval = [
-  "accelerate>=1.12,<2.0",
   "torch>=2.13,<2.14",
   "setuptools>=84.1,<85",
   "transformers>=5.1,<6.0",

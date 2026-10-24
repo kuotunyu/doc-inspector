@@ -69,6 +69,48 @@
         "e99c749c3ed355323cc4cd12ba35d57a148f888e5cf430aaebc8e800df7a383b"
       ],
       "historical_benchmark_sha256": "c9b29d73602aabcb4e64f69372040cb0e6b4bc0fcff065deb4882b9a183e6b22"
+    },
+    {
+      "status": "PASS",
+      "kind": "compatibility smoke, not benchmark",
+      "stage": "stage-b",
+      "model": "vidore/colqwen2-v1.0-hf",
+      "revision": "0d3e414967fde994dd99a0ccc29bcb34b5355712",
+      "device": "NVIDIA GeForce RTX 4090",
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "transformers": "5.14.1",
+      "setuptools": "84.2.1",
+      "accelerate_installed": false,
+      "accelerate_imported": false,
+      "dtype": "torch.bfloat16",
+      "load_seconds": 4.933926899999278,
+      "total_seconds": 8.043231300000116,
+      "peak_allocated_bytes": 4485262848,
+      "peak_reserved_bytes": 4819255296,
+      "scores": [
+        [
+          17.466915130615234,
+          8.903523445129395
+        ],
+        [
+          5.883377552032471,
+          15.235782623291016
+        ]
+      ],
+      "rankings": [
+        0,
+        1
+      ],
+      "page_sha256": [
+        "63faab61adcdacf4389bd6cc63d80cfe7fd9005876347ee3848930ca10826dbb",
+        "e99c749c3ed355323cc4cd12ba35d57a148f888e5cf430aaebc8e800df7a383b"
+      ],
+      "historical_benchmark_sha256": "c9b29d73602aabcb4e64f69372040cb0e6b4bc0fcff065deb4882b9a183e6b22",
+      "stage_a_scores_match_with_atol_rtol_1e_4": true,
+      "process_peak_working_set_bytes": 5241806848,
+      "process_peak_pagefile_bytes": 11577688064,
+      "process_memory_note": "Windows PeakPagefileUsage is peak process commit charge, not measured disk paging. Working set is resident process memory. These include runtime/model loading and are recorded only for stage-b."
     }
   ]
 }
