@@ -27,19 +27,25 @@
 - 程序內 rate limit 不是完整的 per-user、跨重啟防護；公開部署仍需供應商後台支出上限。
 - 工具只做技術預檢，不提供資格或法律判斷。
 
-## 已知且刻意未修的相依警示
+## 可選 GPU 依賴的安全維護
 
-以下兩項已評估並**刻意暫不升級**。兩者都只出現在可選的 `local-retrieval` GPU extra；
-base 安裝、GitHub Actions CI 與公開 CPU 容器都不包含它們。
+`local-retrieval` 使用官方 cu130 index 的 Torch 2.13，以及 setuptools 84.1 以上版本
+（lockfile 固定為 84.2.1），解除舊 Torch 2.11 的 `setuptools<82` 約束。
+這同時取代舊版 Torch 的 `torch.jit.script` 風險接受紀錄，以及舊 setuptools 的 macOS
+MANIFEST 排除繞過紀錄。setuptools 的新 Windows legacy wheel 安裝路徑問題
+[GHSA-xmj3-9gf7-h52w](https://github.com/pypa/setuptools/security/advisories/GHSA-xmj3-9gf7-h52w)
+自 84.1.0 修補；這不是一般文件上傳的處理路徑。
 
-| 套件 | 等級 | 問題 | 為什麼暫不升級 |
-|---|---|---|---|
-| `torch` 2.11.0+cu128 | low | `torch.jit.script` 記憶體毀損 | 專案不呼叫 `torch.jit.script`；視覺檢索走 Transformers 原生實作與 SDPA。已修補版 2.13.0 在專案固定使用的 cu128 index 上不存在（cp311 最新為 2.11.0），升級等同更換 CUDA channel。 |
-| `setuptools` 81.0.0 | medium | sdist 在 macOS APFS/HFS+ 的 MANIFEST.in 排除繞過（Unicode NFC/NFD 碰撞） | 由 `torch` 的 metadata 連帶約束，torch 不動就無法單獨升到 83.0.0。發布包只在 Windows 與 Ubuntu 建置，不觸及 macOS 檔案系統的正規化行為。 |
+Accelerate 的 checkpoint index 路徑問題
+[GHSA-4j2p-28q2-5m79](https://github.com/advisories/GHSA-4j2p-28q2-5m79)
+仍須處理。專案沒有直接呼叫公告中的 `load_checkpoint_in_model` 或
+`load_checkpoint_and_dispatch`；現有單 GPU `device_map` 仍依賴 Accelerate。
+不可把單純升版視為已修補，也不可載入使用者提供的不可信 checkpoint。
 
-**重新評估條件**：cu128（或後續採用的 CUDA channel）出現 torch 2.13 以上版本時一併升級，
-並重跑 GPU 視覺檢索評估、更新 README 記錄的實測環境與數字。在那之前，README 上的
-ColQwen2 結果對應的是已驗證的 Torch 2.11.0+cu128 環境。
+GPU extra 不在 base 安裝、預設 CI 或公開 CPU 容器中。模型驗證應固定可信來源的完整
+revision、使用 safetensors 並禁止 remote code；這些措施不代表任意 checkpoint 都安全。
+安全升級的相容性 smoke 與固定 XFUND benchmark 分開保存；歷史 Torch 2.11.0+cu128
+的 Recall@1／Recall@3 不得冒充新環境的重新量測結果。
 
 Feature Freeze 期間，`.github/dependabot.yml` 以 `open-pull-requests-limit: 0` 停止例行 version-update PR，
 不再用 `ignore` 隱藏特定套件。Dependabot security updates 維持啟用；若上述套件出現新的安全警示，

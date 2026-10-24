@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "purpose": "GPU dependency compatibility smoke only; not a benchmark or quality estimate",
+  "historical_benchmark_preserved": true,
+  "limitations": [
+    "Two synthetic English pages and two queries only",
+    "No XFUND benchmark rerun",
+    "No multi-GPU, CPU offload or training validation",
+    "Timing depends on cache and host activity"
+  ],
+  "driver": "616.92",
+  "weight_sha256": "2f6dbf32fc2db5b045d74ae73b148425d6e03cc1106a047cdcc7e72b6dc53aba",
+  "synthetic_pages": [
+    [
+      "INVOICE",
+      "Invoice number: A-2026-001",
+      "Customer: Sample Company",
+      "Laptop repair service",
+      "TOTAL AMOUNT DUE: 450 dollars"
+    ],
+    [
+      "WEATHER FORECAST",
+      "City: Taipei",
+      "Tomorrow: sunny skies",
+      "TEMPERATURE: 32 degrees Celsius",
+      "Wind: gentle breeze"
+    ]
+  ],
+  "queries": [
+    "What is the total amount due on the invoice?",
+    "What temperature is forecast for Taipei tomorrow?"
+  ],
+  "rendering": "448x448 RGB white; Arial28 black; x12,y20+70*line; one page at a time",
+  "stages": [
+    {
+      "status": "PASS",
+      "kind": "compatibility smoke, not benchmark",
+      "stage": "stage-a",
+      "model": "vidore/colqwen2-v1.0-hf",
+      "revision": "0d3e414967fde994dd99a0ccc29bcb34b5355712",
+      "device": "NVIDIA GeForce RTX 4090",
+      "torch": "2.13.0+cu130",
+      "cuda": "13.0",
+      "transformers": "5.14.1",
+      "setuptools": "84.2.1",
+      "accelerate_installed": true,
+      "accelerate_imported": true,
+      "dtype": "torch.bfloat16",
+      "load_seconds": 5.186825600001612,
+      "total_seconds": 17.939421699999002,
+      "peak_allocated_bytes": 4483300864,
+      "peak_reserved_bytes": 4527751168,
+      "scores": [
+        [
+          17.466915130615234,
+          8.903523445129395
+        ],
+        [
+          5.883377552032471,
+          15.235782623291016
+        ]
+      ],
+      "rankings": [
+        0,
+        1
+      ],
+      "page_sha256": [
+        "63faab61adcdacf4389bd6cc63d80cfe7fd9005876347ee3848930ca10826dbb",
+        "e99c749c3ed355323cc4cd12ba35d57a148f888e5cf430aaebc8e800df7a383b"
+      ],
+      "historical_benchmark_sha256": "c9b29d73602aabcb4e64f69372040cb0e6b4bc0fcff065deb4882b9a183e6b22"
+    }
+  ]
+}

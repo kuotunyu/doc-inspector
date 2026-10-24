@@ -178,6 +178,12 @@ XFUND val 固定 50 頁／20 queries 的 zero-shot benchmark：
 
 模型主要以英文資料訓練，結果只代表這個小型固定資料集。[去識別 artifact](docs/assets/colqwen-retrieval-benchmark.json)
 
+上述數字保留原始 Torch 2.11.0+cu128 的歷史量測，不是目前依賴版本的重測結果。
+安全維護後的 `local-retrieval` 使用 Torch 2.13／CUDA 13.0 與 setuptools 84.2.1；
+相容性 smoke 與這份固定 benchmark 分開記錄，不覆寫原始結果。
+4090 的固定 revision 真模型驗證使用兩張合成英文文件與兩個查詢，僅檢查載入、
+推論、排序及顯存；詳見[安全升級相容性紀錄](docs/assets/retrieval-security-smoke.json)。
+
 ---
 
 ## 模型選型與台灣生態系對照
